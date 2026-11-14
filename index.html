@@ -1,331 +1,3784 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Física Moderna: Estudio Cuántico Interactivo</title>
-    <!-- MathJax para fórmulas -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        :root {
-            /* Paleta Rosa Pastel Viva (Modo Claro) */
-            --bg-base: #FFF5F7;
-            --bg-panel: #FFFFFF;
-            --primary: #E84373; /* Baya/Frambuesa vivo pero no fosforescente */
-            --primary-light: #FFB6C1;
-            --secondary: #FFA6C9;
-            --text-dark: #2D3748;
-            --text-muted: #718096;
-            --sidebar-w: 60px;
-            --sidebar-w-exp: 220px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="artifact-type" content="narrative">
+<meta name="design-style" content="sticker">
+<title>Física Moderna Interactiva — Interacción Luz-Materia y Mecánica Cuántica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        
-        body { background-color: var(--bg-base); color: var(--text-dark); display: flex; min-height: 100vh; overflow-x: hidden; }
+  /* 1. Sticker base adaptado a estética rosita pastel, rosa baya y coral cálido */
+  --background: #fff8fb;
+  --surface-container-low: #ffffff;
+  --surface-container: #fdeef5;
+  --surface-container-high: #f9dfec;
 
-        /* Barra Lateral Flotante Colapsable */
-        nav#sidebar {
-            position: fixed; top: 0; left: 0; height: 100vh; width: var(--sidebar-w);
-            background-color: var(--bg-panel); box-shadow: 2px 0 10px rgba(232, 67, 115, 0.1);
-            transition: width 0.3s ease; z-index: 1000; overflow: hidden; display: flex; flex-direction: column;
-        }
-        nav#sidebar:hover { width: var(--sidebar-w-exp); }
-        .nav-item {
-            display: flex; align-items: center; padding: 15px; text-decoration: none; color: var(--text-dark);
-            white-space: nowrap; transition: background 0.2s; cursor: pointer;
-        }
-        .nav-item:hover { background-color: var(--bg-base); color: var(--primary); }
-        .nav-icon { width: 30px; text-align: center; font-size: 1.2rem; margin-right: 15px; font-weight: bold; color: var(--primary); }
-        
-        /* Contenido Principal */
-        main { margin-left: var(--sidebar-w); padding: 0; width: calc(100% - var(--sidebar-w)); transition: margin-left 0.3s; }
-        
-        /* Hero y Animación de Fotones */
-        #hero { position: relative; height: 350px; background: linear-gradient(135deg, var(--primary-light), var(--secondary)); overflow: hidden; display: flex; align-items: center; justify-content: center; text-align: center; color: white;}
-        canvas#photonCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.6; }
-        .hero-content { position: relative; z-index: 2; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .hero-content h1 { font-size: 2.8rem; margin-bottom: 10px; }
-        
-        /* Contenedores y Tarjetas */
-        .section-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
-        h2.section-title { color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 10px; margin-bottom: 25px; }
-        
-        .card { background: var(--bg-panel); border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(232, 67, 115, 0.05); margin-bottom: 20px; transition: transform 0.2s; border-left: 4px solid var(--primary-light); }
-        .card:hover { transform: translateY(-3px); }
-        
-        /* Alertas de Diagnóstico */
-        .alert { background-color: #FFF0F5; border-left: 4px solid var(--primary); padding: 15px; border-radius: 4px; margin-bottom: 20px; font-size: 0.95rem; }
-        
-        /* Escalera de Ejercicios y Soluciones Ocultas */
-        .exercise-box { border: 1px solid var(--primary-light); border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-        .level-badge { display: inline-block; background: var(--primary); color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
-        .solution { display: none; background: #f9f9f9; padding: 15px; margin-top: 10px; border-radius: 6px; border-left: 3px solid #cbd5e0; }
-        .btn-toggle { background: var(--secondary); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: background 0.2s;}
-        .btn-toggle:hover { background: var(--primary); }
-        
-        /* Carrusel Constantes */
-        .carousel { display: flex; align-items: center; justify-content: center; gap: 15px; }
-        .constant-card { background: var(--bg-panel); padding: 30px; border-radius: 15px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 300px; border: 2px dashed var(--secondary);}
-        .arrow-btn { background: none; border: none; font-size: 2rem; color: var(--primary); cursor: pointer; transition: transform 0.2s;}
-        .arrow-btn:hover { transform: scale(1.2); }
+  /* Tintas de alto contraste (WCAG AA/AAA) */
+  --on-surface: #2d1824;
+  --on-surface-variant: #644557;
 
-        /* Decodificador de Enunciados */
-        .decoder-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        .decoder-item { background: var(--bg-panel); border: 1px solid var(--secondary); border-radius: 8px; padding: 15px; cursor: pointer; }
-        .decoder-answer { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--primary-light); color: var(--text-dark); }
-        
-        /* Checklist Guardado Local */
-        .checkbox-container { display: flex; align-items: center; gap: 10px; margin-top: 15px; }
-        input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer;}
-        
-    </style>
+  /* Bordes y líneas sutiles */
+  --outline: #b48ca2;
+  --outline-variant: #eed6e3;
+
+  /* Acentos vivos y amables: rosa baya y coral suave */
+  --primary: #b81d65;
+  --on-primary: #ffffff;
+  --primary-container: #ffd8ea;
+  --on-primary-container: #4a0a29;
+  --secondary: #bf3b32;
+  --on-secondary: #ffffff;
+  --secondary-container: #ffe4e0;
+  --on-secondary-container: #5a1813;
+  --tertiary: #f07b6e;
+  --berry-plum: #7d3678;
+  --berry-plum-soft: #f1e3f5;
+  --error: #b92b27;
+  --on-error: #ffffff;
+
+  /* Series de datos */
+  --data-1: #b81d65;
+  --data-2: #bf3b32;
+  --data-3: #7d3678;
+  --data-4: #d96a00;
+  --data-context: #d6bfd0;
+
+  /* Colores espectrales físicos para laboratorio y hero */
+  --wave-uv: #7d3678;
+  --wave-blue: #3b5bdb;
+  --wave-green: #2b8a3e;
+  --wave-yellow: #d97706;
+  --wave-coral: #e8594f;
+  --wave-xray: #b81d65;
+  --canvas-bg-top: #fff5f9;
+  --canvas-bg-bot: #fde8f2;
+  --canvas-grid: #f2d5e3;
+
+  /* Tipografías */
+  --font-headline: 'DM Sans', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-label: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Formas */
+  --rounded: 1rem;
+  --rounded-md: 1.25rem;
+  --rounded-lg: 2rem;
+  --rounded-full: 9999px;
+
+  /* Sombras tintadas Sticker */
+  --shadow-pink: 0 6px 20px rgb(184 29 101 / 0.12);
+  --shadow-pink-deep: 0 12px 30px rgb(184 29 101 / 0.22);
+  --shadow-coral: 0 6px 20px rgb(240 123 110 / 0.16);
+  --shadow-plum: 0 6px 20px rgb(125 54 120 / 0.13);
+  --shadow-dock: 0 10px 32px rgb(45 24 36 / 0.12);
+  --pop-scale: scale(1.03);
+  --lift: translateY(-3px);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Semánticos */
+  --positive: #1f7a53;
+  --positive-bg: #e4f6ed;
+  --warning: #a65400;
+  --warning-bg: #fff1df;
+  --error-bg: #fde8e7;
+  --focus: #b81d65;
+
+  /* Escala tipográfica (Narrative con alta legibilidad para estudio prolongado) */
+  --display-size: clamp(2.15rem, 1.4rem + 2.8vw, 3.4rem);
+  --headline-size: clamp(1.5rem, 1.15rem + 1.4vw, 2.15rem);
+  --subhead-size: clamp(1.125rem, 1.02rem + 0.45vw, 1.35rem);
+  --body-size: clamp(1rem, 0.96rem + 0.18vw, 1.08rem);
+  --label-size: 0.78rem;
+
+  /* Escala de espaciado */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 5.5rem;
+
+  /* Movimiento */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 140ms;
+  --dur-short: 240ms;
+  --dur-long: 420ms;
+}
+
+/* Base reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body {
+  overflow-x: clip;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background);
+  color: var(--on-surface);
+  font-family: var(--font-body);
+  font-size: var(--body-size);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+header { position: static !important; }
+button, input, select, textarea { font-family: inherit; }
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Layout principal con espacio reservado para el dock flotante en escritorio */
+.app-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--space-lg) var(--space-lg) var(--space-3xl);
+  transition: padding-right var(--dur-short) var(--ease-out);
+}
+body.dock-expanded .app-shell {
+  padding-right: calc(var(--space-lg) + 12rem);
+}
+body.dock-collapsed .app-shell {
+  padding-right: calc(var(--space-lg) + 4.5rem);
+}
+
+/* Cabecera + Lienzo Hero interactivo */
+.hero-header {
+  background: var(--surface-container-low);
+  border-radius: var(--rounded-lg);
+  box-shadow: var(--shadow-pink);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+}
+.hero-top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-size: var(--label-size);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--rounded-full);
+}
+.badge-pill.coral {
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+.badge-pill.plum {
+  background: var(--berry-plum-soft);
+  color: var(--berry-plum);
+}
+.hero-progress-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+.progress-pill-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--surface-container);
+  color: var(--on-surface);
+  font-size: var(--label-size);
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--rounded-full);
+}
+.progress-bar-mini {
+  width: 76px;
+  height: 8px;
+  background: var(--surface-container-high);
+  border-radius: var(--rounded-full);
+  overflow: hidden;
+}
+.progress-bar-mini-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--primary), var(--tertiary));
+  border-radius: var(--rounded-full);
+  transition: width var(--dur-long) var(--ease-out);
+}
+.hero-title {
+  font-family: var(--font-headline);
+  font-weight: 900;
+  font-size: var(--display-size);
+  letter-spacing: -0.03em;
+  line-height: 1.07;
+  color: var(--on-surface);
+  margin: 0 0 var(--space-md);
+  max-width: 24ch;
+}
+.hero-title em {
+  font-style: normal;
+  color: var(--primary);
+}
+.hero-lede {
+  color: var(--on-surface-variant);
+  font-size: var(--subhead-size);
+  line-height: 1.55;
+  max-width: 65ch;
+  margin: 0 0 var(--space-lg);
+}
+
+/* Lienzo animado de fotones y electrones */
+.hero-canvas-card {
+  background: var(--surface-container);
+  border-radius: var(--rounded-md);
+  padding: var(--space-md);
+  border: 1px solid var(--outline-variant);
+}
+.hero-canvas-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+.segmented-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  background: var(--surface-container-high);
+  padding: var(--space-xs);
+  border-radius: var(--rounded-full);
+  gap: var(--space-xs);
+}
+.seg-btn {
+  border: 0;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-size: var(--label-size);
+  font-weight: 700;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--rounded-full);
+  cursor: pointer;
+  min-height: 36px;
+  transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-bounce);
+}
+.seg-btn.active {
+  background: var(--primary);
+  color: var(--on-primary);
+  box-shadow: var(--shadow-pink);
+}
+.seg-btn:hover:not(.active) {
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+}
+.hero-live-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
+}
+.metric-chip {
+  background: var(--surface-container-low);
+  border-radius: var(--rounded-full);
+  padding: var(--space-xs) var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--label-size);
+  font-weight: 500;
+  color: var(--on-surface);
+  font-variant-numeric: tabular-nums;
+}
+.canvas-stage {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  min-height: 240px;
+  border-radius: var(--rounded);
+  overflow: hidden;
+  cursor: crosshair;
+  background: var(--canvas-bg-top);
+}
+.canvas-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.hero-canvas-hint {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  font-size: var(--label-size);
+  color: var(--on-surface-variant);
+}
+
+/* Barra lateral flotante (Dock) con Scroll-Spy y colapso */
+.floating-dock {
+  position: fixed;
+  right: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  background: var(--surface-container-low);
+  border-radius: var(--rounded-md);
+  box-shadow: var(--shadow-dock);
+  border: 1px solid var(--outline-variant);
+  padding: var(--space-sm);
+  width: 11.2rem;
+  transition: width var(--dur-short) var(--ease-out), padding var(--dur-short) var(--ease-out);
+}
+.floating-dock.is-collapsed {
+  width: 3.7rem;
+  padding: var(--space-sm) var(--space-xs);
+}
+.dock-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+  padding-bottom: var(--space-xs);
+  border-bottom: 1px solid var(--outline-variant);
+}
+.floating-dock.is-collapsed .dock-header {
+  justify-content: center;
+}
+.dock-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--on-surface-variant);
+  padding-left: var(--space-xs);
+}
+.floating-dock.is-collapsed .dock-title {
+  display: none;
+}
+.dock-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--rounded-full);
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container);
+  color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform var(--dur-micro) var(--ease-bounce), background-color var(--dur-micro) var(--ease-out);
+}
+.dock-toggle-btn:hover {
+  background: var(--primary-container);
+  transform: var(--pop-scale);
+}
+.dock-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.dock-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--on-surface-variant);
+  text-align: left;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--rounded-full);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  min-height: 38px;
+  text-decoration: none;
+  transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-bounce);
+}
+.dock-link:hover {
+  background: var(--surface-container);
+  color: var(--on-surface);
+}
+.dock-link.active {
+  background: var(--primary);
+  color: var(--on-primary);
+  box-shadow: var(--shadow-pink);
+}
+.dock-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 24px;
+  padding: 0 5px;
+  border-radius: var(--rounded-full);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: var(--surface-container-high);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.dock-link.active .dock-tag {
+  background: var(--surface-container-low);
+  color: var(--primary);
+}
+.floating-dock.is-collapsed .dock-link {
+  justify-content: center;
+  padding: var(--space-xs);
+}
+.floating-dock.is-collapsed .dock-label {
+  display: none;
+}
+.floating-dock.is-collapsed:hover .dock-label,
+.floating-dock.is-collapsed:focus-within .dock-label {
+  display: inline;
+}
+.floating-dock.is-collapsed:hover,
+.floating-dock.is-collapsed:focus-within {
+  width: 11.2rem;
+  padding: var(--space-sm);
+}
+.floating-dock.is-collapsed:hover .dock-title,
+.floating-dock.is-collapsed:focus-within .dock-title {
+  display: inline;
+}
+.floating-dock.is-collapsed:hover .dock-header,
+.floating-dock.is-collapsed:focus-within .dock-header {
+  justify-content: space-between;
+}
+.floating-dock.is-collapsed:hover .dock-link,
+.floating-dock.is-collapsed:focus-within .dock-link {
+  justify-content: flex-start;
+  padding: var(--space-xs) var(--space-sm);
+}
+.dock-footer-actions {
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--outline-variant);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.floating-dock.is-collapsed:not(:hover):not(:focus-within) .dock-footer-actions {
+  display: none;
+}
+.dock-mini-btn {
+  width: 100%;
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container);
+  color: var(--on-surface);
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--rounded-full);
+  cursor: pointer;
+  min-height: 34px;
+  transition: background-color var(--dur-micro) var(--ease-out);
+}
+.dock-mini-btn:hover {
+  background: var(--surface-container-high);
+}
+
+/* Secciones y Tarjetas de Unidades */
+.study-section {
+  margin-bottom: var(--space-2xl);
+  scroll-margin-top: var(--space-lg);
+}
+.section-header-block {
+  margin-bottom: var(--space-lg);
+}
+.section-kicker {
+  display: inline-block;
+  font-size: var(--label-size);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--secondary);
+  margin-bottom: var(--space-xs);
+}
+.section-title {
+  font-family: var(--font-headline);
+  font-weight: 800;
+  font-size: var(--headline-size);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0 0 var(--space-sm);
+  color: var(--on-surface);
+}
+.section-sub {
+  color: var(--on-surface-variant);
+  max-width: 65ch;
+  margin: 0;
+}
+
+.unit-card {
+  background: var(--surface-container-low);
+  border-radius: var(--rounded-lg);
+  box-shadow: var(--shadow-pink);
+  padding: var(--space-xl);
+}
+.unit-card.coral-tint {
+  box-shadow: var(--shadow-coral);
+}
+.unit-card.plum-tint {
+  box-shadow: var(--shadow-plum);
+}
+
+/* Sub-navegación interna fluida dentro de cada unidad (Teoría / Escalera 6 niveles / Reflexión) */
+.unit-subtabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-xs);
+  background: var(--surface-container);
+  border-radius: var(--rounded-full);
+  width: fit-content;
+  max-width: 100%;
+}
+.unit-tab-btn {
+  border: 0;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--rounded-full);
+  cursor: pointer;
+  min-height: 40px;
+  transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-bounce);
+}
+.unit-tab-btn.active {
+  background: var(--primary);
+  color: var(--on-primary);
+  box-shadow: var(--shadow-pink);
+}
+.unit-tab-btn:hover:not(.active) {
+  background: var(--surface-container-low);
+  color: var(--on-surface);
+}
+.unit-panel {
+  display: none;
+  animation: fadeSlideIn var(--dur-short) var(--ease-out);
+}
+.unit-panel.active {
+  display: block;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Caja de Diagnóstico: Qué esperar de esta sección */
+.diagnostic-box {
+  background: var(--surface-container);
+  border-radius: var(--rounded);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  border-left: 5px solid var(--primary);
+}
+.diagnostic-box h3 {
+  margin: 0 0 var(--space-sm);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--on-surface);
+}
+.diagnostic-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-sm);
+}
+.diag-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  background: var(--surface-container-low);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--rounded);
+}
+.diag-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 3px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.diag-item label {
+  cursor: pointer;
+  font-size: 0.94rem;
+  color: var(--on-surface);
+}
+.diag-alert {
+  display: block;
+  margin-top: var(--space-xs);
+  font-size: 0.85rem;
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+/* Lectura teórica amigable desde cero */
+.theory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(290px, 100%), 1fr));
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+.theory-block {
+  background: var(--background);
+  border-radius: var(--rounded);
+  padding: var(--space-lg);
+  border: 1px solid var(--outline-variant);
+}
+.theory-block h3 {
+  margin: 0 0 var(--space-sm);
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+.theory-block p {
+  margin: 0 0 var(--space-sm);
+  max-width: 65ch;
+}
+.analogy-box {
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+  border-radius: var(--rounded);
+  padding: var(--space-md);
+  margin-top: var(--space-sm);
+  font-size: 0.94rem;
+}
+.analogy-box strong {
+  color: var(--secondary);
+}
+
+/* Fórmulas matemáticas limpias y legibles */
+.eq-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin: var(--space-md) 0;
+}
+.eq-pill {
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--rounded);
+  padding: var(--space-sm) var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--on-surface);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.eq-pill .eq-name {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  font-size: 0.88em;
+  line-height: 1.15;
+  margin: 0 2px;
+}
+.frac .num {
+  border-bottom: 1.5px solid currentColor;
+  padding: 0 4px 1px;
+}
+.frac .den {
+  padding: 1px 4px 0;
+}
+
+/* Escalera de práctica progresiva (6 niveles) */
+.ladder-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+.ladder-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+.level-pill-btn {
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container);
+  color: var(--on-surface);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--rounded-full);
+  cursor: pointer;
+  min-height: 36px;
+  transition: transform var(--dur-micro) var(--ease-bounce), background-color var(--dur-micro) var(--ease-out);
+}
+.level-pill-btn:hover {
+  transform: var(--pop-scale);
+  background: var(--surface-container-high);
+}
+.level-pill-btn.active {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-color: var(--primary);
+}
+.level-pill-btn.solved {
+  background: var(--positive-bg);
+  color: var(--positive);
+  border-color: var(--positive);
+}
+.level-pill-btn.solved.active {
+  background: var(--positive);
+  color: var(--on-primary);
+}
+
+.problem-card {
+  background: var(--background);
+  border-radius: var(--rounded);
+  padding: var(--space-lg);
+  border: 1px solid var(--outline-variant);
+}
+.problem-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+.problem-statement {
+  font-size: 1.03rem;
+  line-height: 1.6;
+  margin: 0 0 var(--space-md);
+  max-width: 68ch;
+}
+.mc-options {
+  display: grid;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.mc-option-btn {
+  text-align: left;
+  background: var(--surface-container-low);
+  border: 1.5px solid var(--outline-variant);
+  border-radius: var(--rounded);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.95rem;
+  color: var(--on-surface);
+  cursor: pointer;
+  min-height: 44px;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-bounce);
+}
+.mc-option-btn:hover {
+  background: var(--surface-container);
+  border-color: var(--primary);
+}
+.mc-option-btn.selected-correct {
+  background: var(--positive-bg);
+  border-color: var(--positive);
+  color: var(--positive);
+  font-weight: 700;
+}
+.mc-option-btn.selected-wrong {
+  background: var(--error-bg);
+  border-color: var(--error);
+  color: var(--error);
+}
+.numeric-answer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.input-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.input-field-group label {
+  font-size: var(--label-size);
+  font-weight: 700;
+  color: var(--on-surface-variant);
+}
+.pill-input {
+  background: var(--surface-container-low);
+  border: 1.5px solid var(--outline);
+  border-radius: var(--rounded-full);
+  padding: var(--space-sm) var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--on-surface);
+  min-height: 44px;
+  min-width: 170px;
+}
+.pill-input:focus {
+  border-color: var(--primary);
+}
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+  border: 0;
+  border-radius: var(--rounded-full);
+  padding: var(--space-sm) var(--space-lg);
+  font-weight: 700;
+  font-size: 0.92rem;
+  min-height: 44px;
+  cursor: pointer;
+  box-shadow: var(--shadow-pink);
+  transition: transform var(--dur-micro) var(--ease-bounce), box-shadow var(--dur-micro) var(--ease-out);
+}
+.btn-primary:hover {
+  transform: var(--pop-scale);
+  box-shadow: var(--shadow-pink-deep);
+}
+.btn-secondary {
+  background: var(--surface-container);
+  color: var(--on-surface);
+  border: 1px solid var(--outline);
+  border-radius: var(--rounded-full);
+  padding: var(--space-sm) var(--space-lg);
+  font-weight: 700;
+  font-size: 0.9rem;
+  min-height: 44px;
+  cursor: pointer;
+  transition: background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-bounce);
+}
+.btn-secondary:hover {
+  background: var(--surface-container-high);
+  transform: var(--pop-scale);
+}
+
+.feedback-banner {
+  border-radius: var(--rounded);
+  padding: var(--space-sm) var(--space-md);
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+  display: none;
+}
+.feedback-banner.show {
+  display: block;
+}
+.feedback-banner.ok {
+  background: var(--positive-bg);
+  color: var(--positive);
+}
+.feedback-banner.err {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+/* Desplegable de solución paso a paso */
+.solution-drawer {
+  border-top: 1px solid var(--outline-variant);
+  padding-top: var(--space-md);
+}
+.solution-body {
+  display: none;
+  margin-top: var(--space-md);
+  background: var(--surface-container-low);
+  border-radius: var(--rounded);
+  padding: var(--space-md) var(--space-lg);
+  border-left: 4px solid var(--secondary);
+}
+.solution-body.open {
+  display: block;
+  animation: fadeSlideIn var(--dur-short) var(--ease-out);
+}
+.solution-steps {
+  margin: 0;
+  padding-left: var(--space-lg);
+  display: grid;
+  gap: var(--space-xs);
+}
+
+/* Cuestionario interactivo de reflexión al final del módulo */
+.reflection-box {
+  background: var(--surface-container);
+  border-radius: var(--rounded);
+  padding: var(--space-lg);
+}
+.reflection-box h3 {
+  margin: 0 0 var(--space-xs);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.reflection-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+  gap: var(--space-sm);
+  margin: var(--space-md) 0;
+}
+.refl-btn {
+  background: var(--surface-container-low);
+  border: 1.5px solid var(--outline-variant);
+  border-radius: var(--rounded);
+  padding: var(--space-md);
+  text-align: left;
+  cursor: pointer;
+  min-height: 48px;
+  font-weight: 700;
+  color: var(--on-surface);
+  transition: transform var(--dur-micro) var(--ease-bounce), border-color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+}
+.refl-btn:hover {
+  border-color: var(--primary);
+  transform: var(--lift);
+}
+.refl-btn.active {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-pink);
+}
+.refl-tip-card {
+  display: none;
+  background: var(--surface-container-low);
+  border-radius: var(--rounded);
+  padding: var(--space-md) var(--space-lg);
+  border-left: 5px solid var(--secondary);
+}
+.refl-tip-card.show {
+  display: block;
+  animation: fadeSlideIn var(--dur-short) var(--ease-out);
+}
+
+/* Decodificador de Enunciados ("Brújula de Enunciados") */
+.compass-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  align-items: end;
+  margin-bottom: var(--space-lg);
+}
+.compass-search-wrap {
+  flex: 1 1 260px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+.compass-search-wrap label {
+  font-size: var(--label-size);
+  font-weight: 700;
+  color: var(--on-surface-variant);
+}
+.compass-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
+  gap: var(--space-lg);
+  align-items: start;
+}
+.phrase-list {
+  display: grid;
+  gap: var(--space-sm);
+}
+.phrase-card-btn {
+  text-align: left;
+  background: var(--surface-container-low);
+  border: 1.5px solid var(--outline-variant);
+  border-radius: var(--rounded);
+  padding: var(--space-md);
+  cursor: pointer;
+  transition: transform var(--dur-micro) var(--ease-bounce), border-color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+}
+.phrase-card-btn:hover {
+  border-color: var(--primary);
+  transform: var(--lift);
+}
+.phrase-card-btn.active {
+  background: var(--surface-container);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-pink);
+}
+.phrase-title {
+  display: block;
+  font-weight: 800;
+  color: var(--on-surface);
+  margin-top: var(--space-xs);
+  font-size: 0.98rem;
+}
+.compass-inspector {
+  background: var(--surface-container-low);
+  border-radius: var(--rounded-lg);
+  box-shadow: var(--shadow-coral);
+  padding: var(--space-xl);
+  position: sticky;
+  top: var(--space-lg);
+}
+.inspector-grid {
+  display: grid;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+.inspector-row {
+  background: var(--background);
+  border-radius: var(--rounded);
+  padding: var(--space-md);
+  border: 1px solid var(--outline-variant);
+}
+.inspector-row h4 {
+  margin: 0 0 var(--space-xs);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+}
+.inspector-row.trap {
+  background: var(--secondary-container);
+  border-color: var(--tertiary);
+}
+.inspector-row.trap h4 {
+  color: var(--secondary);
+}
+
+/* Laboratorio Visual: Simuladores */
+.lab-grid {
+  display: grid;
+  gap: var(--space-xl);
+}
+.sim-card {
+  background: var(--surface-container-low);
+  border-radius: var(--rounded-lg);
+  box-shadow: var(--shadow-pink);
+  padding: var(--space-xl);
+}
+.sim-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: var(--space-lg);
+  align-items: start;
+}
+.slider-stack {
+  display: grid;
+  gap: var(--space-md);
+}
+.slider-row {
+  background: var(--background);
+  border-radius: var(--rounded);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--outline-variant);
+}
+.slider-label-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.slider-val {
+  font-family: var(--font-mono);
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary);
+  cursor: pointer;
+  min-height: 28px;
+}
+.preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+.preset-chip {
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container);
+  color: var(--on-surface);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--rounded-full);
+  cursor: pointer;
+  min-height: 32px;
+}
+.preset-chip:hover {
+  background: var(--primary-container);
+}
+.sim-visual-col {
+  display: grid;
+  gap: var(--space-md);
+}
+.sim-canvas-box {
+  background: var(--canvas-bg-top);
+  border-radius: var(--rounded);
+  border: 1px solid var(--outline-variant);
+  height: 240px;
+  min-height: 230px;
+  overflow: hidden;
+}
+.sim-canvas-box canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.sim-chart-box {
+  background: var(--background);
+  border-radius: var(--rounded);
+  border: 1px solid var(--outline-variant);
+  height: 185px;
+  min-height: 180px;
+  overflow: hidden;
+}
+.sim-chart-box canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.sim-readout-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-sm);
+}
+.kpi-mini {
+  background: var(--surface-container);
+  border-radius: var(--rounded);
+  padding: var(--space-sm) var(--space-md);
+}
+.kpi-mini .k-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+}
+.kpi-mini .k-val {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Carrusel de Constantes Físicas (EXACTAMENTE una constante por vista) */
+.carousel-card {
+  background: var(--surface-container-low);
+  border-radius: var(--rounded-lg);
+  box-shadow: var(--shadow-plum);
+  padding: var(--space-xl);
+}
+.carousel-stage {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-lg);
+}
+.carousel-arrow {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--rounded-full);
+  border: 1.5px solid var(--outline);
+  background: var(--surface-container);
+  color: var(--primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform var(--dur-micro) var(--ease-bounce), background-color var(--dur-micro) var(--ease-out);
+}
+.carousel-arrow:hover {
+  background: var(--primary);
+  color: var(--on-primary);
+  transform: var(--pop-scale);
+}
+.const-slide {
+  background: var(--background);
+  border-radius: var(--rounded-md);
+  padding: var(--space-xl);
+  border: 1px solid var(--outline-variant);
+  text-align: center;
+  animation: fadeSlideIn var(--dur-short) var(--ease-out);
+}
+.const-symbol {
+  font-family: var(--font-mono);
+  font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
+  font-weight: 700;
+  color: var(--primary);
+  margin: var(--space-xs) 0;
+}
+.const-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--on-surface);
+  margin: 0 0 var(--space-md);
+}
+.const-values {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.const-val-pill {
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--rounded-full);
+  padding: var(--space-xs) var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+.const-desc {
+  max-width: 56ch;
+  margin: 0 auto;
+  color: var(--on-surface-variant);
+  font-size: 0.96rem;
+}
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+.dot-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--rounded-full);
+  border: 0;
+  background: var(--surface-container-high);
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--dur-micro) var(--ease-bounce), background-color var(--dur-micro) var(--ease-out);
+}
+.dot-btn.active {
+  background: var(--primary);
+  transform: scale(1.25);
+}
+
+/* Cuaderno de Notas y Respaldo Privado */
+.notes-card {
+  background: var(--surface-container-low);
+  border-radius: var(--rounded-lg);
+  box-shadow: var(--shadow-pink);
+  padding: var(--space-xl);
+}
+.notes-textarea {
+  width: 100%;
+  min-height: 110px;
+  border-radius: var(--rounded);
+  border: 1.5px solid var(--outline);
+  background: var(--background);
+  padding: var(--space-md);
+  font-size: 0.96rem;
+  color: var(--on-surface);
+  resize: vertical;
+}
+.notes-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+.save-status {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--positive);
+}
+
+.site-footer {
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--outline-variant);
+  color: var(--on-surface-variant);
+  font-size: 0.86rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+/* Responsive */
+@media (max-width: 920px) {
+  .compass-layout,
+  .sim-split {
+    grid-template-columns: 1fr;
+  }
+  .compass-inspector {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  body.dock-expanded .app-shell,
+  body.dock-collapsed .app-shell {
+    padding: var(--space-sm) var(--space-sm) 5.5rem;
+  }
+  .hero-header,
+  .unit-card,
+  .sim-card,
+  .carousel-card,
+  .notes-card,
+  .compass-inspector {
+    padding: var(--space-md);
+    border-radius: var(--rounded-md);
+  }
+  .carousel-stage {
+    grid-template-columns: 1fr;
+  }
+  .carousel-arrow {
+    justify-self: center;
+  }
+  /* Dock móvil en barra inferior compacta y colapsable */
+  .floating-dock {
+    right: var(--space-sm);
+    left: var(--space-sm);
+    bottom: var(--space-sm);
+    top: auto;
+    transform: none;
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs);
+    overflow-x: auto;
+  }
+  .floating-dock.is-collapsed {
+    width: fit-content;
+    left: auto;
+    right: var(--space-sm);
+  }
+  .dock-header {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: 0;
+    border-right: 1px solid var(--outline-variant);
+    padding-right: var(--space-xs);
+  }
+  .dock-title,
+  .dock-footer-actions {
+    display: none !important;
+  }
+  .dock-list {
+    flex-direction: row;
+    align-items: center;
+  }
+  .floating-dock.is-collapsed .dock-list {
+    display: none;
+  }
+  .dock-link {
+    width: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
 </head>
-<body>
+<body class="dock-expanded">
 
-    <!-- Navegación Flotante -->
-    <nav id="sidebar">
-        <div style="height: 60px; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; font-weight:bold; font-size: 1.2rem;">FM</div>
-        <a href="#modulo1" class="nav-item"><div class="nav-icon">U1</div> Aprende y Prueba</a>
-        <a href="#modulo2" class="nav-item"><div class="nav-icon">📐</div> Constantes</a>
-        <a href="#modulo3" class="nav-item"><div class="nav-icon">⚗️</div> Simulaciones</a>
-        <a href="#modulo4" class="nav-item"><div class="nav-icon">🧭</div> Decodificador</a>
-    </nav>
+<!-- Navegación lateral vertical flotante con scroll-spy y colapso -->
+<nav id="floating-dock" class="floating-dock" aria-label="Navegación rápida de estudio">
+  <div class="dock-header">
+    <span class="dock-title">Ruta FI1100</span>
+    <button type="button" id="dock-toggle-btn" class="dock-toggle-btn" aria-expanded="true" aria-label="Minimizar barra de navegación" onclick="toggleDock()">
+      <svg id="dock-toggle-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </div>
+  <ul class="dock-list">
+    <li><button type="button" class="dock-link active" data-target="sec-u1" onclick="jumpToSection('sec-u1')"><span class="dock-tag">U1</span><span class="dock-label">Fotoeléctrico</span></button></li>
+    <li><button type="button" class="dock-link" data-target="sec-u2" onclick="jumpToSection('sec-u2')"><span class="dock-tag">U2</span><span class="dock-label">Compton y Rayos X</span></button></li>
+    <li><button type="button" class="dock-link" data-target="sec-u3" onclick="jumpToSection('sec-u3')"><span class="dock-tag">U3</span><span class="dock-label">De Broglie y Δx·Δp</span></button></li>
+    <li><button type="button" class="dock-link" data-target="sec-u4" onclick="jumpToSection('sec-u4')"><span class="dock-tag">U4</span><span class="dock-label">Schrödinger y Túnel</span></button></li>
+    <li><button type="button" class="dock-link" data-target="sec-brujula" onclick="jumpToSection('sec-brujula')"><span class="dock-tag">BRJ</span><span class="dock-label">Brújula</span></button></li>
+    <li><button type="button" class="dock-link" data-target="sec-lab" onclick="jumpToSection('sec-lab')"><span class="dock-tag">LAB</span><span class="dock-label">Simuladores</span></button></li>
+    <li><button type="button" class="dock-link" data-target="sec-ctes" onclick="jumpToSection('sec-ctes')"><span class="dock-tag">CTE</span><span class="dock-label">Constantes</span></button></li>
+  </ul>
+  <div class="dock-footer-actions">
+    <button type="button" class="dock-mini-btn" onclick="jumpToSection('sec-notas')">Mis notas</button>
+  </div>
+</nav>
 
-    <main>
-        <!-- Portada Animada -->
-        <section id="hero">
-            <canvas id="photonCanvas"></canvas>
-            <div class="hero-content">
-                <h1>Física Moderna Cuántica</h1>
-                <p>Estudio interactivo: Aprende, decodifica enunciados y ponte a prueba (Guardado Automático)</p>
+<div class="app-shell">
+
+  <!-- 1. Cabecera con animación dinámica interactiva -->
+  <header class="hero-header">
+    <div class="hero-top-bar">
+      <div style="display:flex; flex-wrap:wrap; gap:var(--space-xs);">
+        <span class="badge-pill">Física Moderna · Cuántica</span>
+        <span class="badge-pill coral">Luz-Materia &amp; Ondas</span>
+      </div>
+      <div class="hero-progress-strip">
+        <div class="progress-pill-stat">
+          <span id="global-mastery-text">0 / 24 desafíos dominados</span>
+          <div class="progress-bar-mini" aria-hidden="true">
+            <div id="global-mastery-fill" class="progress-bar-mini-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h1 class="hero-title">La luz viaja como <em>cuanto</em>, la materia vibra como onda</h1>
+    <p class="hero-lede">
+      Guía interactiva paso a paso para dominar el efecto fotoeléctrico, rayos X, dispersión Compton, ondas de De Broglie, principio de incertidumbre de Heisenberg y ecuación de Schrödinger desde la intuición física hasta problemas de control.
+    </p>
+
+    <div class="hero-canvas-card">
+      <div class="hero-canvas-controls">
+        <div class="segmented-group" role="group" aria-label="Modo del lienzo cuántico">
+          <button type="button" id="hero-mode-compton" class="seg-btn active" onclick="setHeroMode('compton')">Choque Compton (Rayos X)</button>
+          <button type="button" id="hero-mode-photo" class="seg-btn" onclick="setHeroMode('photo')">Efecto Fotoeléctrico</button>
+        </div>
+        <div class="segmented-group" role="group" aria-label="Longitud de onda del paquete">
+          <button type="button" id="hero-wl-uv" class="seg-btn active" onclick="setHeroWave('uv')">310 nm (UV)</button>
+          <button type="button" id="hero-wl-blue" class="seg-btn" onclick="setHeroWave('blue')">450 nm (Azul)</button>
+          <button type="button" id="hero-wl-coral" class="seg-btn" onclick="setHeroWave('coral')">620 nm (Rojo)</button>
+        </div>
+        <div class="hero-live-metrics">
+          <span class="metric-chip" id="hero-metric-e">E = 4.00 eV</span>
+          <span class="metric-chip" id="hero-metric-p">p = 4.00 eV/c</span>
+        </div>
+      </div>
+      <div class="canvas-stage" id="hero-canvas-wrap">
+        <canvas id="hero-canvas" aria-label="Animación interactiva de fotones como paquetes de onda colisionando con electrones"></canvas>
+      </div>
+      <div class="hero-canvas-hint">
+        <span>Haz clic o toca cualquier punto del lienzo para lanzar un nuevo paquete de fotón hacia los electrones.</span>
+        <span id="hero-collision-note">En Compton, el fotón cede momento y se estira a una longitud de onda mayor (λ' &gt; λ).</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 2. MÓDULO DE APRENDIZAJE PASO A PASO (Contenido principal arriba del todo) -->
+
+    <!-- UNIDAD 1: EFECTO FOTOELÉCTRICO -->
+    <section id="sec-u1" class="study-section">
+      <div class="section-header-block">
+        <span class="section-kicker">Unidad 1 · Interacción Luz-Materia</span>
+        <h2 class="section-title">Efecto Fotoeléctrico: la energía viene en paquetes</h2>
+        <p class="section-sub">Por qué un haz tenue azul arranca electrones al instante mientras un foco rojo cegador no logra sacar ninguno.</p>
+      </div>
+
+      <article class="unit-card">
+        <div class="unit-subtabs" role="tablist" aria-label="Secciones de Unidad 1">
+          <button type="button" class="unit-tab-btn active" data-unit="u1" data-tab="teoria" onclick="switchUnitTab('u1','teoria')">1. Diagnóstico y Teoría</button>
+          <button type="button" class="unit-tab-btn" data-unit="u1" data-tab="escalera" onclick="switchUnitTab('u1','escalera')">2. Escalera (6 niveles)</button>
+          <button type="button" class="unit-tab-btn" data-unit="u1" data-tab="reflexion" onclick="switchUnitTab('u1','reflexion')">3. Reflexión final</button>
+        </div>
+
+        <div id="u1-panel-teoria" class="unit-panel active">
+          <div class="diagnostic-box">
+            <h3>Qué esperar de esta sección (Marca lo que ya dominas)</h3>
+            <ul class="diagnostic-list">
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u1-1" onchange="toggleDiag('u1-1', this.checked)">
+                <label for="diag-u1-1">Puedo justificar por qué el voltaje de frenado V<sub>s</sub> no cambia al aumentar la intensidad.
+                  <span class="diag-alert">Si te cuesta: revisa cómo un fotón entrega toda su energía E = hf a un único electrón.</span>
+                </label>
+              </li>
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u1-2" onchange="toggleDiag('u1-2', this.checked)">
+                <label for="diag-u1-2">Sé calcular la función trabajo ϕ y la longitud de onda de corte λ<sub>0</sub> usando hc ≈ 1240 eV·nm.
+                  <span class="diag-alert">Si te cuesta: recuerda que en el umbral K<sub>max</sub> = 0, así que ϕ = hc / λ<sub>0</sub>.</span>
+                </label>
+              </li>
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u1-3" onchange="toggleDiag('u1-3', this.checked)">
+                <label for="diag-u1-3">Distingo cuándo un cambio en la luz altera la corriente eléctrica versus la energía cinética máxima.
+                  <span class="diag-alert">Si te cuesta: intensidad controla el número de fotones por segundo; frecuencia controla la energía por fotón.</span>
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="theory-grid">
+            <div class="theory-block">
+              <h3>Por qué falla la física clásica</h3>
+              <p>La teoría ondulatoria clásica asumía que la luz es una ola continua cuya energía se reparte por toda la superficie metálica. Bajo esa idea, una luz muy intensa (aunque sea roja) debería acumular energía poco a poco hasta expulsar electrones, y a mayor intensidad saldrían electrones más veloces.</p>
+              <p>El experimento muestra lo contrario: por debajo de cierta frecuencia de corte <strong>f<sub>0</sub></strong> no sale ni un electrón, sin importar cuánta potencia uses. Y cuando sí salen, es instantáneo.</p>
             </div>
-        </section>
+            <div class="theory-block">
+              <h3>Qué ocurre físicamente: el fotón de Einstein</h3>
+              <p>Einstein propuso que el haz luminoso está formado por cuantos discretos llamados <strong>fotones</strong>, cada uno con energía <strong>E<sub>γ</sub> = hf = hc / λ</strong>. Cada electrón absorbe <em>un solo fotón</em> completo en un choque inmediato.</p>
+              <div class="analogy-box">
+                <strong>Analogía cotidiana:</strong> Imagina una máquina expendedora donde liberar un electrón cuesta un peaje fijo <strong>ϕ</strong> (la función trabajo). Cada fotón es una moneda de valor <strong>E<sub>γ</sub></strong>. Si traes mil monedas de $100 para un producto de $500 (mucha intensidad, baja frecuencia), la máquina no acepta pagos parciales. Si traes una moneda de $800, el electrón sale con $300 de vuelto (<strong>K<sub>max</sub></strong>).
+              </div>
+            </div>
+          </div>
 
-        <!-- Módulo 1: Aprende y Prueba -->
-        <section id="modulo1" class="section-container">
-            <h2 class="section-title">Módulo 1: Aprende paso a paso y ponlo a prueba</h2>
-            
-            <div class="alert">
-                <strong>¿Qué esperar de esta sección?</strong> Si te cuesta entender por qué la intensidad de la luz no aumenta el potencial de frenado, te falta repasar el concepto de "paquetes discretos" de fotones. Si te enredas con átomos ficticios como el "Beauchefio", recuerda que todo se basa en \\(\Delta E = E_m - E_n\\).
+          <div class="eq-strip">
+            <div class="eq-pill"><span class="eq-name">Ecuación de Einstein</span> K<sub>max</sub> = eV<sub>s</sub> = <span class="frac"><span class="num">hc</span><span class="den">λ</span></span> − ϕ</div>
+            <div class="eq-pill"><span class="eq-name">Umbral de corte</span> ϕ = hf<sub>0</sub> = <span class="frac"><span class="num">hc</span><span class="den">λ<sub>0</sub></span></span></div>
+            <div class="eq-pill"><span class="eq-name">Atajo práctico</span> hc ≈ 1240 eV·nm</div>
+          </div>
+        </div>
+
+        <div id="u1-panel-escalera" class="unit-panel">
+          <div class="ladder-header">
+            <strong id="u1-level-title">Nivel 1: Fácil</strong>
+            <div class="ladder-pills" id="u1-pills"></div>
+          </div>
+          <div id="u1-problem-host" class="problem-card"></div>
+        </div>
+
+        <div id="u1-panel-reflexion" class="unit-panel">
+          <div class="reflection-box">
+            <h3>Reflexión de cierre — Unidad 1</h3>
+            <p class="section-sub">¿Qué fue lo que más te costó en el Efecto Fotoeléctrico? Elige una opción para recibir un consejo puntual.</p>
+            <div class="reflection-options" id="u1-refl-opts">
+              <button type="button" class="refl-btn" data-cat="fundamento" onclick="selectReflection('u1','fundamento')">Fundamento físico</button>
+              <button type="button" class="refl-btn" data-cat="calculo" onclick="selectReflection('u1','calculo')">Cálculo matemático</button>
+              <button type="button" class="refl-btn" data-cat="despejes" onclick="selectReflection('u1','despejes')">Despejes</button>
+              <button type="button" class="refl-btn" data-cat="formulas" onclick="selectReflection('u1','formulas')">Elegir fórmulas</button>
+            </div>
+            <div id="u1-refl-tip" class="refl-tip-card"></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- UNIDAD 2: EFECTO COMPTON Y RAYOS X -->
+    <section id="sec-u2" class="study-section">
+      <div class="section-header-block">
+        <span class="section-kicker">Unidad 2 · Relatividad de Fotones</span>
+        <h2 class="section-title">Efecto Compton y Rayos X: la luz también tiene momento</h2>
+        <p class="section-sub">Cuando un fotón de alta energía choca con un electrón libre, transfiere energía y cantidad de movimiento p = h/λ como una partícula.</p>
+      </div>
+
+      <article class="unit-card coral-tint">
+        <div class="unit-subtabs" role="tablist" aria-label="Secciones de Unidad 2">
+          <button type="button" class="unit-tab-btn active" data-unit="u2" data-tab="teoria" onclick="switchUnitTab('u2','teoria')">1. Diagnóstico y Teoría</button>
+          <button type="button" class="unit-tab-btn" data-unit="u2" data-tab="escalera" onclick="switchUnitTab('u2','escalera')">2. Escalera (6 niveles)</button>
+          <button type="button" class="unit-tab-btn" data-unit="u2" data-tab="reflexion" onclick="switchUnitTab('u2','reflexion')">3. Reflexión final</button>
+        </div>
+
+        <div id="u2-panel-teoria" class="unit-panel active">
+          <div class="diagnostic-box">
+            <h3>Qué esperar de esta sección (Marca lo que ya dominas)</h3>
+            <ul class="diagnostic-list">
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u2-1" onchange="toggleDiag('u2-1', this.checked)">
+                <label for="diag-u2-1">Entiendo por qué aparecen dos picos en el espectro de Compton (uno en λ y otro en λ + Δλ).
+                  <span class="diag-alert">Si te cuesta: recuerda que los electrones internos muy ligados hacen rebotar al fotón contra todo el átomo.</span>
+                </label>
+              </li>
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u2-2" onchange="toggleDiag('u2-2', this.checked)">
+                <label for="diag-u2-2">Sé calcular la longitud de onda mínima λ<sub>min</sub> de frenado en un tubo de Rayos X.
+                  <span class="diag-alert">Si te cuesta: en el frenado brusco toda la energía cinética e·ΔV se vuelve un solo fotón.</span>
+                </label>
+              </li>
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u2-3" onchange="toggleDiag('u2-3', this.checked)">
+                <label for="diag-u2-3">Aplico conservación de momento en 2D y la fórmula Δλ = λ<sub>C</sub>(1 − cos θ) incluso en colisiones sucesivas.
+                  <span class="diag-alert">Si te cuesta: dibuja siempre el ángulo relativo entre el fotón entrante y el saliente en cada choque.</span>
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="theory-grid">
+            <div class="theory-block">
+              <h3>Por qué falla la física clásica en Compton</h3>
+              <p>Si los rayos X fueran solo ondas electromagnéticas clásicas, harían oscilar al electrón exactamente a la misma frecuencia del haz incidente, emitiendo radiación dispersada con la <strong>misma longitud de onda λ</strong> en todas las direcciones.</p>
+              <p>Compton midió que la radiación dispersada a un ángulo θ tenía una longitud de onda <strong>mayor (λ' &gt; λ)</strong>, es decir, menor energía. Y esa variación Δλ depende únicamente del ángulo θ, no de la intensidad ni del material.</p>
+            </div>
+            <div class="theory-block">
+              <h3>Rayos X, retroceso y choque de billar cuántico</h3>
+              <p>Un fotón posee momento lineal <strong>p = h / λ</strong>. En el choque elástico relativista contra un electrón libre en reposo, el fotón pierde energía al impulsar al electrón y sale «estirado» con Δλ = λ<sub>C</sub>(1 − cos θ). Por otro lado, en un tubo de rayos X ocurre el proceso inverso: electrones acelerados por ΔV frenan de golpe y convierten su energía cinética en un fotón de corte λ<sub>min</sub> = hc / (eΔV).</p>
+              <div class="analogy-box">
+                <strong>Analogía cotidiana:</strong> Piensa en una bola de billar liviana (fotón) golpeando a otra bola quieta (electrón). Si solo la roza (θ ≈ 0°), casi no pierde energía (Δλ ≈ 0). Si choca de frente y rebota hacia atrás (θ = 180°), transfiere la máxima energía posible y su «color» sufre el mayor corrimiento (Δλ<sub>max</sub> = 2λ<sub>C</sub>).
+              </div>
+            </div>
+          </div>
+
+          <div class="eq-strip">
+            <div class="eq-pill"><span class="eq-name">Corrimiento Compton</span> Δλ = λ' − λ = λ<sub>C</sub>(1 − cos θ)</div>
+            <div class="eq-pill"><span class="eq-name">λ de Compton</span> λ<sub>C</sub> = <span class="frac"><span class="num">h</span><span class="den">m<sub>e</sub>c</span></span> ≈ 2.426 pm</div>
+            <div class="eq-pill"><span class="eq-name">Corte Rayos X</span> λ<sub>min</sub> = <span class="frac"><span class="num">hc</span><span class="den">e ΔV</span></span></div>
+          </div>
+        </div>
+
+        <div id="u2-panel-escalera" class="unit-panel">
+          <div class="ladder-header">
+            <strong id="u2-level-title">Nivel 1: Fácil</strong>
+            <div class="ladder-pills" id="u2-pills"></div>
+          </div>
+          <div id="u2-problem-host" class="problem-card"></div>
+        </div>
+
+        <div id="u2-panel-reflexion" class="unit-panel">
+          <div class="reflection-box">
+            <h3>Reflexión de cierre — Unidad 2</h3>
+            <p class="section-sub">¿Qué fue lo que más te costó en Efecto Compton y Rayos X?</p>
+            <div class="reflection-options" id="u2-refl-opts">
+              <button type="button" class="refl-btn" data-cat="fundamento" onclick="selectReflection('u2','fundamento')">Fundamento físico</button>
+              <button type="button" class="refl-btn" data-cat="calculo" onclick="selectReflection('u2','calculo')">Cálculo matemático</button>
+              <button type="button" class="refl-btn" data-cat="despejes" onclick="selectReflection('u2','despejes')">Despejes</button>
+              <button type="button" class="refl-btn" data-cat="formulas" onclick="selectReflection('u2','formulas')">Elegir fórmulas</button>
+            </div>
+            <div id="u2-refl-tip" class="refl-tip-card"></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- UNIDAD 3: ONDAS DE MATERIA E INCERTIDUMBRE DE HEISENBERG -->
+    <section id="sec-u3" class="study-section">
+      <div class="section-header-block">
+        <span class="section-kicker">Unidad 3 · Dualidad y Límites Cuánticos</span>
+        <h2 class="section-title">Ondas de De Broglie e Incertidumbre de Heisenberg</h2>
+        <p class="section-sub">Si las ondas de luz tienen propiedades de partícula, toda la materia en movimiento también posee una longitud de onda λ = h/p que impone límites fundamentales a lo que podemos medir.</p>
+      </div>
+
+      <article class="unit-card plum-tint">
+        <div class="unit-subtabs" role="tablist" aria-label="Secciones de Unidad 3">
+          <button type="button" class="unit-tab-btn active" data-unit="u3" data-tab="teoria" onclick="switchUnitTab('u3','teoria')">1. Diagnóstico y Teoría</button>
+          <button type="button" class="unit-tab-btn" data-unit="u3" data-tab="escalera" onclick="switchUnitTab('u3','escalera')">2. Escalera (6 niveles)</button>
+          <button type="button" class="unit-tab-btn" data-unit="u3" data-tab="reflexion" onclick="switchUnitTab('u3','reflexion')">3. Reflexión final</button>
+        </div>
+
+        <div id="u3-panel-teoria" class="unit-panel active">
+          <div class="diagnostic-box">
+            <h3>Qué esperar de esta sección (Marca lo que ya dominas)</h3>
+            <ul class="diagnostic-list">
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u3-1" onchange="toggleDiag('u3-1', this.checked)">
+                <label for="diag-u3-1">Sé calcular la longitud de onda de De Broglie λ = h/p y explicar por qué una pelota no muestra difracción visible.
+                  <span class="diag-alert">Si te cuesta: calcula λ para una masa macroscópica y compárala con el tamaño de un átomo (10⁻¹⁰ m).</span>
+                </label>
+              </li>
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u3-2" onchange="toggleDiag('u3-2', this.checked)">
+                <label for="diag-u3-2">Aplico Δx·Δp<sub>x</sub> ≥ ℏ/2 solo entre ejes paralelos (x con p<sub>x</sub>, nunca x con p<sub>y</sub>).
+                  <span class="diag-alert">Si te cuesta: las componentes ortogonales son independientes; conocer x = 0 no altera Δv<sub>y</sub>.</span>
+                </label>
+              </li>
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u3-3" onchange="toggleDiag('u3-3', this.checked)">
+                <label for="diag-u3-3">Relaciono la vida media τ con el ancho de línea Δf usando ΔE·Δt ≥ ℏ/2.
+                  <span class="diag-alert">Si te cuesta: recuerda que ΔE = h·Δf y ℏ = h / (2π), por lo que h se cancela al despejar Δf.</span>
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="theory-grid">
+            <div class="theory-block">
+              <h3>Qué es una onda de materia (De Broglie)</h3>
+              <p>En 1923, Louis de Broglie postuló la simetría de la naturaleza: cualquier partícula con momento p tiene asociada una onda de longitud <strong>λ = h / p</strong>. Tres años después, Davisson y Germer confirmaron la difracción de electrones en cristales de níquel.</p>
+              <p>Para electrones acelerados, λ es del orden de átomos (Ångströms), por eso interfieren; para una canica de 10 g, λ es ~10⁻³³ m, indetectable.</p>
+            </div>
+            <div class="theory-block">
+              <h3>Por qué el principio de incertidumbre es intrínseco</h3>
+              <p>Heisenberg no habla de instrumentos defectuosos. Una onda pura de momento p exacto (λ única) se extiende por todo el espacio (Δx = ∞). Para localizarla en una zona pequeña Δx hay que sumar muchas longitudes de onda distintas, lo que inevitablemente ensancha el rango de momentos Δp<sub>x</sub>.</p>
+              <div class="analogy-box">
+                <strong>Analogía cotidiana:</strong> Para identificar la nota musical exacta (frecuencia/momento) de un sonido, necesitas escucharlo durante varios ciclos (Δt grande). Un chasquido ultracorto en el tiempo (Δt → 0) suena como un golpe seco sin nota definida (Δf enorme).
+              </div>
+            </div>
+          </div>
+
+          <div class="eq-strip">
+            <div class="eq-pill"><span class="eq-name">De Broglie</span> λ = <span class="frac"><span class="num">h</span><span class="den">p</span></span> = <span class="frac"><span class="num">h</span><span class="den">mv</span></span></div>
+            <div class="eq-pill"><span class="eq-name">Posición-Momento</span> Δx · Δp<sub>x</sub> ≥ <span class="frac"><span class="num">ℏ</span><span class="den">2</span></span></div>
+            <div class="eq-pill"><span class="eq-name">Energía-Tiempo</span> ΔE · Δt ≥ <span class="frac"><span class="num">ℏ</span><span class="den">2</span></span></div>
+          </div>
+        </div>
+
+        <div id="u3-panel-escalera" class="unit-panel">
+          <div class="ladder-header">
+            <strong id="u3-level-title">Nivel 1: Fácil</strong>
+            <div class="ladder-pills" id="u3-pills"></div>
+          </div>
+          <div id="u3-problem-host" class="problem-card"></div>
+        </div>
+
+        <div id="u3-panel-reflexion" class="unit-panel">
+          <div class="reflection-box">
+            <h3>Reflexión de cierre — Unidad 3</h3>
+            <p class="section-sub">¿Qué fue lo que más te costó en De Broglie e Incertidumbre?</p>
+            <div class="reflection-options" id="u3-refl-opts">
+              <button type="button" class="refl-btn" data-cat="fundamento" onclick="selectReflection('u3','fundamento')">Fundamento físico</button>
+              <button type="button" class="refl-btn" data-cat="calculo" onclick="selectReflection('u3','calculo')">Cálculo matemático</button>
+              <button type="button" class="refl-btn" data-cat="despejes" onclick="selectReflection('u3','despejes')">Despejes</button>
+              <button type="button" class="refl-btn" data-cat="formulas" onclick="selectReflection('u3','formulas')">Elegir fórmulas</button>
+            </div>
+            <div id="u3-refl-tip" class="refl-tip-card"></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- UNIDAD 4: FUNCIÓN DE ONDA, ECUACIÓN DE SCHRÖDINGER, POZOS INFINITOS Y EFECTO TÚNEL -->
+    <section id="sec-u4" class="study-section">
+      <div class="section-header-block">
+        <span class="section-kicker">Unidad 4 · Mecánica Cuántica Formal</span>
+        <h2 class="section-title">Función de Onda, Schrödinger, Pozos Infinitos y Efecto Túnel</h2>
+        <p class="section-sub">Cómo predecir la probabilidad de hallar una partícula, por qué el confinamiento cuantiza la energía y cómo la materia atraviesa barreras clásicamente prohibidas.</p>
+      </div>
+
+      <article class="unit-card">
+        <div class="unit-subtabs" role="tablist" aria-label="Secciones de Unidad 4">
+          <button type="button" class="unit-tab-btn active" data-unit="u4" data-tab="teoria" onclick="switchUnitTab('u4','teoria')">1. Diagnóstico y Teoría</button>
+          <button type="button" class="unit-tab-btn" data-unit="u4" data-tab="escalera" onclick="switchUnitTab('u4','escalera')">2. Escalera (6 niveles)</button>
+          <button type="button" class="unit-tab-btn" data-unit="u4" data-tab="reflexion" onclick="switchUnitTab('u4','reflexion')">3. Reflexión final</button>
+        </div>
+
+        <div id="u4-panel-teoria" class="unit-panel active">
+          <div class="diagnostic-box">
+            <h3>Qué esperar de esta sección (Marca lo que ya dominas)</h3>
+            <ul class="diagnostic-list">
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u4-1" onchange="toggleDiag('u4-1', this.checked)">
+                <label for="diag-u4-1">Interpreto |ψ(x)|² como densidad de probabilidad y sé normalizar ∫ |ψ(x)|² dx = 1.
+                  <span class="diag-alert">Si te cuesta: recuerda que ψ por sí sola puede ser negativa o compleja; la probabilidad siempre es |ψ|² ≥ 0.</span>
+                </label>
+              </li>
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u4-2" onchange="toggleDiag('u4-2', this.checked)">
+                <label for="diag-u4-2">Uso argumentos de simetría para hallar valores esperados ⟨x⟩ antes de integrar.
+                  <span class="diag-alert">Si te cuesta: una función impar centrada integrada en intervalo simétrico siempre da cero; en una caja [0,L], el centro es L/2.</span>
+                </label>
+              </li>
+              <li class="diag-item">
+                <input type="checkbox" id="diag-u4-3" onchange="toggleDiag('u4-3', this.checked)">
+                <label for="diag-u4-3">Entiendo el decaimiento exponencial dentro de una barrera (U<sub>0</sub> &gt; E) en el efecto túnel.
+                  <span class="diag-alert">Si te cuesta: dentro de la barrera la segunda derivada cambia de signo, convirtiendo senos oscilantes en exponenciales reales e<sup>−κx</sup>.</span>
+                </label>
+              </li>
+            </ul>
+          </div>
+
+          <div class="theory-grid">
+            <div class="theory-block">
+              <h3>Función de onda y pozo infinito</h3>
+              <p>En lugar de una trayectoria exacta x(t), la mecánica cuántica describe el estado mediante la <strong>función de onda ψ(x)</strong>, solución de la ecuación de Schrödinger. Según Born, <strong>|ψ(x)|² dx</strong> es la probabilidad de encontrar la partícula entre x y x + dx.</p>
+              <p>Al encerrar una partícula en un pozo infinito de ancho L (U = ∞ fuera de [0, L]), ψ debe anularse en las paredes. Solo caben medias longitudes de onda enteras (L = n·λ/2), ¡y eso cuantiza la energía <strong>E<sub>n</sub> ∝ n²</strong>!</p>
+            </div>
+            <div class="theory-block">
+              <h3>Efecto túnel: cruzar paredes sin romperlas</h3>
+              <p>Clásicamente, si una pelota tiene energía E menor que la altura de una colina U<sub>0</sub>, rebota al 100%. Cuánticamente, si la barrera tiene grosor finito <em>a</em>, la función de onda no cae a cero abruptamente en la frontera: penetra como una cola exponencial <strong>e<sup>−κx</sup></strong>. Si la pared es suficientemente delgada, queda una amplitud no nula al otro lado.</p>
+              <div class="analogy-box">
+                <strong>Analogía cotidiana:</strong> Una cuerda de guitarra atada en ambos extremos solo vibra en armónicos n = 1, 2, 3… (pozo infinito). Y si escuchas música grave a través de un muro delgado de concreto aunque las ondas no puedan «saltar» por encima, parte de la vibración se filtra amortiguada al otro lado (efecto túnel).
+              </div>
+            </div>
+          </div>
+
+          <div class="eq-strip">
+            <div class="eq-pill"><span class="eq-name">Schrödinger 1D</span> −<span class="frac"><span class="num">ℏ²</span><span class="den">2m</span></span> <span class="frac"><span class="num">d²ψ</span><span class="den">dx²</span></span> + U(x)ψ = Eψ</div>
+            <div class="eq-pill"><span class="eq-name">Pozo infinito</span> E<sub>n</sub> = <span class="frac"><span class="num">n² h²</span><span class="den">8 m L²</span></span></div>
+            <div class="eq-pill"><span class="eq-name">Túnel (U<sub>0</sub> &gt; E)</span> T ≈ e<sup>−2κa</sup>, κ = <span class="frac"><span class="num">√(2m(U<sub>0</sub>−E))</span><span class="den">ℏ</span></span></div>
+          </div>
+        </div>
+
+        <div id="u4-panel-escalera" class="unit-panel">
+          <div class="ladder-header">
+            <strong id="u4-level-title">Nivel 1: Fácil</strong>
+            <div class="ladder-pills" id="u4-pills"></div>
+          </div>
+          <div id="u4-problem-host" class="problem-card"></div>
+        </div>
+
+        <div id="u4-panel-reflexion" class="unit-panel">
+          <div class="reflection-box">
+            <h3>Reflexión de cierre — Unidad 4</h3>
+            <p class="section-sub">¿Qué fue lo que más te costó en Función de Onda, Schrödinger y Túnel?</p>
+            <div class="reflection-options" id="u4-refl-opts">
+              <button type="button" class="refl-btn" data-cat="fundamento" onclick="selectReflection('u4','fundamento')">Fundamento físico</button>
+              <button type="button" class="refl-btn" data-cat="calculo" onclick="selectReflection('u4','calculo')">Cálculo matemático</button>
+              <button type="button" class="refl-btn" data-cat="despejes" onclick="selectReflection('u4','despejes')">Despejes</button>
+              <button type="button" class="refl-btn" data-cat="formulas" onclick="selectReflection('u4','formulas')">Elegir fórmulas</button>
+            </div>
+            <div id="u4-refl-tip" class="refl-tip-card"></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- 5. DECODIFICADOR DE ENUNCIADOS ("Brújula de Enunciados") -->
+    <section id="sec-brujula" class="study-section">
+      <div class="section-header-block">
+        <span class="section-kicker">Estrategia de Prueba</span>
+        <h2 class="section-title">Brújula de Enunciados: traduce la frase al modelo físico</h2>
+        <p class="section-sub">Las preguntas de cátedra esconden las condiciones matemáticas dentro de palabras clave. Busca o selecciona una frase típica para desglosar su traducción exacta.</p>
+      </div>
+
+      <div class="compass-controls">
+        <div class="compass-search-wrap">
+          <label for="compass-search">Filtrar por palabra clave del enunciado</label>
+          <input type="search" id="compass-search" class="pill-input" placeholder="Ej: frenado, 180°, vida media, confinada, túnel…" oninput="filterCompass()">
+        </div>
+        <div class="segmented-group" role="group" aria-label="Filtrar por tema">
+          <button type="button" class="seg-btn active" data-cat="all" onclick="setCompassCat('all', this)">Todos</button>
+          <button type="button" class="seg-btn" data-cat="foto" onclick="setCompassCat('foto', this)">Fotoeléctrico</button>
+          <button type="button" class="seg-btn" data-cat="compton" onclick="setCompassCat('compton', this)">Compton / Rayos X</button>
+          <button type="button" class="seg-btn" data-cat="heisenberg" onclick="setCompassCat('heisenberg', this)">Incertidumbre</button>
+          <button type="button" class="seg-btn" data-cat="schrodinger" onclick="setCompassCat('schrodinger', this)">Schrödinger</button>
+        </div>
+      </div>
+
+      <div class="compass-layout">
+        <div id="compass-list" class="phrase-list"></div>
+        <div id="compass-inspector" class="compass-inspector" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- 4. SIMULADORES Y LABORATORIO VISUAL -->
+    <section id="sec-lab" class="study-section">
+      <div class="section-header-block">
+        <span class="section-kicker">Laboratorio Visual Interactivo</span>
+        <h2 class="section-title">Manipula variables reales y observa el efecto cuántico</h2>
+        <p class="section-sub">Experimenta cómo responden la corriente fotoeléctrica, el potencial de frenado y el corrimiento Compton al variar cada parámetro físico.</p>
+      </div>
+
+      <div class="lab-grid">
+        <!-- Simulador 1: Efecto Fotoeléctrico -->
+        <article class="sim-card">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:var(--space-sm); margin-bottom:var(--space-md);">
+            <h3 style="margin:0; font-size:1.3rem; font-weight:800;">Experimento Fotoeléctrico y Curva I–V</h3>
+            <span id="pe-status-badge" class="badge-pill">Emisión activa</span>
+          </div>
+
+          <div class="sim-split">
+            <div class="slider-stack">
+              <div class="slider-row">
+                <div class="slider-label-top">
+                  <label for="pe-wl">Longitud de onda λ</label>
+                  <span class="slider-val" id="pe-wl-val">400 nm</span>
+                </div>
+                <input type="range" id="pe-wl" min="200" max="750" step="1" value="400" oninput="updatePESim()">
+              </div>
+
+              <div class="slider-row">
+                <div class="slider-label-top">
+                  <label for="pe-phi">Función trabajo ϕ</label>
+                  <span class="slider-val" id="pe-phi-val">1.89 eV</span>
+                </div>
+                <input type="range" id="pe-phi" min="1.4" max="6.5" step="0.01" value="1.89" oninput="updatePESim()">
+                <div class="preset-row" style="margin-top:var(--space-xs);">
+                  <button type="button" class="preset-chip" onclick="setPEPhi(1.894)">Metal Aux. 8 (1.894 eV)</button>
+                  <button type="button" class="preset-chip" onclick="setPEPhi(2.28)">Sodio (2.28 eV)</button>
+                  <button type="button" class="preset-chip" onclick="setPEPhi(4.50)">Tungsteno (4.50 eV)</button>
+                </div>
+              </div>
+
+              <div class="slider-row">
+                <div class="slider-label-top">
+                  <label for="pe-int">Intensidad luminosa I</label>
+                  <span class="slider-val" id="pe-int-val">65%</span>
+                </div>
+                <input type="range" id="pe-int" min="10" max="100" step="5" value="65" oninput="updatePESim()">
+              </div>
+
+              <div class="slider-row">
+                <div class="slider-label-top">
+                  <label for="pe-volt">Voltaje colector V</label>
+                  <span class="slider-val" id="pe-volt-val">0.00 V</span>
+                </div>
+                <input type="range" id="pe-volt" min="-4.0" max="3.0" step="0.05" value="0.00" oninput="updatePESim()">
+              </div>
+
+              <div class="sim-readout-row">
+                <div class="kpi-mini"><span class="k-label">Fotón E<sub>γ</sub></span><span class="k-val" id="pe-e-out">3.10 eV</span></div>
+                <div class="kpi-mini"><span class="k-label">K<sub>max</sub></span><span class="k-val" id="pe-k-out">1.21 eV</span></div>
+                <div class="kpi-mini"><span class="k-label">V<sub>frenado</sub></span><span class="k-val" id="pe-vs-out">-1.21 V</span></div>
+                <div class="kpi-mini"><span class="k-label">λ<sub>corte</sub></span><span class="k-val" id="pe-l0-out">655 nm</span></div>
+              </div>
             </div>
 
-            <!-- Teoría Intuitiva -->
-            <div class="card">
-                <h3>1. El Átomo de Bohr y Transiciones (Estilo FCFM)</h3>
-                <p style="margin-top: 10px; line-height: 1.6;">
-                    En lugar del Hidrógeno clásico, solemos ver átomos inventados (como el <em>Quinteronsio</em> o el <em>Beauchefio</em>). La clave es que <strong>el electrón solo puede existir en órbitas específicas</strong>. Su energía en el nivel \\(n\\) es \\(E_n = \frac{E_1}{n^2}\\). <br><br>
-                    Cuando un electrón "cae" de un nivel alto (\\(m\\)) a uno bajo (\\(n\\)), pierde energía. Esa energía no desaparece, se convierte en un <strong>fotón</strong> que sale disparado con energía: 
-                    $$ E_{fotón} = \Delta E = |E_m - E_n| = \frac{hc}{\lambda} $$
-                </p>
-                <div class="checkbox-container">
-                    <input type="checkbox" id="chk-teoria1" onchange="saveProgress(this)"> <label for="chk-teoria1">Entendido. Ya sé cómo un átomo emite luz.</label>
+            <div class="sim-visual-col">
+              <div class="sim-canvas-box">
+                <canvas id="pe-sim-canvas" aria-label="Cámara de vacío fotoeléctrica interactiva"></canvas>
+              </div>
+              <div class="sim-chart-box">
+                <canvas id="pe-iv-canvas" aria-label="Gráfico Corriente vs Voltaje del efecto fotoeléctrico"></canvas>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Simulador 2: Dispersión Compton -->
+        <article class="sim-card">
+          <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:var(--space-sm); margin-bottom:var(--space-md);">
+            <h3 style="margin:0; font-size:1.3rem; font-weight:800;">Dispersión Compton y Espectro de Dos Picos</h3>
+            <span class="badge-pill coral">λ<sub>C</sub> = 2.426 pm</span>
+          </div>
+
+          <div class="sim-split">
+            <div class="slider-stack">
+              <div class="slider-row">
+                <div class="slider-label-top">
+                  <label for="cp-wl">Longitud de onda inicial λ</label>
+                  <span class="slider-val" id="cp-wl-val">50.0 pm</span>
                 </div>
+                <input type="range" id="cp-wl" min="20" max="120" step="1" value="50" oninput="updateComptonSim()">
+                <div class="preset-row" style="margin-top:var(--space-xs);">
+                  <button type="button" class="preset-chip" onclick="setComptonPreset(50, 90)">Guía P5 (50 pm, 90°)</button>
+                  <button type="button" class="preset-chip" onclick="setComptonPreset(71, 180)">Mo Kα a 180° (71 pm)</button>
+                </div>
+              </div>
+
+              <div class="slider-row">
+                <div class="slider-label-top">
+                  <label for="cp-theta">Ángulo de dispersión θ</label>
+                  <span class="slider-val" id="cp-theta-val">90°</span>
+                </div>
+                <input type="range" id="cp-theta" min="0" max="180" step="1" value="90" oninput="updateComptonSim()">
+              </div>
+
+              <div class="sim-readout-row">
+                <div class="kpi-mini"><span class="k-label">Corrimiento Δλ</span><span class="k-val" id="cp-dl-out">2.43 pm</span></div>
+                <div class="kpi-mini"><span class="k-label">Fotón saliente λ'</span><span class="k-val" id="cp-lp-out">52.43 pm</span></div>
+                <div class="kpi-mini"><span class="k-label">E<sub>γ</sub> inicial</span><span class="k-val" id="cp-e0-out">24.8 keV</span></div>
+                <div class="kpi-mini"><span class="k-label">K electrón retroceso</span><span class="k-val" id="cp-ke-out">1.15 keV</span></div>
+              </div>
+
+              <div class="analogy-box" style="margin-top:0;">
+                <strong>Observa el segundo pico:</strong> El pico fijo en <strong>λ</strong> viene de electrones internos ligados fuertemente al átomo; el pico móvil en <strong>λ'</strong> es la dispersión Compton con electrones de valencia casi libres.
+              </div>
             </div>
 
-            <!-- Ejercicio Progresivo (Medio-Difícil) -->
-            <div class="exercise-box">
-                <span class="level-badge">Nivel Control FCFM</span>
-                <h4>Problema Combinado: Beauchefio + Efecto Fotoeléctrico</h4>
-                <p style="margin-top: 10px;">
-                    Un electrón en el átomo hipotético "Beauchefio" (estado fundamental \\(E_1 = -20 \text{ eV}\\)) hace transiciones. Los fotones emitidos en las caídas \\(3 \to 2\\) y \\(3 \to 1\\) logran arrancar electrones de un metal desconocido, pero el fotón de la transición \\(4 \to 3\\) <strong>no</strong> lo logra. ¿Cuáles son los límites de la función trabajo \\(\phi\\) del metal?
-                </p>
-                <button class="btn-toggle" onclick="toggleSolution('sol1')">Ver Solución Paso a Paso</button>
-                <div id="sol1" class="solution">
-                    <p><strong>1. Calcular las energías de los niveles:</strong><br>
-                    \\(E_n = \frac{-20}{n^2}\\) eV.<br>
-                    \\(E_1 = -20\\) eV, \\(E_2 = -5\\) eV, \\(E_3 = -2.22\\) eV, \\(E_4 = -1.25\\) eV. <em>(Usando una aproximación de los controles reales donde te dan los valores directamente como E4=-2eV, E3=-5eV, E2=-10eV, E1=-20eV)</em>.<br><br>
-                    <strong>2. Calcular energías de los fotones emitidos (\\(\Delta E\\)):</strong><br>
-                    - Transición \\(3 \to 2\\): \\(E_{\gamma} = |-5 - (-10)| = 5 \text{ eV}\\)<br>
-                    - Transición \\(4 \to 3\\): \\(E_{\gamma} = |-2 - (-5)| = 3 \text{ eV}\\)<br><br>
-                    <strong>3. Condición fotoeléctrica:</strong> Para arrancar un electrón, la energía del fotón debe superar la función trabajo (\\(E_{\gamma} > \phi\\)).<br>
-                    - Si \\(3 \to 2\\) (5 eV) sí emite: \\(5 \text{ eV} > \phi\\)<br>
-                    - Si \\(4 \to 3\\) (3 eV) NO emite: \\(3 \text{ eV} \le \phi\\)<br><br>
-                    <strong>Respuesta:</strong> \\(3 \text{ eV} \le \phi < 5 \text{ eV}\\).
-                    </p>
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="chk-ej1" onchange="saveProgress(this)"> <label for="chk-ej1">Dominado</label>
-                    </div>
-                </div>
+            <div class="sim-visual-col">
+              <div class="sim-canvas-box">
+                <canvas id="cp-sim-canvas" aria-label="Geometría de colisión fotón-electrón en efecto Compton"></canvas>
+              </div>
+              <div class="sim-chart-box">
+                <canvas id="cp-spec-canvas" aria-label="Espectro de intensidad con pico original y pico desplazado Compton"></canvas>
+              </div>
             </div>
+          </div>
+        </article>
+      </div>
+    </section>
 
-            <div class="card">
-                <h3>2. Schrödinger y el Pozo Infinito</h3>
-                <p style="margin-top: 10px; line-height: 1.6;">
-                    Si confinamos a un electrón en una caja de ancho \\(L\\), por el principio de Incertidumbre (\\(\Delta x \Delta p \ge \hbar/2\\)), su momentum nunca puede ser cero. Esto nos da la famosa <strong>energía de punto cero</strong>. Los niveles de energía son:
-                    $$ E_n = \frac{n^2 h^2}{8mL^2} $$
-                    La probabilidad de encontrar la partícula entre dos puntos \\(x_1\\) y \\(x_2\\) es la integral de su función de onda al cuadrado: \\( \int |\psi|^2 dx \\). Por simetría en el estado fundamental, el área central siempre agrupa la mayor probabilidad (aprox 41% en el centro vs 9% en los bordes).
-                </p>
-            </div>
-            
-        </section>
+    <!-- 3. CARRUSEL DE CONSTANTES FÍSICAS DE REFERENCIA (Una constante por vista) -->
+    <section id="sec-ctes" class="study-section">
+      <div class="section-header-block">
+        <span class="section-kicker">Formulario de Referencia</span>
+        <h2 class="section-title">Carrusel de Constantes Físicas</h2>
+        <p class="section-sub">Una sola constante por tarjeta para evitar sobrecarga visual. Navega con las flechas o indicadores.</p>
+      </div>
 
-        <!-- Módulo 2: Constantes -->
-        <section id="modulo2" class="section-container">
-            <h2 class="section-title">Módulo 2: Constantes Físicas de Referencia</h2>
-            <div class="carousel">
-                <button class="arrow-btn" onclick="prevConst()">&#9664;</button>
-                <div class="constant-card" id="constCard">
-                    <!-- Dinámico -->
-                </div>
-                <button class="arrow-btn" onclick="nextConst()">&#9654;</button>
-            </div>
-        </section>
+      <div class="carousel-card">
+        <div class="carousel-stage">
+          <button type="button" class="carousel-arrow" aria-label="Constante anterior" onclick="stepConstant(-1)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <div id="const-slide-host" class="const-slide" aria-live="polite"></div>
+          <button type="button" class="carousel-arrow" aria-label="Siguiente constante" onclick="stepConstant(1)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+        <div id="const-dots" class="carousel-dots" aria-label="Selector de constante"></div>
+      </div>
+    </section>
 
-        <!-- Módulo 4: Decodificador -->
-        <section id="modulo4" class="section-container">
-            <h2 class="section-title">Módulo 4: Decodificador de Enunciados FCFM</h2>
-            <p style="margin-bottom: 20px;">Haz clic en las frases típicas de pruebas para revelar su traducción física, la fórmula a usar y las trampas comunes.</p>
-            
-            <div class="decoder-grid">
-                <!-- Tarjeta 1 -->
-                <div class="decoder-item" onclick="toggleSolution('dec1')">
-                    <strong>"Se aplica un potencial de frenado \\(V_0\\) hasta que cesa la fotocorriente"</strong>
-                </div>
-                <div id="dec1" class="decoder-answer">
-                    <strong>Traducción Física:</strong> Los electrones más rápidos perdieron toda su energía cinética antes de llegar al colector.<br>
-                    <strong>Fórmula Directa:</strong> \\(K_{\max} = e V_0 = hf - \phi\\)<br>
-                    <strong>Trampa típica:</strong> Creer que si aumentas la intensidad (más watts), \\(V_0\\) cambia. ¡Falso! La intensidad solo aumenta la cantidad de electrones, pero no su energía máxima.
-                </div>
+    <!-- 6. NOTAS PERSONALES Y GUARDADO PRIVADO -->
+    <section id="sec-notas" class="study-section">
+      <div class="section-header-block">
+        <span class="section-kicker">Bitácora Personal</span>
+        <h2 class="section-title">Tus notas rápidas y respaldo automático</h2>
+        <p class="section-sub">Cada marca de progreso, desafío resuelto, reflexión y apunte se guarda de forma privada y automática en tu sesión personal, sin mezclarse con otros estudiantes.</p>
+      </div>
 
-                <!-- Tarjeta 2 -->
-                <div class="decoder-item" onclick="toggleSolution('dec2')">
-                    <strong>"Partícula confinada en una región de tamaño nuclear (ej. \\(10^{-15}\\) m)"</strong>
-                </div>
-                <div id="dec2" class="decoder-answer">
-                    <strong>Traducción Física:</strong> Te están dando la incertidumbre en la posición (\\(\Delta x \approx L\\)). Al confinarla, su momentum y energía se disparan.<br>
-                    <strong>Fórmula Directa:</strong> \\(\Delta p_x \ge \frac{\hbar}{2 \Delta x}\\). Luego calculas energía con \\(K = \frac{p^2}{2m}\\).<br>
-                    <strong>Trampa típica:</strong> Olvidar que un electrón no puede existir establemente dentro del núcleo justamente porque esta energía cinética calculada resulta ser mayor que las fuerzas de atracción nucleares (te da del orden de MeV).
-                </div>
-                
-                <!-- Tarjeta 3 -->
-                <div class="decoder-item" onclick="toggleSolution('dec3')">
-                    <strong>"Retrodispersión a 180° en Efecto Compton"</strong>
-                </div>
-                <div id="dec3" class="decoder-answer">
-                    <strong>Traducción Física:</strong> Es un choque frontal. El fotón rebota justo hacia atrás y transfiere la MÁXIMA energía y momentum posible al electrón.<br>
-                    <strong>Fórmula Directa:</strong> \\(\Delta \lambda = \frac{h}{m_e c}(1 - \cos 180^\circ) = 2\lambda_C\\)<br>
-                    <strong>Variables extremas:</strong> La longitud de onda del fotón saliente es máxima. La energía del electrón saliente es máxima.
-                </div>
-            </div>
-        </section>
+      <div class="notes-card">
+        <div class="input-field-group">
+          <label for="personal-notes">Apuntes personales para el control (fórmulas clave, recordatorios, dudas para auxiliar)</label>
+          <textarea id="personal-notes" class="notes-textarea" placeholder="Escribe aquí tus recordatorios (ej: pasar λ de nm a m cuando uso J·s, revisar ángulo relativo 180°−θ en doble dispersión)…" oninput="onNotesInput(this.value)"></textarea>
+        </div>
+        <div class="notes-footer">
+          <span id="save-status-msg" class="save-status">Sesión lista y privada</span>
+          <div style="display:flex; flex-wrap:wrap; gap:var(--space-sm);">
+            <button type="button" class="btn-secondary" onclick="exportStudySummary()">Exportar resumen (.txt)</button>
+            <button type="button" id="reset-progress-btn" class="btn-secondary" onclick="handleResetProgress(this)">Reiniciar progreso</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-        <!-- Cuestionario Reflexivo -->
-        <section class="section-container">
-            <div class="card" style="background-color: var(--primary); color: white;">
-                <h3 style="margin-bottom: 15px;">Diagnóstico: ¿Qué fue lo que más te costó?</h3>
-                <select id="diagnostico" onchange="showTip()" style="padding: 10px; width: 100%; border-radius: 6px; border:none; margin-bottom: 15px; font-weight: bold;">
-                    <option value="">Selecciona una opción...</option>
-                    <option value="conceptos">Diferenciar física clásica vs cuántica</option>
-                    <option value="unidades">Cálculos matemáticos (eV a Joules)</option>
-                    <option value="formulas">Saber qué fórmula de Schrödinger elegir</option>
-                </select>
-                <div id="tip-box" style="display:none; background: rgba(255,255,255,0.2); padding: 15px; border-radius: 6px;"></div>
-            </div>
-        </section>
+  <footer class="site-footer">
+    <span>Material de estudio basado en guías y auxiliares de Introducción a la Física Moderna (FI1100, FCFM — Universidad de Chile) y textos de Serway / Sears-Zemansky.</span>
+    <span>Guardado privado automático por sesión de usuario.</span>
+  </footer>
+</div>
 
-    </main>
+<api-shim></api-shim>
 
-    <script>
-        // Animación de Fotones (Canvas)
-        const canvas = document.getElementById('photonCanvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
+<script>
+/* =========================================================
+   1. ESTADO PERSISTENTE PRIVADO (notebookAppApi)
+   ========================================================= */
+let appState = {
+  dockCollapsed: false,
+  diagChecked: {},
+  solvedProblems: {},
+  reflections: {},
+  activeTabs: { u1: 'teoria', u2: 'teoria', u3: 'teoria', u4: 'teoria' },
+  activeLevels: { u1: 0, u2: 0, u3: 0, u4: 0 },
+  constIndex: 0,
+  notes: ''
+};
 
-        function resize() {
-            width = canvas.width = canvas.offsetWidth;
-            height = canvas.height = canvas.offsetHeight;
+let saveTimer = null;
+let THEME = {};
+
+function readThemeTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  const g = (k) => cs.getPropertyValue(k).trim();
+  THEME = {
+    primary: g('--primary'),
+    secondary: g('--secondary'),
+    tertiary: g('--tertiary'),
+    plum: g('--berry-plum'),
+    ink: g('--on-surface'),
+    inkMuted: g('--on-surface-variant'),
+    bgTop: g('--canvas-bg-top'),
+    bgBot: g('--canvas-bg-bot'),
+    grid: g('--canvas-grid'),
+    white: g('--surface-container-low'),
+    positive: g('--positive'),
+    uv: g('--wave-uv'),
+    blue: g('--wave-blue'),
+    green: g('--wave-green'),
+    yellow: g('--wave-yellow'),
+    coral: g('--wave-coral')
+  };
+}
+
+async function loadPersistedState() {
+  try {
+    if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === 'function') {
+      const saved = await window.notebookAppApi.getAppState();
+      if (saved && typeof saved === 'object') {
+        appState = Object.assign({}, appState, saved);
+        if (!appState.diagChecked) appState.diagChecked = {};
+        if (!appState.solvedProblems) appState.solvedProblems = {};
+        if (!appState.reflections) appState.reflections = {};
+        if (!appState.activeTabs) appState.activeTabs = { u1: 'teoria', u2: 'teoria', u3: 'teoria', u4: 'teoria' };
+        if (!appState.activeLevels) appState.activeLevels = { u1: 0, u2: 0, u3: 0, u4: 0 };
+      }
+    }
+  } catch (err) {
+    setSaveStatus('Modo sesión temporal activo');
+  }
+}
+
+async function persistStateNow() {
+  try {
+    if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+      await window.notebookAppApi.setAppState(appState);
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      setSaveStatus(`Guardado automáticamente (${hh}:${mm})`);
+    } else {
+      setSaveStatus('Cambios activos en esta sesión');
+    }
+  } catch (err) {
+    setSaveStatus('No se pudo sincronizar el respaldo');
+  }
+}
+
+function scheduleSave() {
+  setSaveStatus('Guardando…');
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => { persistStateNow(); }, 250);
+}
+
+function setSaveStatus(text) {
+  const el = document.getElementById('save-status-msg');
+  if (el) el.textContent = text;
+}
+
+/* =========================================================
+   2. DATOS PEDAGÓGICOS COMPLETOS (24 PROBLEMAS, BRÚJULA, CONSTANTES)
+   ========================================================= */
+const UNITS_DATA = {
+  u1: {
+    levels: [
+      {
+        label: `Nivel 1 · Fácil`,
+        type: `mc`,
+        statement: `Se ilumina una placa metálica con un láser rojo cuya frecuencia es menor que la frecuencia de corte f₀ del metal. Si aumentamos diez veces la intensidad del láser, ¿qué ocurre con los electrones?`,
+        options: [
+          `No se emite ningún fotoelectrón, porque cada fotón tiene energía hf < ϕ y la absorción es de uno a uno.`,
+          `Salen electrones después de unos segundos, cuando el metal acumula suficiente energía térmica.`,
+          `Salen la misma cantidad de electrones, pero con menor energía cinética máxima.`
+        ],
+        correctIdx: 0,
+        steps: [
+          `Paso 1: En el modelo de Einstein, la energía llega en paquetes discretos E_γ = hf, no como flujo continuo.`,
+          `Paso 2: Cada electrón interactúa con un único fotón. Si hf < ϕ, el fotón no alcanza a pagar la función trabajo ϕ del metal.`,
+          `Paso 3: Subir la intensidad aumenta la cantidad de fotones por segundo, pero ninguno tiene energía individual suficiente para liberar electrones.`
+        ]
+      },
+      {
+        label: `Nivel 2 · Fácil-Medio`,
+        type: `num`,
+        unit: `nm`,
+        answer: 620,
+        tol: 5,
+        statement: `Un metal alcalino posee una función trabajo ϕ = 2.00 eV. Calcula la longitud de onda máxima (de corte λ₀) capaz de producir efecto fotoeléctrico. Usa hc = 1240 eV·nm.`,
+        steps: [
+          `Paso 1: En el umbral de emisión, los electrones salen con energía cinética nula (K_max = 0).`,
+          `Paso 2: Por la ecuación de Einstein, E_γ = ϕ = hc / λ₀.`,
+          `Paso 3: Despejando: λ₀ = (1240 eV·nm) / (2.00 eV) = 620 nm.`
+        ]
+      },
+      {
+        label: `Nivel 3 · Medio`,
+        type: `num`,
+        unit: `eV`,
+        answer: 0.82,
+        tol: 0.03,
+        statement: `Sobre una superficie de sodio (ϕ = 2.28 eV) incide luz violeta de longitud de onda λ = 400 nm. Determina la energía cinética máxima K_max (en eV) de los fotoelectrones emitidos.`,
+        steps: [
+          `Paso 1: Calcula la energía de cada fotón incidente: E_γ = hc / λ = 1240 / 400 = 3.10 eV.`,
+          `Paso 2: Aplica conservación de energía: K_max = E_γ − ϕ.`,
+          `Paso 3: K_max = 3.10 eV − 2.28 eV = 0.82 eV.`
+        ]
+      },
+      {
+        label: `Nivel 4 · Medio-Difícil`,
+        type: `num`,
+        unit: `V`,
+        answer: 0.85,
+        tol: 0.01,
+        statement: `Al iluminar un cátodo con luz de λ = 450 nm se mide un potencial de frenado V_s = 0.85 V. Si duplicamos la intensidad luminosa manteniendo fija la longitud de onda en 450 nm, ¿qué valor marcará el nuevo potencial de frenado V_s?`,
+        steps: [
+          `Paso 1: El potencial de frenado mide la energía cinética máxima por unidad de carga: eV_s = K_max = hc/λ − ϕ.`,
+          `Paso 2: Ninguna de las variables (λ ni ϕ) depende de la intensidad de la fuente luminosa.`,
+          `Paso 3: Al duplicar la intensidad aumenta el número de fotoelectrones (fotocorriente de saturación), pero V_s permanece exactamente en 0.85 V.`
+        ]
+      },
+      {
+        label: `Nivel 5 · Difícil`,
+        type: `num`,
+        unit: `eV`,
+        answer: 1.00,
+        tol: 0.05,
+        statement: `Se ilumina un metal desconocido primero con λ₁ = 310 nm y luego con λ₂ = 620 nm. Experimentalmente se observa que el potencial de frenado para λ₁ es exactamente el triple que para λ₂ (V_s1 = 3·V_s2). Calcula la función trabajo ϕ del metal en eV.`,
+        steps: [
+          `Paso 1: Calcula ambas energías de fotón: E₁ = 1240 / 310 = 4.00 eV y E₂ = 1240 / 620 = 2.00 eV.`,
+          `Paso 2: Escribe las ecuaciones fotoeléctricas: eV_s1 = 4.00 − ϕ y eV_s2 = 2.00 − ϕ.`,
+          `Paso 3: Como V_s1 = 3·V_s2, entonces 4.00 − ϕ = 3(2.00 − ϕ) = 6.00 − 3ϕ.`,
+          `Paso 4: Reagrupando: 2ϕ = 2.00 eV ⇒ ϕ = 1.00 eV.`
+        ]
+      },
+      {
+        label: `Nivel 6 · Control Cátedra FCFM`,
+        type: `num`,
+        unit: `V`,
+        answer: 0.216,
+        tol: 0.015,
+        statement: `(Auxiliar 8, P1) Dos fuentes luminosas se usan para determinar la función trabajo de un metal. Con luz verde de mercurio (λ₁ = 546.1 nm), un potencial de frenado de 0.376 V reduce la fotocorriente a cero. ¿Qué potencial de frenado (en Volts) se observará cuando se usa luz amarilla de helio (λ₂ = 587.5 nm)?`,
+        steps: [
+          `Paso 1: Energía del fotón verde: E_γ1 = 1240 eV·nm / 546.1 nm ≈ 2.27 eV.`,
+          `Paso 2: Como K_max1 = eV_s1 = 0.376 eV, despejamos la función trabajo: ϕ = E_γ1 − K_max1 = 2.27 − 0.376 = 1.894 eV.`,
+          `Paso 3: Energía del fotón amarillo: E_γ2 = 1240 eV·nm / 587.5 nm ≈ 2.11 eV.`,
+          `Paso 4: Nuevo potencial de frenado: eV_s2 = E_γ2 − ϕ = 2.11 − 1.894 = 0.216 eV ⇒ V_s2 = 0.216 V.`
+        ]
+      }
+    ],
+    tips: {
+      fundamento: `Recuerda la regla de oro de Einstein: «intensidad = cantidad de fotones», mientras que «frecuencia = energía de cada fotón». Repasa cómo el simulador de abajo mantiene fijo V_frenado cuando mueves el deslizador de intensidad.`,
+      calculo: `Evita convertir a Joules si todos tus datos están en nm y eV. Usa directamente hc ≈ 1240 eV·nm y recuerda que 1 eV dividido por la carga elemental e da numéricamente 1 Volt.`,
+      despejes: `Cuando busques ϕ o λ₀, parte siempre de K_max = hc/λ − ϕ y sustituye primero los ceros del caso umbral (K_max = 0) antes de mover términos.`,
+      formulas: `Solo necesitas dos relaciones: E_γ = hc/λ para caracterizar el haz, y eV_s = E_γ − ϕ para el balance energético en la placa metálica.`
+    }
+  },
+  u2: {
+    levels: [
+      {
+        label: `Nivel 1 · Fácil`,
+        type: `mc`,
+        statement: `En los espectros experimentales de dispersión Compton sobre grafito aparecen dos picos: uno desplazado a λ' y otro sin corrimiento exactamente en la longitud de onda incidente λ. ¿Cuál es la causa física del pico no desplazado?`,
+        options: [
+          `Fotones que colisionan con electrones internos fuertemente ligados, rebotando de hecho contra todo el átomo (masa M ≫ m_e).`,
+          `Fotones que no atravesaron el blanco y rebotaron en el vidrio del detector.`,
+          `Electrones que emiten rayos X térmicos antes de ser golpeados.`
+        ],
+        correctIdx: 0,
+        steps: [
+          `Paso 1: En la fórmula de Compton Δλ = (h / Mc)(1 − cos θ), aparece la masa M de la partícula blanco.`,
+          `Paso 2: Los electrones de valencia se comportan casi como libres (M = m_e), generando el pico desplazado λ'.`,
+          `Paso 3: Los electrones internos están tan ligados al núcleo que el fotón transfiere momento a todo el átomo (M_átomo miles de veces mayor que m_e), haciendo Δλ ≈ 0.`
+        ]
+      },
+      {
+        label: `Nivel 2 · Fácil-Medio`,
+        type: `num`,
+        unit: `nm`,
+        answer: 0.031,
+        tol: 0.002,
+        statement: `Un tubo de rayos X acelera electrones desde el reposo mediante una diferencia de potencial ΔV = 40.0 kV. Calcula la longitud de onda mínima λ_min (en nm) del espectro continuo producido al frenar contra el ánodo.`,
+        steps: [
+          `Paso 1: La energía cinética máxima que gana un electrón es K = e ΔV = 40 000 eV.`,
+          `Paso 2: El fotón más energético (λ_min) nace cuando el electrón entrega toda esa energía en un único frenado: E_γ,max = hc / λ_min = e ΔV.`,
+          `Paso 3: λ_min = 1240 eV·nm / 40 000 eV = 0.031 nm.`
+        ]
+      },
+      {
+        label: `Nivel 3 · Medio`,
+        type: `num`,
+        unit: `pm`,
+        answer: 2.426,
+        tol: 0.05,
+        statement: `Un haz de rayos X con λ = 0.1000 nm se dispersa a un ángulo θ = 90° tras chocar con un electrón libre. ¿Cuánto vale el corrimiento Compton Δλ = λ' − λ en picómetros (pm)? (λ_C = 2.426 pm).`,
+        steps: [
+          `Paso 1: Escribimos la relación de Compton: Δλ = λ_C (1 − cos θ).`,
+          `Paso 2: Evaluamos en θ = 90°, donde cos(90°) = 0.`,
+          `Paso 3: Δλ = 2.426 pm · (1 − 0) = 2.426 pm.`
+        ]
+      },
+      {
+        label: `Nivel 4 · Medio-Difícil`,
+        type: `mc`,
+        statement: `(Guía P4) Para el efecto Compton sobre electrones libres, ¿cuál es el corrimiento máximo posible Δλ_max y qué significa físicamente considerar ángulos θ > 180°?`,
+        options: [
+          `Δλ_max = 2λ_C ≈ 4.852 pm (en θ = 180°); un θ > 180° equivale simplemente a la dispersión simétrica por el otro lado (360° − θ) y no produce corrimientos mayores.`,
+          `Δλ_max = λ_C ≈ 2.426 pm; para θ > 180° el fotón gana energía y su longitud de onda disminuye.`,
+          `No existe límite máximo, Δλ crece linealmente más allá de 180° hasta el infinito.`
+        ],
+        correctIdx: 0,
+        steps: [
+          `Paso 1: Como cos θ oscila entre −1 y +1, (1 − cos θ) es mínimo en θ = 0° (Δλ = 0) y máximo en θ = 180° (1 − (−1) = 2).`,
+          `Paso 2: Por ello Δλ_max = 2λ_C = 4.852 pm.`,
+          `Paso 3: Geométricamente, un ángulo θ = 210° respecto al eje incidente es indistinguible de una desviación de 150° hacia el semiplano opuesto, cumpliendo cos(360° − θ) = cos θ.`
+        ]
+      },
+      {
+        label: `Nivel 5 · Difícil`,
+        type: `num`,
+        unit: `neV`,
+        answer: 55.4,
+        tol: 1.5,
+        statement: `(Auxiliar 8, P3) Un átomo de hidrógeno (masa m = 1.67 × 10⁻²⁷ kg, o m·c² ≈ 938.3 MeV) inicialmente en reposo emite un fotón ultravioleta de energía E = 10.2 eV. Calcula la energía cinética de retroceso K del átomo en nanoelectronvolts (1 neV = 10⁻⁹ eV).`,
+        steps: [
+          `Paso 1: Por conservación del momento lineal, p_átomo = p_fotón = E / c.`,
+          `Paso 2: La energía cinética de retroceso (no relativista) del átomo es K = p² / (2m) = E² / (2 m c²).`,
+          `Paso 3: En unidades de eV, m c² ≈ 9.383 × 10⁸ eV. Entonces K = (10.2 eV)² / (2 × 9.383 × 10⁸ eV) ≈ 5.54 × 10⁻⁸ eV.`,
+          `Paso 4: Expresado en nanoelectronvolts: 5.54 × 10⁻⁸ eV = 55.4 neV (la razón K/E ≈ 5.4 × 10⁻⁹ ≪ 1, por lo que el retroceso es despreciable aquí).`
+        ]
+      },
+      {
+        label: `Nivel 6 · Control Cátedra FCFM`,
+        type: `num`,
+        unit: `pm`,
+        answer: 4.852,
+        tol: 0.05,
+        statement: `(Auxiliar 8, P2) Un fotón con longitud de onda λ se dispersa un ángulo θ por un electrón libre en A, produciendo λ'. Ese fotón λ' choca con otro electrón libre en B, saliendo λ'' en dirección directamente opuesta (180°) a la del fotón original λ. Determina el valor numérico total Δλ = λ'' − λ en picómetros (pm).`,
+        steps: [
+          `Paso 1: Primer choque en A (desviación θ): λ' − λ = λ_C (1 − cos θ).`,
+          `Paso 2: Si λ viajaba a 0° y λ' a θ, para que λ'' viaje a 180°, el ángulo de dispersión relativo en B es (180° − θ).`,
+          `Paso 3: Segundo choque en B: λ'' − λ' = λ_C (1 − cos(180° − θ)) = λ_C (1 + cos θ).`,
+          `Paso 4: Sumamos ambos corrimientos: λ'' − λ = (λ'' − λ') + (λ' − λ) = λ_C(1 + cos θ + 1 − cos θ) = 2λ_C = 2(2.426 pm) = 4.852 pm, ¡independiente de θ!`
+        ]
+      }
+    ],
+    tips: {
+      fundamento: `Diferencia bien los tres procesos: Fotoeléctrico (absorción total por electrón ligado), Compton (choque elástico con electrón libre, parte de la energía sigue como fotón) y Rayos X de frenado (electrón acelerado crea un fotón).`,
+      calculo: `Trabaja los corrimientos Compton directamente en picómetros (1 pm = 10⁻¹² m) usando λ_C = 2.426 pm; evitarás errores de potencias de diez.`,
+      despejes: `En colisiones encadenadas como la del Auxiliar 8 P2, no te asustes si no te dan θ: escribe el ángulo relativo entre vectores sucesivos y suma las ecuaciones; el coseno suele cancelarse.`,
+      formulas: `Si el problema menciona «ángulo de dispersión» y «electrón libre», ve directo a Δλ = λ_C(1 − cos θ). Si menciona «voltaje acelerador» y «corte», usa λ_min = hc / (eΔV).`
+    }
+  },
+  u3: {
+    levels: [
+      {
+        label: `Nivel 1 · Fácil`,
+        type: `mc`,
+        statement: `(Auxiliar 10, P1a) Se observa la localización de una partícula y se concluye que está exactamente en x = 0, con incertidumbre cero en la dirección x (Δx = 0). ¿De qué manera afecta esto a la incertidumbre en su componente de velocidad en la dirección y (Δv_y)?`,
+        options: [
+          `No la afecta en absoluto: el principio de incertidumbre relaciona cada coordenada únicamente con su propia componente de momento (Δx con Δp_x).`,
+          `La hace infinita también en el eje y, porque toda la energía de la partícula explota en todas direcciones.`,
+          `La reduce a cero para compensar el error en el eje x.`
+        ],
+        correctIdx: 0,
+        steps: [
+          `Paso 1: El principio de incertidumbre de Heisenberg se aplica por pares conjugados: Δx·Δp_x ≥ ℏ/2 y Δy·Δp_y ≥ ℏ/2.`,
+          `Paso 2: Las coordenadas espaciales ortogonales (x e y) son observables independientes.`,
+          `Paso 3: Conocer exactamente x = 0 vuelve indeterminada la velocidad v_x (Δp_x → ∞), pero no impone ninguna restricción sobre Δv_y.`
+        ]
+      },
+      {
+        label: `Nivel 2 · Fácil-Medio`,
+        type: `num`,
+        unit: `nm`,
+        answer: 1.00,
+        tol: 0.05,
+        statement: `Calcula la longitud de onda de De Broglie (en nm) de un electrón que se mueve con rapidez v = 7.27 × 10⁵ m/s. (Usa h = 6.626 × 10⁻³⁴ J·s y m_e = 9.109 × 10⁻³¹ kg).`,
+        steps: [
+          `Paso 1: Calculamos el momento lineal no relativista: p = m_e · v = (9.109 × 10⁻³¹ kg)(7.27 × 10⁵ m/s) ≈ 6.622 × 10⁻²⁵ kg·m/s.`,
+          `Paso 2: Aplicamos λ = h / p = (6.626 × 10⁻³⁴) / (6.622 × 10⁻²⁵) ≈ 1.00 × 10⁻⁹ m.`,
+          `Paso 3: Convirtiendo a nanómetros: λ = 1.00 nm.`
+        ]
+      },
+      {
+        label: `Nivel 3 · Medio`,
+        type: `num`,
+        unit: `mm`,
+        answer: 0.386,
+        tol: 0.02,
+        statement: `(Auxiliar 10, P1b) Se mide la rapidez de un electrón en v = 5.00 × 10³ m/s con una exactitud de 0.003%. Encuentra la incertidumbre mínima Δx_min (en milímetros, mm) para determinar la posición de este electrón.`,
+        steps: [
+          `Paso 1: Calculamos la incertidumbre en la rapidez: Δv = 0.003% de 5.00 × 10³ = (3 × 10⁻⁵)(5.00 × 10³) = 0.15 m/s.`,
+          `Paso 2: Incertidumbre en momento: Δp = m_e · Δv = (9.109 × 10⁻³¹)(0.15) = 1.366 × 10⁻³¹ kg·m/s.`,
+          `Paso 3: Incertidumbre mínima en posición: Δx_min = ℏ / (2 Δp) = (1.0546 × 10⁻³⁴) / (2 × 1.366 × 10⁻³¹) = 3.86 × 10⁻⁴ m = 0.386 mm.`
+        ]
+      },
+      {
+        label: `Nivel 4 · Medio-Difícil`,
+        type: `num`,
+        unit: `MHz`,
+        answer: 7.96,
+        tol: 0.25,
+        statement: `(Auxiliar 10, P2) Un átomo excitado radia un fotón con una vida media promedio τ = 1.0 × 10⁻⁸ s. Usando ΔE·Δt ≥ ℏ/2 (con Δt = τ y ΔE = h·Δf), calcula el ancho de línea mínimo Δf en megahertz (MHz).`,
+        steps: [
+          `Paso 1: La incertidumbre mínima en energía del estado excitado es ΔE_min = ℏ / (2τ).`,
+          `Paso 2: Como la energía del fotón es E = hf, un ensanchamiento ΔE equivale a Δf = ΔE / h.`,
+          `Paso 3: Sustituyendo ℏ = h / (2π), se cancela h: Δf = 1 / (4π τ) = 1 / (4π × 10⁻⁸ s) ≈ 7.96 × 10⁶ Hz = 7.96 MHz.`
+        ]
+      },
+      {
+        label: `Nivel 5 · Difícil`,
+        type: `mc`,
+        statement: `(Guía P4) La energía de un oscilador armónico es E = P²/(2m) + k x²/2. Estimando x ≈ Δx y P ≈ Δp vinculados por Δx·Δp = ℏ/2, ¿qué energía mínima E_min obtiene el principio de incertidumbre en términos de ω = √(k/m)?`,
+        options: [
+          `E_min = (1/2) ℏω, un valor estrictamente mayor que cero (a diferencia del reposo clásico E = 0).`,
+          `E_min = 0, igual que el oscilador clásico detenido en el origen.`,
+          `E_min = 2 ℏω, porque se duplica la energía potencial.`
+        ],
+        correctIdx: 0,
+        steps: [
+          `Paso 1: Sustituimos Δp = ℏ / (2 Δx) y k = mω² en la energía: E(Δx) = ℏ² / (8 m Δx²) + (1/2) m ω² Δx².`,
+          `Paso 2: Derivamos respecto a Δx e igualamos a 0: −ℏ² / (4 m Δx³) + m ω² Δx = 0 ⇒ Δx² = ℏ / (2 m ω).`,
+          `Paso 3: Evaluando en este mínimo: E_min = (1/4) ℏω + (1/4) ℏω = (1/2) ℏω. Clásicamente una masa puede estar quieta en x=0 (E=0), pero cuánticamente violaría Δx·Δp ≥ ℏ/2.`
+        ]
+      },
+      {
+        label: `Nivel 6 · Control Cátedra FCFM`,
+        type: `mc`,
+        statement: `(Auxiliar 10, P3 y P4) Una persona en una escalera a altura H deja caer bolitas de 0.5 kg hacia un blanco A. Al incluir la dispersión cuántica horizontal Δx_min ≈ √(ℏ t / m) tras caer un tiempo t = √(2H/g), ¿por qué nunca notamos este límite al soltar bolitas o colocar una canica de 10 g sobre una mesa?`,
+        options: [
+          `Porque ℏ ≈ 10⁻³⁴ J·s es diminuta frente a masas macroscópicas: lograr Δx ~ 1 cm requeriría tiempos de caída t ~ 10²⁹ s, trillones de veces superiores a la edad del Universo (~14 mil millones de años).`,
+          `Porque la gravedad anula el principio de incertidumbre para masas mayores a 1 gramo.`,
+          `Porque las bolitas son esféricas y su momento angular cancela Δp.`
+        ],
+        correctIdx: 0,
+        steps: [
+          `Paso 1: La incertidumbre total al llegar al piso combina el ancho inicial Δx₀ y la deriva lateral por momento inicial (Δp₀/m)·t ≥ (ℏ / (2 m Δx₀))·t.`,
+          `Paso 2: Minimizando respecto a Δx₀, resulta Δx_min ~ √(ℏ t / m).`,
+          `Paso 3: Despejando t ≈ m (Δx_min)² / ℏ para m = 0.5 kg y Δx_min = 0.01 m, da t ≈ 4.7 × 10²⁹ s (frente a la edad del Universo ~4.4 × 10¹⁷ s). La altura H sería inimaginablemente mayor que el cosmos observable.`
+        ]
+      }
+    ],
+    tips: {
+      fundamento: `No confundas incertidumbre de medición instrumental con dispersión cuántica intrínseca: incluso en un laboratorio perfecto, localizar Δx exige superponer ondas que ensanchan Δp.`,
+      calculo: `En problemas de precisión porcentual (como 0.003%), recuerda dividir por 100 antes de multiplicar (0.003% = 0.00003 = 3 × 10⁻⁵).`,
+      despejes: `Cuando minimices una suma del tipo A/u² + B·u², usa derivada igual a cero o el truco de que en el mínimo ambos términos son iguales (A/u² = B·u²).`,
+      formulas: `Asegúrate de usar ℏ = h / (2π) = 1.055 × 10⁻³⁴ J·s (y no h) en Δx·Δp ≥ ℏ/2.`
+    }
+  },
+  u4: {
+    levels: [
+      {
+        label: `Nivel 1 · Fácil`,
+        type: `num`,
+        unit: `unidades`,
+        answer: 0,
+        tol: 0.001,
+        statement: `(Auxiliar 11, P1b) Una partícula está descrita por la función de onda simétrica ψ(x) = A e^(−a x²), donde A y a son constantes reales positivas. Sin resolver integrales complicadas, ¿cuál es el valor esperado de su posición ⟨x⟩?`,
+        steps: [
+          `Paso 1: Por definición, ⟨x⟩ = ∫_{−∞}^{∞} x |ψ(x)|² dx = A² ∫_{−∞}^{∞} x e^(−2ax²) dx.`,
+          `Paso 2: El factor |ψ(x)|² = A² e^(−2ax²) es una función par (simétrica respecto a x = 0).`,
+          `Paso 3: Al multiplicar por x (función impar), el integrando completo es impar; su integral en un intervalo simétrico (−∞, +∞) es exactamente 0.`
+        ]
+      },
+      {
+        label: `Nivel 2 · Fácil-Medio`,
+        type: `num`,
+        unit: `L`,
+        answer: 0.5,
+        tol: 0.01,
+        statement: `(Auxiliar 11, P2) Una partícula de masa m está confinada en una caja unidimensional de paredes infinitas entre x = 0 y x = L. ¿Cuál es el valor esperado de la posición ⟨x⟩ (en fracción de L, ej: 0.5) cuando se encuentra en el estado cuántico n = 3?`,
+        steps: [
+          `Paso 1: Las funciones propias del pozo infinito son ψ_n(x) = √(2/L) sin(nπx/L).`,
+          `Paso 2: La densidad de probabilidad |ψ_n(x)|² = (2/L) sin²(nπx/L) es perfectamente simétrica respecto al punto medio de la caja x = L/2 para cualquier entero n.`,
+          `Paso 3: Por lo tanto, la posición promedio esperada siempre es ⟨x⟩ = L/2 = 0.5 L.`
+        ]
+      },
+      {
+        label: `Nivel 3 · Medio`,
+        type: `mc`,
+        statement: `(Auxiliar 11, P1a) Dada la función de onda ψ(x) = A e^(−a x²) (a > 0), y sabiendo que ∫_{−∞}^{∞} e^(−u²) du = √π, ¿cuál debe ser el valor de la constante positiva A para que ψ esté normalizada?`,
+        options: [
+          `A = (2a / π)^(1/4)`,
+          `A = √(2a / π)`,
+          `A = (a / π)^(1/4)`
+        ],
+        correctIdx: 0,
+        steps: [
+          `Paso 1: La condición de normalización exige ∫_{−∞}^{∞} |ψ(x)|² dx = 1 ⇒ A² ∫_{−∞}^{∞} e^(−2ax²) dx = 1.`,
+          `Paso 2: Hacemos el cambio u = √(2a)·x, con dx = du / √(2a).`,
+          `Paso 3: Resulta A² · (1 / √(2a)) · √π = 1 ⇒ A² = √(2a / π).`,
+          `Paso 4: Sacando raíz cuadrada positiva: A = (2a / π)^(1/4).`
+        ]
+      },
+      {
+        label: `Nivel 4 · Medio-Difícil`,
+        type: `mc`,
+        statement: `(Auxiliar 11, P3) Una partícula libre (U = 0) tiene función de onda ψ(x) = A cos(kx) + B sin(kx). Al sustituirla en la ecuación de Schrödinger independiente del tiempo −(ℏ²/2m) d²ψ/dx² = E ψ, ¿qué energía E le corresponde?`,
+        options: [
+          `E = ℏ² k² / (2m)`,
+          `E = −ℏ² k² / (2m)`,
+          `E = ℏ k / (2m)`
+        ],
+        correctIdx: 0,
+        steps: [
+          `Paso 1: Derivamos dos veces respecto a x: dψ/dx = −Ak sin(kx) + Bk cos(kx); d²ψ/dx² = −k² (A cos(kx) + B sin(kx)) = −k² ψ.`,
+          `Paso 2: Sustituimos en Schrödinger con U = 0: −(ℏ²/2m)(−k² ψ) = E ψ.`,
+          `Paso 3: Simplificando ψ (no idénticamente nula), queda E = ℏ² k² / (2m) = p² / (2m), coherente con p = ℏk.`
+        ]
+      },
+      {
+        label: `Nivel 5 · Difícil`,
+        type: `num`,
+        unit: `nm⁻¹`,
+        answer: 7.24,
+        tol: 0.2,
+        statement: `Un electrón con energía total E = 4.0 eV incide sobre una barrera de potencial de altura U₀ = 6.0 eV y ancho a = 0.50 nm. Calcula el coeficiente de atenuación κ = √(2 m_e (U₀ − E)) / ℏ dentro de la barrera, en unidades de nm⁻¹.`,
+        steps: [
+          `Paso 1: Calculamos la altura efectiva de barrera: U₀ − E = 6.0 − 4.0 = 2.0 eV = 2.0 × 1.602 × 10⁻¹⁹ J = 3.204 × 10⁻¹⁹ J.`,
+          `Paso 2: Multiplicamos por 2 m_e: 2(9.109 × 10⁻³¹)(3.204 × 10⁻¹⁹) = 5.837 × 10⁻⁴⁹ (kg·m/s)².`,
+          `Paso 3: Sacamos raíz cuadrada: 7.640 × 10⁻²⁵ kg·m/s.`,
+          `Paso 4: Dividimos por ℏ = 1.0546 × 10⁻³⁴ J·s: κ = 7.24 × 10⁹ m⁻¹ = 7.24 nm⁻¹ (y T ≈ e^(−2κa) ≈ e^(−7.24) ≈ 7.2 × 10⁻⁴).`
+        ]
+      },
+      {
+        label: `Nivel 6 · Control Cátedra FCFM`,
+        type: `num`,
+        unit: `eV`,
+        answer: 37.6,
+        tol: 1.0,
+        statement: `Un electrón se encuentra confinado en un pozo de potencial infinito unidimensional de ancho L = 0.20 nm. Calcula la energía del primer estado excitado (n = 2) en electronvolts (eV). (Dato: m_e c² = 5.11 × 10⁵ eV, hc = 1240 eV·nm).`,
+        steps: [
+          `Paso 1: Escribimos la energía cuantizada del pozo: E_n = n² h² / (8 m_e L²).`,
+          `Paso 2: Truco FCFM: multiplica arriba y abajo por c² para usar hc y m_e c²: E_n = n² (hc)² / (8 (m_e c²) L²).`,
+          `Paso 3: Para n = 1: E₁ = (1240)² / (8 × 511 000 × 0.20²) = 1 537 600 / 163 520 ≈ 9.40 eV.`,
+          `Paso 4: El primer estado excitado corresponde a n = 2: E₂ = 2² · E₁ = 4 × 9.40 eV = 37.6 eV.`
+        ]
+      }
+    ],
+    tips: {
+      fundamento: `Visualiza siempre |ψ(x)|² como una nube de probabilidad: donde la amplitud es cero (nodos), la partícula jamás se detecta; donde es curva suave (efecto túnel), puede colarse.`,
+      calculo: `El truco de multiplicar numerador y denominador por c² en E_n = n²(hc)² / (8 m_e c² L²) te ahorra todas las conversiones a Joules y metros.`,
+      despejes: `Antes de integrar ∫ x |ψ(x)|² dx, revisa si el intervalo y la función tienen paridad impar/par: la simetría resuelve más de la mitad de los valores esperados en 5 segundos.`,
+      formulas: `Distingue las condiciones de borde: dentro de un pozo infinito (U = 0) ψ es oscilatoria (sin/cos); dentro de una barrera (U₀ > E) ψ es exponencial decreciente (e^(−κx)).`
+    }
+  }
+};
+
+const COMPASS_PHRASES = [
+  {
+    id: `frenado`,
+    cat: `foto`,
+    catLabel: `Fotoeléctrico`,
+    phrase: `«Se aplica un potencial de frenado V_s hasta anular la fotocorriente»`,
+    meaning: `Se coloca un voltaje negativo creciente que frena incluso a los fotoelectrones más rápidos que salieron del metal.`,
+    zeros: `La corriente eléctrica llega a I = 0; los electrones más energéticos pierden toda su K_max justo al llegar al colector.`,
+    conservation: `Conservación de energía mecánica/eléctrica por cada electrón: K_max = e · V_s.`,
+    formula: `e · V_s = hc / λ − ϕ`,
+    trap: `No pongas la masa del electrón para buscar v si solo te piden ϕ o λ; trabajar directo en eV y Volts ahorra tiempo y errores.`
+  },
+  {
+    id: `retro180`,
+    cat: `compton`,
+    catLabel: `Compton`,
+    phrase: `«Retrodispersión a 180° (o rebote directamente opuesto)»`,
+    meaning: `El fotón choca frontalmente contra el electrón libre y se devuelve exactamente por donde vino.`,
+    zeros: `Ángulo de dispersión θ = 180°, por lo que cos(180°) = −1 y el cambio de longitud de onda es máximo.`,
+    conservation: `Conservación de momento lineal relativista y energía total del sistema fotón + electrón.`,
+    formula: `Δλ_max = 2 λ_C ≈ 4.852 pm`,
+    trap: `En colisiones múltiples (ej: primer choque θ y segundo choque sale opuesto al haz inicial), el segundo ángulo relativo es (180° − θ), no 180° directo.`
+  },
+  {
+    id: `corte_rx`,
+    cat: `compton`,
+    catLabel: `Rayos X`,
+    phrase: `«Corte abrupto en λ_min del espectro continuo de Rayos X»`,
+    meaning: `Un electrón acelerado por el tubo frena de golpe contra el ánodo y convierte el 100% de su energía cinética en un solo fotón.`,
+    zeros: `Energía cinética final del electrón tras el choque K_final = 0 (frenado completo).`,
+    conservation: `Energía eléctrica inicial e·ΔV = Energía del fotón emitido hc / λ_min.`,
+    formula: `λ_min = hc / (e ΔV)`,
+    trap: `No confundas λ_min (frenado continuo, depende solo de ΔV) con los picos característicos Kα, Kβ (que dependen del material del ánodo).`
+  },
+  {
+    id: `pico_fijo`,
+    cat: `compton`,
+    catLabel: `Compton`,
+    phrase: `«Aparece un pico no desplazado en la misma λ incidente»`,
+    meaning: `Parte de los fotones chocan contra electrones internos fuertemente ligados al núcleo, arrastrando a todo el átomo.`,
+    zeros: `Al reemplazar m_e por M_átomo (miles de veces mayor), λ_C,átomo → 0 y el corrimiento Δλ ≈ 0.`,
+    conservation: `Conservación de energía y momento con masa efectiva M_átomo ≫ m_e.`,
+    formula: `Δλ_átomo = (h / M_átomo c)(1 − cos θ) ≈ 0`,
+    trap: `No significa que no hubo colisión; significa que el electrón no estaba libre y el átomo entero absorbió el retroceso con energía despreciable.`
+  },
+  {
+    id: `vida_media`,
+    cat: `heisenberg`,
+    catLabel: `Incertidumbre`,
+    phrase: `«Un estado excitado tiene tiempo de vida medio τ y emite un fotón»`,
+    meaning: `El átomo solo permanece en ese nivel energético durante un intervalo promedio Δt ≈ τ antes de decaer.`,
+    zeros: `No es un nivel de energía perfectamente nítido; tiene un «espesor» o ensanchamiento ΔE mínimo inevitable.`,
+    conservation: `Relación de incertidumbre energía-tiempo de Heisenberg junto con cuantización de Planck E = hf.`,
+    formula: `ΔE · τ ≥ ℏ/2 ⇒ Δf_min = 1 / (4π τ)`,
+    trap: `Olvidar que ℏ = h/(2π): muchos escriben Δf = 1/(2τ) dejando un factor 2π errado en el resultado.`
+  },
+  {
+    id: `incertidumbre_cero`,
+    cat: `heisenberg`,
+    catLabel: `Incertidumbre`,
+    phrase: `«Se mide la posición exacta x = 0 con incertidumbre nula (Δx → 0)»`,
+    meaning: `La función de onda se estrecha en un pulso localizado en x = 0, exigiendo infinitas longitudes de onda superpuestas.`,
+    zeros: `Δx = 0 implica Δp_x → ∞, pero NO afecta a Δp_y ni Δp_z.`,
+    conservation: `Regla de conmutación de observables conjugados por eje independiente.`,
+    formula: `Δx · Δp_x ≥ ℏ/2  (independiente de y, z)`,
+    trap: `Caer en la trampa de decir que la velocidad en el eje y también se vuelve infinita.`
+  },
+  {
+    id: `confinada_L`,
+    cat: `schrodinger`,
+    catLabel: `Schrödinger`,
+    phrase: `«Partícula confinada en una región unidimensional de ancho L»`,
+    meaning: `Potencial U(x) = 0 dentro de [0, L] y paredes impenetrables U = ∞ afuera.`,
+    zeros: `La función de onda se anula obligatoriamente en los bordes: ψ(0) = 0 y ψ(L) = 0.`,
+    conservation: `Cuantización de estados estacionarios; simetría del pozo implica ⟨x⟩ = L/2 para todo n.`,
+    formula: `ψ_n(x) = √(2/L) sin(nπx/L) ; E_n = n² h² / (8 m L²)`,
+    trap: `Asumir que la energía mínima (n = 1) puede ser cero: el estado fundamental E₁ > 0 es obligatorio por Heisenberg (Δx ≤ L).`
+  },
+  {
+    id: `tunel`,
+    cat: `schrodinger`,
+    catLabel: `Schrödinger`,
+    phrase: `«Una partícula de energía E incide sobre una barrera de altura U₀ > E»`,
+    meaning: `Clásicamente es una zona prohibida (K sería negativa), pero cuánticamente ψ continúa de forma continua dentro de la pared.`,
+    zeros: `Dentro de la barrera la función NO oscila (no es seno/coseno), sino que decae exponencialmente.`,
+    conservation: `Continuidad de ψ(x) y dψ/dx en las fronteras de la barrera; la energía E del lado transmitido es igual a la incidente.`,
+    formula: `T ≈ e^(−2κa) con κ = √(2m(U₀ − E)) / ℏ`,
+    trap: `Creer que la partícula «pierde energía» al cruzar la barrera: lo que cae es la probabilidad de encontrarla al otro lado, no su energía E.`
+  },
+  {
+    id: `atomo_reposo`,
+    cat: `compton`,
+    catLabel: `Compton / Emisión`,
+    phrase: `«Un átomo inicialmente en reposo emite un fotón de longitud de onda λ»`,
+    meaning: `Aunque no haya choque previo, el fotón se lleva momento lineal h/λ y el átomo debe patear hacia atrás.`,
+    zeros: `Momento total inicial del sistema P_inicial = 0.`,
+    conservation: `Conservación de momento lineal: m·v_retroceso = h / λ = E_fotón / c.`,
+    formula: `K_retroceso = p² / (2m) = E² / (2 m c²)`,
+    trap: `Calcular la rapidez del átomo usando p = mv pero olvidar que el momento del fotón es E/c, no mv_fotón.`
+  }
+];
+
+const CONSTANTS_LIST = [
+  {
+    symbol: `c`,
+    name: `Rapidez de la luz en el vacío`,
+    si: `2.998 × 10⁸ m/s`,
+    alt: `3.00 × 10⁸ m/s (cálculo rápido)`,
+    desc: `Límite universal de propagación electromagnética. Conecta frecuencia y longitud de onda mediante c = λf, y energía con momento del fotón mediante E = pc.`
+  },
+  {
+    symbol: `h`,
+    name: `Constante de Planck`,
+    si: `6.626 × 10⁻³⁴ J·s`,
+    alt: `4.136 × 10⁻¹⁵ eV·s`,
+    desc: `El cuanto fundamental de acción. Escala la energía de cada fotón (E = hf) y la longitud de onda de De Broglie de toda partícula material (λ = h/p).`
+  },
+  {
+    symbol: `ℏ = h / 2π`,
+    name: `Constante de Planck reducida`,
+    si: `1.055 × 10⁻³⁴ J·s`,
+    alt: `6.582 × 10⁻¹⁶ eV·s`,
+    desc: `Aparece siempre que trabajas con frecuencias angulares (E = ℏω), número de onda (p = ℏk), principio de incertidumbre (Δx·Δp ≥ ℏ/2) y ecuación de Schrödinger.`
+  },
+  {
+    symbol: `e`,
+    name: `Carga elemental (y factor eV)`,
+    si: `1.602 × 10⁻¹⁹ C`,
+    alt: `1 eV = 1.602 × 10⁻¹⁹ J`,
+    desc: `Permite pasar directamente entre energía en electronvolts (eV) y potencial eléctrico de frenado o aceleración en Volts (V): K_max = e·V_s.`
+  },
+  {
+    symbol: `mₑ`,
+    name: `Masa en reposo del electrón`,
+    si: `9.109 × 10⁻³¹ kg`,
+    alt: `mₑc² = 0.511 MeV = 5.11 × 10⁵ eV`,
+    desc: `Indispensable para hallar la longitud de onda de De Broglie de electrones, la energía en pozos infinitos y el parámetro κ en efecto túnel.`
+  },
+  {
+    symbol: `h·c`,
+    name: `Producto Planck por velocidad de la luz`,
+    si: `1240 eV·nm`,
+    alt: `1.986 × 10⁻²⁵ J·m`,
+    desc: `El atajo estrella para pruebas: permite calcular energía de fotones (E = 1240/λ) o corte de Rayos X (λ_min = 1240/V) usando nm y eV sin cambiar a SI.`
+  },
+  {
+    symbol: `λ_C`,
+    name: `Longitud de onda de Compton del electrón`,
+    si: `2.426 × 10⁻¹² m`,
+    alt: `2.426 pm = 0.002426 nm`,
+    desc: `Definida como h / (mₑ c). Es exactamente el corrimiento Δλ que sufre un fotón dispersado a 90° por un electrón libre; el máximo (180°) es el doble: 4.852 pm.`
+  }
+];
+
+/* =========================================================
+   3. NAVEGACIÓN DOCK FLOTANTE Y SCROLL-SPY
+   ========================================================= */
+function toggleDock() {
+  appState.dockCollapsed = !appState.dockCollapsed;
+  applyDockUI();
+  scheduleSave();
+}
+
+function applyDockUI() {
+  const dock = document.getElementById('floating-dock');
+  const btn = document.getElementById('dock-toggle-btn');
+  const icon = document.getElementById('dock-toggle-icon');
+  if (!dock || !btn) return;
+  if (appState.dockCollapsed) {
+    dock.classList.add('is-collapsed');
+    document.body.classList.remove('dock-expanded');
+    document.body.classList.add('dock-collapsed');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-label', 'Expandir barra de navegación');
+    if (icon) icon.innerHTML = `<polyline points="15 18 9 12 15 6"></polyline>`;
+  } else {
+    dock.classList.remove('is-collapsed');
+    document.body.classList.add('dock-expanded');
+    document.body.classList.remove('dock-collapsed');
+    btn.setAttribute('aria-expanded', 'true');
+    btn.setAttribute('aria-label', 'Minimizar barra de navegación');
+    if (icon) icon.innerHTML = `<polyline points="9 18 15 12 9 6"></polyline>`;
+  }
+}
+
+function jumpToSection(id) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  updateActiveDockLink(id);
+}
+
+function updateActiveDockLink(activeId) {
+  const links = document.querySelectorAll('.dock-link');
+  links.forEach((btn) => {
+    if (btn.dataset.target === activeId) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+function setupScrollSpy() {
+  const ids = ['sec-u1', 'sec-u2', 'sec-u3', 'sec-u4', 'sec-brujula', 'sec-lab', 'sec-ctes'];
+  const sections = ids.map((id) => document.getElementById(id)).filter(Boolean);
+  if (!sections.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    let best = null;
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        if (!best || entry.intersectionRatio > best.intersectionRatio) {
+          best = entry;
         }
-        window.addEventListener('resize', resize);
-        resize();
+      }
+    });
+    if (best && best.target && best.target.id) {
+      updateActiveDockLink(best.target.id);
+    }
+  }, { rootMargin: '-18% 0px -55% 0px', threshold: [0.1, 0.35, 0.6] });
 
-        class Photon {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 2;
-                this.vy = Math.random() * -2 - 1; // Viajan hacia arriba
-                this.size = Math.random() * 3 + 1;
-                this.phase = Math.random() * Math.PI * 2;
-            }
-            update() {
-                this.x += this.vx + Math.sin(this.phase) * 1.5; // Movimiento ondulatorio
-                this.y += this.vy;
-                this.phase += 0.1;
-                if (this.y < 0) { this.y = height; this.x = Math.random() * width; }
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-                ctx.fill();
-            }
+  sections.forEach((sec) => observer.observe(sec));
+}
+
+/* =========================================================
+   4. UNIDADES: TABS, DIAGNÓSTICO, ESCALERA 6 NIVELES, REFLEXIÓN
+   ========================================================= */
+function switchUnitTab(unitId, tabName) {
+  appState.activeTabs[unitId] = tabName;
+  const btns = document.querySelectorAll(`.unit-tab-btn[data-unit="${unitId}"]`);
+  btns.forEach((b) => {
+    b.classList.toggle('active', b.dataset.tab === tabName);
+  });
+  ['teoria', 'escalera', 'reflexion'].forEach((t) => {
+    const p = document.getElementById(`${unitId}-panel-${t}`);
+    if (p) p.classList.toggle('active', t === tabName);
+  });
+  scheduleSave();
+}
+
+function toggleDiag(key, checked) {
+  appState.diagChecked[key] = !!checked;
+  scheduleSave();
+}
+
+function renderUnitLadder(unitId) {
+  const unit = UNITS_DATA[unitId];
+  if (!unit) return;
+  const activeLvl = appState.activeLevels[unitId] || 0;
+  const pillsEl = document.getElementById(`${unitId}-pills`);
+  const titleEl = document.getElementById(`${unitId}-level-title`);
+  const hostEl = document.getElementById(`${unitId}-problem-host`);
+  if (!pillsEl || !hostEl || !titleEl) return;
+
+  const lvlData = unit.levels[activeLvl];
+  titleEl.textContent = lvlData.label;
+
+  pillsEl.innerHTML = unit.levels.map((lv, idx) => {
+    const pKey = `${unitId}-${idx}`;
+    const isSolved = !!appState.solvedProblems[pKey];
+    const isActive = idx === activeLvl;
+    return `<button type="button" class="level-pill-btn ${isSolved ? 'solved' : ''} ${isActive ? 'active' : ''}" onclick="selectLevel('${unitId}', ${idx})">N${idx + 1}${isSolved ? ' ✓' : ''}</button>`;
+  }).join('');
+
+  const pKey = `${unitId}-${activeLvl}`;
+  const isSolved = !!appState.solvedProblems[pKey];
+
+  let interactionHtml = '';
+  if (lvlData.type === 'mc') {
+    interactionHtml = `<div class="mc-options">` + lvlData.options.map((opt, i) => `
+      <button type="button" class="mc-option-btn" id="${pKey}-opt-${i}" onclick="checkMC('${unitId}', ${activeLvl}, ${i})">${opt}</button>
+    `).join('') + `</div>`;
+  } else {
+    interactionHtml = `
+      <div class="numeric-answer-row">
+        <div class="input-field-group">
+          <label for="${pKey}-num-input">Tu respuesta (${lvlData.unit})</label>
+          <input type="number" step="any" id="${pKey}-num-input" class="pill-input" placeholder="Ej: ${lvlData.answer}">
+        </div>
+        <button type="button" class="btn-primary" onclick="checkNumeric('${unitId}', ${activeLvl})">Comprobar resultado</button>
+      </div>
+    `;
+  }
+
+  hostEl.innerHTML = `
+    <div class="problem-meta">
+      <span class="badge-pill ${activeLvl === 5 ? 'coral' : ''}">${lvlData.label}</span>
+      <span class="badge-pill ${isSolved ? 'plum' : ''}" id="${pKey}-status">${isSolved ? 'Dominado ✓' : 'Pendiente'}</span>
+    </div>
+    <p class="problem-statement">${lvlData.statement}</p>
+    ${interactionHtml}
+    <div id="${pKey}-feedback" class="feedback-banner ${isSolved ? 'show ok' : ''}">${isSolved ? 'Desafío ya marcado como dominado.' : ''}</div>
+    <div class="solution-drawer">
+      <button type="button" class="btn-secondary" id="${pKey}-sol-btn" onclick="toggleSolution('${pKey}')">Ver solución detallada paso a paso</button>
+      <div id="${pKey}-sol-body" class="solution-body">
+        <ol class="solution-steps">
+          ${lvlData.steps.map((st) => `<li>${st}</li>`).join('')}
+        </ol>
+      </div>
+    </div>
+  `;
+}
+
+function selectLevel(unitId, idx) {
+  appState.activeLevels[unitId] = idx;
+  renderUnitLadder(unitId);
+  scheduleSave();
+}
+
+function checkMC(unitId, idx, optIdx) {
+  const unit = UNITS_DATA[unitId];
+  const lv = unit.levels[idx];
+  const pKey = `${unitId}-${idx}`;
+  const fb = document.getElementById(`${pKey}-feedback`);
+  lv.options.forEach((_, i) => {
+    const b = document.getElementById(`${pKey}-opt-${i}`);
+    if (b) b.classList.remove('selected-correct', 'selected-wrong');
+  });
+  const chosenBtn = document.getElementById(`${pKey}-opt-${optIdx}`);
+  if (optIdx === lv.correctIdx) {
+    if (chosenBtn) chosenBtn.classList.add('selected-correct');
+    if (fb) {
+      fb.textContent = `¡Excelente! Razonamiento físico correcto. Desafío dominado.`;
+      fb.className = `feedback-banner show ok`;
+    }
+    appState.solvedProblems[pKey] = true;
+    updateGlobalMastery();
+    renderUnitLadder(unitId);
+    const fbAfter = document.getElementById(`${pKey}-feedback`);
+    const chosenAfter = document.getElementById(`${pKey}-opt-${optIdx}`);
+    if (chosenAfter) chosenAfter.classList.add('selected-correct');
+    if (fbAfter) {
+      fbAfter.textContent = `¡Excelente! Razonamiento físico correcto. Desafío dominado.`;
+      fbAfter.className = `feedback-banner show ok`;
+    }
+    scheduleSave();
+  } else {
+    if (chosenBtn) chosenBtn.classList.add('selected-wrong');
+    if (fb) {
+      fb.textContent = `Revisa la intuición física o despliega la solución paso a paso abajo para comparar.`;
+      fb.className = `feedback-banner show err`;
+    }
+  }
+}
+
+function checkNumeric(unitId, idx) {
+  const unit = UNITS_DATA[unitId];
+  const lv = unit.levels[idx];
+  const pKey = `${unitId}-${idx}`;
+  const inp = document.getElementById(`${pKey}-num-input`);
+  const fb = document.getElementById(`${pKey}-feedback`);
+  if (!inp || !fb) return;
+  const val = parseFloat(String(inp.value).replace(',', '.'));
+  if (Number.isNaN(val)) {
+    fb.textContent = `Ingresa un número válido para comprobar.`;
+    fb.className = `feedback-banner show err`;
+    return;
+  }
+  if (Math.abs(val - lv.answer) <= lv.tol) {
+    appState.solvedProblems[pKey] = true;
+    updateGlobalMastery();
+    renderUnitLadder(unitId);
+    const fbAfter = document.getElementById(`${pKey}-feedback`);
+    if (fbAfter) {
+      fbAfter.textContent = `¡Correcto! Valor esperado ≈ ${lv.answer} ${lv.unit}. Desafío dominado.`;
+      fbAfter.className = `feedback-banner show ok`;
+    }
+    const inpAfter = document.getElementById(`${pKey}-num-input`);
+    if (inpAfter) inpAfter.value = val;
+    scheduleSave();
+  } else {
+    fb.textContent = `Aún no coincide (obtuviste ${val} ${lv.unit}). Revisa unidades (nm vs m, eV vs J) o abre la solución paso a paso.`;
+    fb.className = `feedback-banner show err`;
+  }
+}
+
+function toggleSolution(pKey) {
+  const body = document.getElementById(`${pKey}-sol-body`);
+  const btn = document.getElementById(`${pKey}-sol-btn`);
+  if (!body || !btn) return;
+  const open = body.classList.toggle('open');
+  btn.textContent = open ? `Ocultar solución paso a paso` : `Ver solución detallada paso a paso`;
+}
+
+function selectReflection(unitId, cat) {
+  appState.reflections[unitId] = cat;
+  applyReflectionUI(unitId);
+  scheduleSave();
+}
+
+function applyReflectionUI(unitId) {
+  const cat = appState.reflections[unitId];
+  const wrap = document.getElementById(`${unitId}-refl-opts`);
+  const tipCard = document.getElementById(`${unitId}-refl-tip`);
+  if (!wrap || !tipCard) return;
+  wrap.querySelectorAll('.refl-btn').forEach((b) => {
+    b.classList.toggle('active', b.dataset.cat === cat);
+  });
+  if (cat && UNITS_DATA[unitId] && UNITS_DATA[unitId].tips[cat]) {
+    const names = {
+      fundamento: `Refuerzo en Fundamento Físico`,
+      calculo: `Refuerzo en Cálculo Matemático`,
+      despejes: `Refuerzo en Despejes Algebraicos`,
+      formulas: `Refuerzo en Selección de Fórmulas`
+    };
+    tipCard.innerHTML = `<strong>${names[cat]}:</strong> <p style="margin:var(--space-xs) 0 0;">${UNITS_DATA[unitId].tips[cat]}</p>`;
+    tipCard.classList.add('show');
+  } else {
+    tipCard.classList.remove('show');
+  }
+}
+
+function updateGlobalMastery() {
+  const total = 24;
+  let solved = 0;
+  Object.keys(appState.solvedProblems).forEach((k) => {
+    if (appState.solvedProblems[k]) solved++;
+  });
+  const textEl = document.getElementById('global-mastery-text');
+  const fillEl = document.getElementById('global-mastery-fill');
+  if (textEl) textEl.textContent = `${solved} / ${total} desafíos dominados`;
+  if (fillEl) fillEl.style.width = `${Math.round((solved / total) * 100)}%`;
+}
+
+/* =========================================================
+   5. BRÚJULA DE ENUNCIADOS
+   ========================================================= */
+let compassFilterCat = 'all';
+let selectedCompassId = COMPASS_PHRASES[0].id;
+
+function setCompassCat(cat, btnEl) {
+  compassFilterCat = cat;
+  const group = btnEl ? btnEl.parentElement : null;
+  if (group) {
+    group.querySelectorAll('.seg-btn').forEach((b) => b.classList.remove('active'));
+  }
+  if (btnEl) btnEl.classList.add('active');
+  renderCompassList();
+}
+
+function filterCompass() {
+  renderCompassList();
+}
+
+function renderCompassList() {
+  const listEl = document.getElementById('compass-list');
+  const searchEl = document.getElementById('compass-search');
+  if (!listEl) return;
+  const query = searchEl ? searchEl.value.trim().toLowerCase() : '';
+
+  const filtered = COMPASS_PHRASES.filter((item) => {
+    const catOk = compassFilterCat === 'all' || item.cat === compassFilterCat;
+    const textOk = !query || `${item.phrase} ${item.meaning} ${item.formula} ${item.catLabel}`.toLowerCase().includes(query);
+    return catOk && textOk;
+  });
+
+  if (!filtered.length) {
+    listEl.innerHTML = `<div class="phrase-card-btn"><strong>Sin coincidencias</strong><span class="phrase-title">Prueba con otra palabra clave (ej: frenado, 180°, túnel, vida media).</span></div>`;
+    return;
+  }
+
+  if (!filtered.some((f) => f.id === selectedCompassId)) {
+    selectedCompassId = filtered[0].id;
+  }
+
+  listEl.innerHTML = filtered.map((item) => `
+    <button type="button" class="phrase-card-btn ${item.id === selectedCompassId ? 'active' : ''}" onclick="selectCompass('${item.id}')">
+      <span class="badge-pill ${item.cat === 'compton' ? 'coral' : item.cat === 'heisenberg' ? 'plum' : ''}">${item.catLabel}</span>
+      <span class="phrase-title">${item.phrase}</span>
+    </button>
+  `).join('');
+
+  renderCompassInspector();
+}
+
+function selectCompass(id) {
+  selectedCompassId = id;
+  renderCompassList();
+}
+
+function renderCompassInspector() {
+  const el = document.getElementById('compass-inspector');
+  if (!el) return;
+  const item = COMPASS_PHRASES.find((p) => p.id === selectedCompassId) || COMPASS_PHRASES[0];
+  el.innerHTML = `
+    <span class="badge-pill">${item.catLabel}</span>
+    <h3 style="margin:var(--space-sm) 0 0; font-size:1.25rem; font-weight:800;">${item.phrase}</h3>
+    <div class="inspector-grid">
+      <div class="inspector-row">
+        <h4>Significado físico real</h4>
+        <p style="margin:0;">${item.meaning}</p>
+      </div>
+      <div class="inspector-row">
+        <h4>Variables cero o extremas</h4>
+        <p style="margin:0;">${item.zeros}</p>
+      </div>
+      <div class="inspector-row">
+        <h4>Leyes de conservación aplicables</h4>
+        <p style="margin:0;">${item.conservation}</p>
+      </div>
+      <div class="inspector-row">
+        <h4>Fórmula directa</h4>
+        <p style="margin:0; font-family:var(--font-mono); font-weight:700; color:var(--primary);">${item.formula}</p>
+      </div>
+      <div class="inspector-row trap">
+        <h4>Trampa común a evitar</h4>
+        <p style="margin:0;">${item.trap}</p>
+      </div>
+    </div>
+  `;
+}
+
+/* =========================================================
+   6. CARRUSEL DE CONSTANTES (EXACTAMENTE 1 POR VISTA)
+   ========================================================= */
+function stepConstant(delta) {
+  const n = CONSTANTS_LIST.length;
+  appState.constIndex = (appState.constIndex + delta + n) % n;
+  renderConstantCarousel();
+  scheduleSave();
+}
+
+function goConstant(idx) {
+  appState.constIndex = idx;
+  renderConstantCarousel();
+  scheduleSave();
+}
+
+function renderConstantCarousel() {
+  const host = document.getElementById('const-slide-host');
+  const dots = document.getElementById('const-dots');
+  if (!host || !dots) return;
+  const idx = appState.constIndex || 0;
+  const c = CONSTANTS_LIST[idx];
+  host.innerHTML = `
+    <span class="badge-pill plum">Constante ${idx + 1} de ${CONSTANTS_LIST.length}</span>
+    <div class="const-symbol">${c.symbol}</div>
+    <h3 class="const-name">${c.name}</h3>
+    <div class="const-values">
+      <span class="const-val-pill">${c.si}</span>
+      <span class="const-val-pill">${c.alt}</span>
+    </div>
+    <p class="const-desc">${c.desc}</p>
+  `;
+  dots.innerHTML = CONSTANTS_LIST.map((item, i) => `
+    <button type="button" class="dot-btn ${i === idx ? 'active' : ''}" aria-label="Ver constante ${item.name}" onclick="goConstant(${i})"></button>
+  `).join('');
+}
+
+/* =========================================================
+   7. CABECERA ANIMADA INTERACTIVA (PAQUETES DE ONDA + CHOQUES)
+   ========================================================= */
+let heroMode = 'compton';
+let heroWave = 'uv';
+let heroPhotons = [];
+let heroElectrons = [];
+let heroFrameId = null;
+let heroLastSpawn = 0;
+
+function setHeroMode(mode) {
+  heroMode = mode;
+  const b1 = document.getElementById('hero-mode-compton');
+  const b2 = document.getElementById('hero-mode-photo');
+  if (b1) b1.classList.toggle('active', mode === 'compton');
+  if (b2) b2.classList.toggle('active', mode === 'photo');
+  const note = document.getElementById('hero-collision-note');
+  if (note) {
+    note.textContent = mode === 'compton'
+      ? `En Compton, el fotón cede momento y se estira a una longitud de onda mayor (λ' > λ).`
+      : `En Fotoeléctrico, el fotón desaparece por completo si E ≥ ϕ y libera un electrón.`;
+  }
+  spawnHeroPhoton(0.5);
+}
+
+function setHeroWave(wlKey) {
+  heroWave = wlKey;
+  ['uv', 'blue', 'coral'].forEach((k) => {
+    const b = document.getElementById(`hero-wl-${k}`);
+    if (b) b.classList.toggle('active', k === wlKey);
+  });
+  const map = {
+    uv: { nm: 310, e: `4.00 eV`, p: `4.00 eV/c` },
+    blue: { nm: 450, e: `2.76 eV`, p: `2.76 eV/c` },
+    coral: { nm: 620, e: `2.00 eV`, p: `2.00 eV/c` }
+  };
+  const eEl = document.getElementById('hero-metric-e');
+  const pEl = document.getElementById('hero-metric-p');
+  if (eEl) eEl.textContent = `E = ${map[wlKey].e}`;
+  if (pEl) pEl.textContent = `p = ${map[wlKey].p}`;
+  spawnHeroPhoton(0.45);
+}
+
+function getHeroColor() {
+  if (heroWave === 'uv') return THEME.uv || THEME.primary;
+  if (heroWave === 'blue') return THEME.blue || THEME.primary;
+  return THEME.coral || THEME.secondary;
+}
+
+function spawnHeroPhoton(yRatio) {
+  const canvas = document.getElementById('hero-canvas');
+  if (!canvas) return;
+  const h = canvas.height || 240;
+  const y = Math.max(36, Math.min(h - 36, yRatio * h));
+  const freqMap = { uv: 0.34, blue: 0.24, coral: 0.16 };
+  heroPhotons.push({
+    x: -50,
+    y: y,
+    vx: 3.1,
+    vy: 0,
+    k: freqMap[heroWave] || 0.25,
+    color: getHeroColor(),
+    hit: false,
+    alpha: 1,
+    wavelengthKey: heroWave
+  });
+  if (heroPhotons.length > 10) heroPhotons.shift();
+}
+
+function initHeroCanvas() {
+  const canvas = document.getElementById('hero-canvas');
+  const wrap = document.getElementById('hero-canvas-wrap');
+  if (!canvas || !wrap) return;
+
+  function resizeHero() {
+    canvas.width = wrap.clientWidth || 720;
+    canvas.height = wrap.clientHeight || 240;
+    heroElectrons = [
+      { x: canvas.width * 0.56, y: canvas.height * 0.36, vx: 0, vy: 0, homeX: canvas.width * 0.56, homeY: canvas.height * 0.36, ejected: false },
+      { x: canvas.width * 0.62, y: canvas.height * 0.64, vx: 0, vy: 0, homeX: canvas.width * 0.62, homeY: canvas.height * 0.64, ejected: false }
+    ];
+  }
+  resizeHero();
+  window.addEventListener('resize', resizeHero);
+
+  canvas.addEventListener('click', (ev) => {
+    const rect = canvas.getBoundingClientRect();
+    const ratio = (ev.clientY - rect.top) / rect.height;
+    spawnHeroPhoton(ratio);
+  });
+
+  spawnHeroPhoton(0.36);
+
+  function tick(ts) {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const w = canvas.width;
+    const h = canvas.height;
+
+    if (ts - heroLastSpawn > 2100) {
+      heroLastSpawn = ts;
+      spawnHeroPhoton(heroPhotons.length % 2 === 0 ? 0.36 : 0.64);
+    }
+
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, THEME.bgTop);
+    grad.addColorStop(1, THEME.bgBot);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = THEME.grid;
+    ctx.lineWidth = 1;
+    for (let gx = 40; gx < w; gx += 50) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (let gy = 40; gy < h; gy += 50) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+
+    if (heroMode === 'photo') {
+      ctx.fillStyle = THEME.grid;
+      ctx.fillRect(w * 0.52, 16, 18, h - 32);
+      ctx.fillStyle = THEME.inkMuted;
+      ctx.font = `700 11px DM Sans, sans-serif`;
+      ctx.fillText(`Placa metálica (ϕ = 2.3 eV)`, w * 0.52 - 58, h - 10);
+    }
+
+    // Dibujar y actualizar electrones
+    heroElectrons.forEach((el) => {
+      if (el.ejected) {
+        el.x += el.vx;
+        el.y += el.vy;
+        if (el.x > w + 25 || el.y < -25 || el.y > h + 25) {
+          el.ejected = false;
+          el.x = el.homeX;
+          el.y = el.homeY;
+          el.vx = 0;
+          el.vy = 0;
         }
-        for (let i = 0; i < 60; i++) particles.push(new Photon());
+      } else {
+        el.x = el.homeX + Math.sin(ts * 0.004 + el.homeY) * 3;
+        el.y = el.homeY + Math.cos(ts * 0.003 + el.homeX) * 3;
+      }
 
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
-        }
-        animate();
+      ctx.beginPath();
+      ctx.arc(el.x, el.y, 18, 0, Math.PI * 2);
+      ctx.fillStyle = el.ejected ? THEME.secondary : THEME.primary;
+      ctx.globalAlpha = 0.16;
+      ctx.fill();
+      ctx.globalAlpha = 1;
 
-        // Acordeón de Soluciones
-        function toggleSolution(id) {
-            const el = document.getElementById(id);
-            el.style.display = el.style.display === 'block' ? 'none' : 'block';
-        }
+      ctx.beginPath();
+      ctx.arc(el.x, el.y, 7, 0, Math.PI * 2);
+      ctx.fillStyle = el.ejected ? THEME.secondary : THEME.primary;
+      ctx.fill();
 
-        // Carrusel de Constantes
-        const constantes = [
-            { nombre: "Constante de Planck (h)", valor: "6.626 × 10⁻³⁴ J·s", equiv: "4.136 × 10⁻¹⁵ eV·s" },
-            { nombre: "hc (Atajo útil)", valor: "1240 eV·nm", equiv: "Úsalo directo en E = hc/λ" },
-            { nombre: "Masa del Electrón (me)", valor: "9.11 × 10⁻³¹ kg", equiv: "0.511 MeV/c²" },
-            { nombre: "Carga elemental (e)", valor: "1.602 × 10⁻¹⁹ C", equiv: "Factor Joules a eV" }
-        ];
-        let constIndex = 0;
-        const constCard = document.getElementById('constCard');
+      ctx.fillStyle = THEME.white;
+      ctx.font = `700 10px JetBrains Mono, monospace`;
+      ctx.fillText(`e⁻`, el.x - 6, el.y + 3.5);
+    });
 
-        function updateConst() {
-            const c = constantes[constIndex];
-            constCard.innerHTML = `<h3 style="color:var(--primary); margin-bottom:10px;">${c.nombre}</h3><p style="font-size:1.2rem; font-weight:bold;">${c.valor}</p><p style="color:var(--text-muted); margin-top:5px;">${c.equiv}</p>`;
-        }
-        function nextConst() { constIndex = (constIndex + 1) % constantes.length; updateConst(); }
-        function prevConst() { constIndex = (constIndex - 1 + constantes.length) % constantes.length; updateConst(); }
-        updateConst();
+    // Dibujar y actualizar paquetes de onda
+    for (let i = heroPhotons.length - 1; i >= 0; i--) {
+      const p = heroPhotons[i];
+      p.x += p.vx;
+      p.y += p.vy;
 
-        // Guardado Local (localStorage)
-        function saveProgress(checkbox) {
-            localStorage.setItem(checkbox.id, checkbox.checked);
-        }
-        window.onload = () => {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(chk => {
-                if (localStorage.getItem(chk.id) === 'true') chk.checked = true;
-            });
-        }
-
-        // Tips Cuestionario
-        function showTip() {
-            const sel = document.getElementById('diagnostico').value;
-            const box = document.getElementById('tip-box');
-            if(sel === "conceptos") {
-                box.innerHTML = "💡 <strong>Tip:</strong> Clásica = Variables continuas. Cuántica = Variables discretas (cuantizadas) y fotones individuales.";
-                box.style.display = "block";
-            } else if (sel === "unidades") {
-                box.innerHTML = "💡 <strong>Tip:</strong> Si el problema usa nanómetros (nm), trabaja todo en eV usando \\(hc = 1240 \text{ eV}\cdot\text{nm}\\). ¡No pases a Joules a menos que te pidan velocidades en m/s!";
-                box.style.display = "block";
-            } else if (sel === "formulas") {
-                box.innerHTML = "💡 <strong>Tip:</strong> ¿Hablan de luz chocando metal? Efecto Fotoeléctrico. ¿Luz rebotando en un electrón libre? Efecto Compton. ¿Partícula atrapada en ancho L? Pozo de potencial.";
-                box.style.display = "block";
+      // Detectar colisión con electrón
+      if (!p.hit) {
+        heroElectrons.forEach((el) => {
+          const dx = p.x - el.x;
+          const dy = p.y - el.y;
+          if (!el.ejected && Math.hypot(dx, dy) < 26) {
+            p.hit = true;
+            if (heroMode === 'compton') {
+              p.vx = 2.4;
+              p.vy = -1.65;
+              p.k = p.k * 0.65;
+              p.color = THEME.coral;
+              el.ejected = true;
+              el.vx = 2.1;
+              el.vy = 1.45;
             } else {
-                box.style.display = "none";
+              if (p.wavelengthKey === 'coral') {
+                p.vx = 0;
+                p.alpha = 0;
+              } else {
+                p.alpha = 0;
+                el.ejected = true;
+                el.vx = p.wavelengthKey === 'uv' ? 3.4 : 2.1;
+                el.vy = (Math.random() - 0.5) * 0.6;
+              }
             }
+          }
+        });
+      }
+
+      if (p.alpha > 0.02) {
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(Math.atan2(p.vy, p.vx));
+        ctx.strokeStyle = p.color;
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        for (let s = -36; s <= 36; s += 2) {
+          const env = Math.exp(-(s * s) / 380);
+          const wy = Math.sin(s * p.k - ts * 0.015) * 13 * env;
+          if (s === -36) ctx.moveTo(s, wy);
+          else ctx.lineTo(s, wy);
         }
-    </script>
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      if (p.x > w + 70 || p.y < -60 || p.y > h + 60 || p.alpha <= 0.02) {
+        heroPhotons.splice(i, 1);
+      }
+    }
+
+    heroFrameId = requestAnimationFrame(tick);
+  }
+
+  if (heroFrameId) cancelAnimationFrame(heroFrameId);
+  heroFrameId = requestAnimationFrame(tick);
+}
+
+/* =========================================================
+   8. SIMULADORES DEL LABORATORIO VISUAL
+   ========================================================= */
+let peParticles = [];
+let peAnimId = null;
+
+function setPEPhi(val) {
+  const el = document.getElementById('pe-phi');
+  if (el) el.value = val;
+  updatePESim();
+}
+
+function wavelengthToColor(nm) {
+  if (nm < 380) return THEME.uv;
+  if (nm < 485) return THEME.blue;
+  if (nm < 565) return THEME.green;
+  if (nm < 595) return THEME.yellow;
+  return THEME.coral;
+}
+
+function updatePESim() {
+  const wl = parseFloat(document.getElementById('pe-wl').value);
+  const phi = parseFloat(document.getElementById('pe-phi').value);
+  const inten = parseFloat(document.getElementById('pe-int').value);
+  const volt = parseFloat(document.getElementById('pe-volt').value);
+
+  document.getElementById('pe-wl-val').textContent = `${wl} nm`;
+  document.getElementById('pe-phi-val').textContent = `${phi.toFixed(2)} eV`;
+  document.getElementById('pe-int-val').textContent = `${inten}%`;
+  document.getElementById('pe-volt-val').textContent = `${volt.toFixed(2)} V`;
+
+  const ePhoton = 1240 / wl;
+  const kMax = Math.max(0, ePhoton - phi);
+  const vStop = -kMax;
+  const lambdaCut = 1240 / phi;
+
+  document.getElementById('pe-e-out').textContent = `${ePhoton.toFixed(2)} eV`;
+  document.getElementById('pe-k-out').textContent = `${kMax.toFixed(2)} eV`;
+  document.getElementById('pe-vs-out').textContent = kMax > 0 ? `${vStop.toFixed(2)} V` : `Sin emisión`;
+  document.getElementById('pe-l0-out').textContent = `${lambdaCut.toFixed(0)} nm`;
+
+  const badge = document.getElementById('pe-status-badge');
+  if (badge) {
+    if (kMax <= 0) {
+      badge.textContent = `Bajo umbral (E < ϕ)`;
+      badge.className = `badge-pill coral`;
+    } else if (volt <= vStop) {
+      badge.textContent = `Frenados (I = 0)`;
+      badge.className = `badge-pill plum`;
+    } else {
+      badge.textContent = `Fotocorriente activa`;
+      badge.className = `badge-pill`;
+    }
+  }
+
+  drawPEIVCurve(kMax, inten, volt);
+}
+
+function drawPEIVCurve(kMax, inten, currentVolt) {
+  const canvas = document.getElementById('pe-iv-canvas');
+  if (!canvas) return;
+  const box = canvas.parentElement;
+  canvas.width = box.clientWidth || 440;
+  canvas.height = box.clientHeight || 180;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.fillStyle = THEME.white;
+  ctx.fillRect(0, 0, w, h);
+
+  const padL = 44, padR = 18, padT = 22, padB = 28;
+  const gw = w - padL - padR;
+  const gh = h - padT - padB;
+  const vMin = -4.0, vMax = 3.0;
+  const mapX = (v) => padL + ((v - vMin) / (vMax - vMin)) * gw;
+  const mapY = (cur) => padT + gh - cur * gh;
+
+  // Grid & ejes
+  ctx.strokeStyle = THEME.grid;
+  ctx.lineWidth = 1;
+  [-3, -2, -1, 0, 1, 2].forEach((vx) => {
+    const x = mapX(vx);
+    ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT + gh); ctx.stroke();
+  });
+  ctx.strokeStyle = THEME.inkMuted;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(padL, padT + gh); ctx.lineTo(padL + gw, padT + gh); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(mapX(0), padT); ctx.lineTo(mapX(0), padT + gh); ctx.stroke();
+
+  const iSat = inten / 100;
+  const vStop = -kMax;
+
+  // Curva I-V suave
+  ctx.strokeStyle = THEME.primary;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let px = 0; px <= gw; px += 3) {
+    const v = vMin + (px / gw) * (vMax - vMin);
+    let cur = 0;
+    if (kMax > 0 && v > vStop) {
+      const t = (v - vStop) / Math.max(0.35, 0.7);
+      cur = iSat * Math.min(1, 1 - Math.exp(-t * 2.3));
+    }
+    const y = mapY(cur);
+    if (px === 0) ctx.moveTo(padL + px, y);
+    else ctx.lineTo(padL + px, y);
+  }
+  ctx.stroke();
+
+  // Punto actual
+  let curNow = 0;
+  if (kMax > 0 && currentVolt > vStop) {
+    const t = (currentVolt - vStop) / 0.7;
+    curNow = iSat * Math.min(1, 1 - Math.exp(-t * 2.3));
+  }
+  ctx.beginPath();
+  ctx.arc(mapX(currentVolt), mapY(curNow), 6, 0, Math.PI * 2);
+  ctx.fillStyle = THEME.secondary;
+  ctx.fill();
+
+  ctx.fillStyle = THEME.ink;
+  ctx.font = `700 11px DM Sans, sans-serif`;
+  ctx.fillText(`Curva Corriente (I) vs Voltaje (V)`, padL + 6, 15);
+  ctx.fillStyle = THEME.inkMuted;
+  ctx.font = `500 10px JetBrains Mono, monospace`;
+  [-3, -2, -1, 0, 1, 2].forEach((vx) => {
+    ctx.fillText(`${vx}V`, mapX(vx) - 8, h - 8);
+  });
+  if (kMax > 0 && vStop >= vMin) {
+    ctx.fillStyle = THEME.secondary;
+    ctx.fillText(`Vs=${vStop.toFixed(2)}V`, Math.max(padL, mapX(vStop) - 22), padT + gh - 8);
+  }
+}
+
+function startPEAnimation() {
+  const canvas = document.getElementById('pe-sim-canvas');
+  if (!canvas) return;
+
+  function step(ts) {
+    const box = canvas.parentElement;
+    if (box && (canvas.width !== box.clientWidth || canvas.height !== box.clientHeight)) {
+      canvas.width = box.clientWidth || 440;
+      canvas.height = box.clientHeight || 240;
+    }
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    const wl = parseFloat(document.getElementById('pe-wl').value);
+    const phi = parseFloat(document.getElementById('pe-phi').value);
+    const inten = parseFloat(document.getElementById('pe-int').value);
+    const volt = parseFloat(document.getElementById('pe-volt').value);
+    const ePhoton = 1240 / wl;
+    const kMax = Math.max(0, ePhoton - phi);
+    const beamCol = wavelengthToColor(wl);
+
+    ctx.fillStyle = THEME.bgTop;
+    ctx.fillRect(0, 0, w, h);
+
+    // Placas cátodo y ánodo
+    const catX = 48;
+    const anoX = w - 42;
+    ctx.fillStyle = THEME.primary;
+    ctx.fillRect(catX, 26, 12, h - 52);
+    ctx.fillStyle = THEME.plum;
+    ctx.fillRect(anoX, 26, 10, h - 52);
+
+    ctx.fillStyle = THEME.ink;
+    ctx.font = `700 11px DM Sans, sans-serif`;
+    ctx.fillText(`Cátodo`, catX - 8, h - 8);
+    ctx.fillText(`Ánodo (${volt.toFixed(1)}V)`, anoX - 44, h - 8);
+
+    // Haz de luz
+    ctx.strokeStyle = beamCol;
+    ctx.lineWidth = Math.max(2, (inten / 100) * 6);
+    ctx.globalAlpha = 0.25 + (inten / 100) * 0.55;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.42, 10);
+    ctx.lineTo(catX + 12, h * 0.5);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Emitir electrones si E >= phi
+    if (kMax > 0 && peParticles.length < Math.round(inten / 4) && Math.random() < inten / 180) {
+      const kFraction = 0.4 + Math.random() * 0.6;
+      const eKinetic = kMax * kFraction;
+      peParticles.push({
+        x: catX + 14,
+        y: 38 + Math.random() * (h - 80),
+        vx: Math.sqrt(eKinetic) * 2.2,
+        k0: eKinetic
+      });
+    }
+
+    const accel = volt * 0.032;
+    for (let i = peParticles.length - 1; i >= 0; i--) {
+      const p = peParticles[i];
+      p.vx += accel;
+      p.x += p.vx;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = THEME.secondary;
+      ctx.fill();
+      if (p.x >= anoX || p.x < catX + 8) {
+        peParticles.splice(i, 1);
+      }
+    }
+
+    peAnimId = requestAnimationFrame(step);
+  }
+
+  if (peAnimId) cancelAnimationFrame(peAnimId);
+  peAnimId = requestAnimationFrame(step);
+}
+
+function setComptonPreset(wlPm, thetaDeg) {
+  document.getElementById('cp-wl').value = wlPm;
+  document.getElementById('cp-theta').value = thetaDeg;
+  updateComptonSim();
+}
+
+function updateComptonSim() {
+  const wl = parseFloat(document.getElementById('cp-wl').value);
+  const thetaDeg = parseFloat(document.getElementById('cp-theta').value);
+  const thetaRad = (thetaDeg * Math.PI) / 180;
+  const lambdaC = 2.426;
+  const dLambda = lambdaC * (1 - Math.cos(thetaRad));
+  const wlPrime = wl + dLambda;
+
+  const e0 = 1240 / wl; // porque 1240 eV*nm = 1240 keV*pm!
+  const ePrime = 1240 / wlPrime;
+  const kElec = Math.max(0, e0 - ePrime);
+
+  document.getElementById('cp-wl-val').textContent = `${wl.toFixed(1)} pm`;
+  document.getElementById('cp-theta-val').textContent = `${thetaDeg}°`;
+  document.getElementById('cp-dl-out').textContent = `${dLambda.toFixed(2)} pm`;
+  document.getElementById('cp-lp-out').textContent = `${wlPrime.toFixed(2)} pm`;
+  document.getElementById('cp-e0-out').textContent = `${e0.toFixed(1)} keV`;
+  document.getElementById('cp-ke-out').textContent = `${kElec.toFixed(2)} keV`;
+
+  drawComptonGeometry(wl, wlPrime, thetaDeg, thetaRad);
+  drawComptonSpectrum(wl, wlPrime);
+}
+
+function drawComptonGeometry(wl, wlPrime, thetaDeg, thetaRad) {
+  const canvas = document.getElementById('cp-sim-canvas');
+  if (!canvas) return;
+  const box = canvas.parentElement;
+  canvas.width = box.clientWidth || 440;
+  canvas.height = box.clientHeight || 240;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.fillStyle = THEME.bgTop;
+  ctx.fillRect(0, 0, w, h);
+
+  const cx = w * 0.48;
+  const cy = h * 0.54;
+
+  // Eje referencia
+  ctx.setLineDash([5, 5]);
+  ctx.strokeStyle = THEME.inkMuted;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(24, cy); ctx.lineTo(w - 24, cy); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Fotón incidente (onda corta = más azul/baya)
+  ctx.strokeStyle = THEME.plum;
+  ctx.lineWidth = 2.6;
+  ctx.beginPath();
+  for (let x = 28; x <= cx - 10; x += 2) {
+    const wy = cy + Math.sin(x * 0.35) * 9;
+    if (x === 28) ctx.moveTo(x, wy);
+    else ctx.lineTo(x, wy);
+  }
+  ctx.stroke();
+
+  // Fotón dispersado en -thetaRad (arriba)
+  const len = 120;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-thetaRad);
+  ctx.strokeStyle = THEME.secondary;
+  ctx.lineWidth = 2.6;
+  ctx.beginPath();
+  const kOut = 0.35 * (wl / wlPrime);
+  for (let s = 10; s <= len; s += 2) {
+    const wy = Math.sin(s * kOut) * 9;
+    if (s === 10) ctx.moveTo(s, wy);
+    else ctx.lineTo(s, wy);
+  }
+  ctx.stroke();
+  ctx.fillStyle = THEME.secondary;
+  ctx.font = `700 11px JetBrains Mono, monospace`;
+  ctx.fillText(`λ'=${wlPrime.toFixed(1)}pm`, len - 32, -14);
+  ctx.restore();
+
+  // Electrón en retroceso hacia abajo
+  if (thetaDeg > 2) {
+    const phiRad = Math.atan2(Math.sin(thetaRad), (1 + (1240 / (wl * 511)) * (1 - Math.cos(thetaRad))) * (1 - Math.cos(thetaRad)) + 0.001) || (Math.PI / 2 - thetaRad / 2);
+    const ex = cx + Math.cos(phiRad) * 90;
+    const ey = cy + Math.sin(phiRad) * 90;
+    ctx.strokeStyle = THEME.primary;
+    ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey); ctx.stroke();
+    ctx.beginPath(); ctx.arc(ex, ey, 6, 0, Math.PI * 2); ctx.fillStyle = THEME.primary; ctx.fill();
+    ctx.fillStyle = THEME.primary;
+    ctx.font = `700 11px DM Sans, sans-serif`;
+    ctx.fillText(`e⁻ retroceso`, ex + 8, ey + 4);
+  }
+
+  // Electrón blanco en el centro
+  ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+  ctx.fillStyle = THEME.primary; ctx.fill();
+
+  ctx.fillStyle = THEME.ink;
+  ctx.font = `700 11px JetBrains Mono, monospace`;
+  ctx.fillText(`λ=${wl.toFixed(1)}pm`, 30, cy - 16);
+  ctx.fillText(`θ=${thetaDeg}°`, cx + 22, cy - 14);
+}
+
+function drawComptonSpectrum(wl, wlPrime) {
+  const canvas = document.getElementById('cp-spec-canvas');
+  if (!canvas) return;
+  const box = canvas.parentElement;
+  canvas.width = box.clientWidth || 440;
+  canvas.height = box.clientHeight || 180;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.fillStyle = THEME.white;
+  ctx.fillRect(0, 0, w, h);
+
+  const padL = 32, padR = 20, padT = 24, padB = 26;
+  const gw = w - padL - padR;
+  const gh = h - padT - padB;
+  const xMin = wl - 4;
+  const xMax = wl + 10;
+  const mapX = (val) => padL + ((val - xMin) / (xMax - xMin)) * gw;
+
+  ctx.strokeStyle = THEME.inkMuted;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(padL, padT + gh); ctx.lineTo(padL + gw, padT + gh); ctx.stroke();
+
+  // Curva de dos picos gaussianos (pico original en wl + pico Compton en wlPrime)
+  ctx.strokeStyle = THEME.primary;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let px = 0; px <= gw; px += 2) {
+    const lam = xMin + (px / gw) * (xMax - xMin);
+    const p1 = 0.72 * Math.exp(-Math.pow((lam - wl) / 0.55, 2));
+    const p2 = 0.92 * Math.exp(-Math.pow((lam - wlPrime) / 0.65, 2));
+    const y = padT + gh - Math.min(1, p1 + p2) * (gh - 12);
+    if (px === 0) ctx.moveTo(padL + px, y);
+    else ctx.lineTo(padL + px, y);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = THEME.ink;
+  ctx.font = `700 11px DM Sans, sans-serif`;
+  ctx.fillText(`Espectro de Dispersión: Pico fijo (λ) vs Pico Compton (λ')`, padL, 15);
+  ctx.fillStyle = THEME.plum;
+  ctx.font = `700 10px JetBrains Mono, monospace`;
+  ctx.fillText(`λ`, mapX(wl) - 4, h - 8);
+  ctx.fillStyle = THEME.secondary;
+  ctx.fillText(`λ'`, mapX(wlPrime) - 4, h - 8);
+}
+
+/* =========================================================
+   9. NOTAS, EXPORTACIÓN Y REINICIO SIN ALERT/CONFIRM
+   ========================================================= */
+function onNotesInput(val) {
+  appState.notes = val;
+  scheduleSave();
+}
+
+function exportStudySummary() {
+  let solvedCount = 0;
+  Object.keys(appState.solvedProblems).forEach((k) => { if (appState.solvedProblems[k]) solvedCount++; });
+  const lines = [
+    `RESUMEN DE ESTUDIO — FÍSICA MODERNA (FI1100)`,
+    `Desafíos dominados: ${solvedCount} / 24`,
+    ``,
+    `MIS NOTAS PERSONALES:`,
+    appState.notes || `(Sin apuntes escritos aún)`,
+    ``
+  ];
+  const content = lines.join('\n');
+  if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === 'function') {
+    window.notebookAppApi.triggerFileDownload({
+      content: content,
+      contentType: 'text/plain',
+      encoding: 'UTF-8',
+      filename: 'resumen_fisica_moderna.txt'
+    });
+  } else {
+    setSaveStatus('Descarga lista en entorno Notebook');
+  }
+}
+
+function handleResetProgress(btn) {
+  if (!btn) return;
+  if (btn.dataset.armed !== 'true') {
+    btn.dataset.armed = 'true';
+    btn.textContent = `Haz clic de nuevo para confirmar`;
+    setTimeout(() => {
+      if (btn.dataset.armed === 'true') {
+        btn.dataset.armed = 'false';
+        btn.textContent = `Reiniciar progreso`;
+      }
+    }, 4500);
+    return;
+  }
+  btn.dataset.armed = 'false';
+  btn.textContent = `Reiniciar progreso`;
+  appState = {
+    dockCollapsed: false,
+    diagChecked: {},
+    solvedProblems: {},
+    reflections: {},
+    activeTabs: { u1: 'teoria', u2: 'teoria', u3: 'teoria', u4: 'teoria' },
+    activeLevels: { u1: 0, u2: 0, u3: 0, u4: 0 },
+    constIndex: 0,
+    notes: ''
+  };
+  hydrateAllUI();
+  persistStateNow();
+}
+
+function hydrateAllUI() {
+  applyDockUI();
+  Object.keys(appState.diagChecked).forEach((k) => {
+    const cb = document.getElementById(`diag-${k}`);
+    if (cb) cb.checked = !!appState.diagChecked[k];
+  });
+  document.querySelectorAll('.diagnostic-list input[type="checkbox"]').forEach((cb) => {
+    const key = cb.id.replace('diag-', '');
+    cb.checked = !!appState.diagChecked[key];
+  });
+  ['u1', 'u2', 'u3', 'u4'].forEach((u) => {
+    switchUnitTab(u, appState.activeTabs[u] || 'teoria');
+    renderUnitLadder(u);
+    applyReflectionUI(u);
+  });
+  const notesEl = document.getElementById('personal-notes');
+  if (notesEl) notesEl.value = appState.notes || '';
+  updateGlobalMastery();
+  renderConstantCarousel();
+}
+
+/* =========================================================
+   10. INICIALIZACIÓN PRINCIPAL
+   ========================================================= */
+async function initApp() {
+  readThemeTokens();
+  await loadPersistedState();
+  hydrateAllUI();
+  renderCompassList();
+  setupScrollSpy();
+  initHeroCanvas();
+  updatePESim();
+  startPEAnimation();
+  updateComptonSim();
+
+  window.addEventListener('resize', () => {
+    updatePESim();
+    updateComptonSim();
+  });
+
+  if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
+    window.notebookAppApi.notifyAppReady();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initApp);
+</script>
 </body>
 </html>
-```
