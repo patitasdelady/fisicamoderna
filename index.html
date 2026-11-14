@@ -1,0 +1,3083 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="narrative">
+  <meta name="design-style" content="sticker">
+  <title>Física Moderna Interactiva — Interacción Luz-Materia y Cuántica</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces — Pastel rosita suave y amable a la vista */
+      --background: #fef5fa;
+      --surface-container-low: #ffffff;
+      --surface-container: #fdebf4;
+      --surface-container-high: #f8dceb;
+
+      /* Ink */
+      --on-surface: #361b2e;
+      --on-surface-variant: #6b4661;
+
+      /* Rules */
+      --outline: #b993ab;
+      --outline-variant: #ecd2e2;
+
+      /* Accents */
+      --primary: #be2576;
+      --on-primary: #ffffff;
+      --primary-container: #fbd0e6;
+      --on-primary-container: #361b2e;
+      --secondary: #754c9e;
+      --on-secondary: #ffffff;
+      --secondary-container: #ede3f9;
+      --tertiary: #1989b8;
+      --tertiary-container: #dff3fc;
+      --error: #b82b3b;
+      --on-error: #ffffff;
+      --positive: #1f7a56;
+      --positive-container: #ddf5ea;
+      --warning: #a65c00;
+      --warning-container: #fff0d9;
+
+      /* Data series */
+      --data-1: #be2576;
+      --data-2: #754c9e;
+      --data-3: #1989b8;
+      --data-4: #c86414;
+      --data-context: #cbb5c5;
+
+      /* Fonts */
+      --font-headline: 'DM Sans', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-label: 'DM Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      /* Shape */
+      --rounded: 1.25rem;
+      --rounded-lg: 2rem;
+      --rounded-full: 9999px;
+
+      /* Style effects */
+      --shadow-pink: 0 6px 20px rgb(190 37 118 / 0.14);
+      --shadow-pink-deep: 0 12px 30px rgb(190 37 118 / 0.24);
+      --shadow-grape: 0 6px 20px rgb(117 76 158 / 0.14);
+      --shadow-sky: 0 6px 20px rgb(25 137 184 / 0.14);
+      --pop-scale: scale(1.03);
+      --lift: translateY(-4px);
+      --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+      /* Focus */
+      --focus: var(--primary);
+
+      /* Type scale (Narrative) */
+      --display-size: clamp(2.25rem, 1.3rem + 3.2vw, 3.6rem);
+      --headline-size: clamp(1.65rem, 1.2rem + 1.5vw, 2.35rem);
+      --subhead-size: clamp(1.15rem, 1.05rem + 0.45vw, 1.38rem);
+      --body-size: clamp(1rem, 0.96rem + 0.18vw, 1.08rem);
+      --label-size: clamp(0.75rem, 0.72rem + 0.12vw, 0.8125rem);
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 5.5rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.6;
+      scroll-behavior: smooth;
+    }
+    header { position: static !important; }
+
+    .page-grid {
+      display: grid;
+      gap: var(--space-2xl);
+      padding: var(--space-lg);
+      max-width: 1220px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Focus rings */
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Typography */
+    h1, h2, h3 {
+      margin: 0;
+      font-family: var(--font-headline);
+      color: var(--on-surface);
+    }
+    .display {
+      font-weight: 900;
+      font-size: var(--display-size);
+      letter-spacing: -0.03em;
+      line-height: 1.06;
+    }
+    .section-title {
+      font-weight: 800;
+      font-size: var(--headline-size);
+      letter-spacing: -0.025em;
+      line-height: 1.12;
+    }
+    .display em, .section-title em {
+      font-style: normal;
+      color: var(--primary);
+    }
+    .subhead {
+      font-weight: 700;
+      font-size: var(--subhead-size);
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+    }
+    .lede {
+      margin: var(--space-sm) 0 0;
+      color: var(--on-surface-variant);
+      max-width: 62ch;
+      font-size: 1.05rem;
+    }
+    .label-kicker {
+      display: inline-block;
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--secondary);
+      margin-bottom: var(--space-xs);
+    }
+    .mono {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Top study header bar */
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      background: var(--surface-container-low);
+      border-radius: var(--rounded-full);
+      padding: var(--space-sm) var(--space-lg);
+      box-shadow: var(--shadow-pink);
+    }
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+    .badge-course {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--rounded-full);
+    }
+    .nav-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      align-items: center;
+    }
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 var(--space-md);
+      border-radius: var(--rounded-full);
+      text-decoration: none;
+      color: var(--on-surface);
+      font-weight: 600;
+      font-size: 0.875rem;
+      background: transparent;
+      transition: background-color var(--dur-short) var(--ease-out),
+                  color var(--dur-short) var(--ease-out),
+                  transform var(--dur-short) var(--ease-bounce);
+    }
+    .nav-pill:hover {
+      background: var(--surface-container);
+      color: var(--primary);
+      transform: var(--pop-scale);
+    }
+
+    /* Buttons & Controls */
+    button, input, select {
+      font-family: inherit;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--rounded-full);
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.9375rem;
+      text-decoration: none;
+      transition: transform var(--dur-short) var(--ease-bounce),
+                  box-shadow var(--dur-short) var(--ease-out),
+                  background-color var(--dur-short) var(--ease-out);
+    }
+    .btn:hover:not(:disabled) {
+      transform: var(--pop-scale);
+    }
+    .btn:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      box-shadow: var(--shadow-pink);
+    }
+    .btn-primary:hover:not(:disabled) {
+      box-shadow: var(--shadow-pink-deep);
+    }
+    .btn-secondary {
+      background: var(--secondary);
+      color: var(--on-secondary);
+      box-shadow: var(--shadow-grape);
+    }
+    .btn-soft {
+      background: var(--surface-container);
+      color: var(--on-surface);
+    }
+    .btn-soft:hover:not(:disabled) {
+      background: var(--surface-container-high);
+    }
+    .btn-sm {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-md);
+      font-size: 0.85rem;
+    }
+
+    /* Segmented controls */
+    .segmented {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      background: var(--surface-container);
+      padding: var(--space-xs);
+      border-radius: var(--rounded-full);
+    }
+    .seg-btn {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-md);
+      border: none;
+      border-radius: var(--rounded-full);
+      background: transparent;
+      color: var(--on-surface-variant);
+      font-weight: 700;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background-color var(--dur-short) var(--ease-out),
+                  color var(--dur-short) var(--ease-out),
+                  transform var(--dur-short) var(--ease-bounce),
+                  box-shadow var(--dur-short) var(--ease-out);
+    }
+    .seg-btn:hover {
+      color: var(--on-surface);
+    }
+    .seg-btn.active {
+      background: var(--surface-container-low);
+      color: var(--primary);
+      box-shadow: var(--shadow-pink);
+      transform: scale(1.01);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface-container-low);
+      border-radius: var(--rounded);
+      box-shadow: var(--shadow-pink);
+      padding: var(--space-lg);
+    }
+    .card-grape {
+      box-shadow: var(--shadow-grape);
+    }
+    .card-sky {
+      box-shadow: var(--shadow-sky);
+    }
+    .hero-panel {
+      background: var(--surface-container-low);
+      border-radius: var(--rounded-lg);
+      box-shadow: var(--shadow-pink-deep);
+      padding: var(--space-xl);
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
+      gap: var(--space-xl);
+      align-items: center;
+    }
+
+    /* Inputs & Sliders */
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .control-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: var(--space-sm);
+    }
+    .control-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--on-surface-variant);
+    }
+    .control-val {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 12px;
+      border-radius: var(--rounded-full);
+      background: var(--surface-container-high);
+      outline: none;
+      cursor: pointer;
+      margin: var(--space-xs) 0;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: var(--rounded-full);
+      background: var(--primary);
+      box-shadow: var(--shadow-pink);
+      cursor: pointer;
+      transition: transform var(--dur-micro) var(--ease-bounce);
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border: none;
+      border-radius: var(--rounded-full);
+      background: var(--primary);
+      box-shadow: var(--shadow-pink);
+      cursor: pointer;
+    }
+    select.pill-select {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-xl) var(--space-xs) var(--space-md);
+      border-radius: var(--rounded-full);
+      border: 2px solid var(--outline);
+      background-color: var(--surface-container);
+      color: var(--on-surface);
+      font-weight: 600;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      transition: border-color var(--dur-micro) var(--ease-out);
+    }
+    select.pill-select:focus {
+      border-color: var(--primary);
+    }
+
+    /* Canvas containers */
+    .canvas-stage {
+      position: relative;
+      width: 100%;
+      min-height: 360px;
+      border-radius: var(--rounded);
+      background: var(--surface-container);
+      overflow: hidden;
+    }
+    .canvas-stage canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 360px;
+      cursor: crosshair;
+    }
+    .canvas-overlay-hint {
+      position: absolute;
+      bottom: var(--space-sm);
+      left: var(--space-sm);
+      background: var(--surface-container-low);
+      color: var(--on-surface-variant);
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--rounded-full);
+      font-size: 0.78rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-pink);
+      pointer-events: none;
+    }
+
+    /* Hero specifics */
+    .hero-controls {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+    .readout-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: var(--space-sm);
+    }
+    .readout-chip {
+      background: var(--surface-container);
+      border-radius: var(--rounded);
+      padding: var(--space-sm) var(--space-md);
+    }
+    .readout-chip .r-lbl {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+    }
+    .readout-chip .r-val {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--on-surface);
+    }
+
+    /* Constants Carousel */
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+    .carousel-shell {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: var(--space-md);
+      align-items: center;
+    }
+    .carousel-card {
+      background: var(--surface-container-low);
+      border-radius: var(--rounded-lg);
+      box-shadow: var(--shadow-grape);
+      padding: var(--space-xl);
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: var(--space-xl);
+      align-items: center;
+      min-height: 210px;
+      transition: transform var(--dur-short) var(--ease-out),
+                  opacity var(--dur-short) var(--ease-out);
+    }
+    .carousel-card.anim-swap {
+      animation: cardPop var(--dur-short) var(--ease-bounce);
+    }
+    @keyframes cardPop {
+      0% { opacity: 0.55; transform: scale(0.97); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .const-symbol-badge {
+      width: 96px;
+      height: 96px;
+      border-radius: var(--rounded-lg);
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 2.1rem;
+      font-weight: 800;
+      box-shadow: var(--shadow-pink);
+    }
+    .const-meta {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .const-values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+    .val-pill {
+      background: var(--surface-container);
+      color: var(--on-surface);
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--rounded-full);
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+    .val-pill.highlight {
+      background: var(--secondary-container);
+      color: var(--secondary);
+    }
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
+    .dot-btn {
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0 var(--space-sm);
+      border: none;
+      border-radius: var(--rounded-full);
+      background: var(--surface-container);
+      color: var(--on-surface-variant);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background-color var(--dur-short) var(--ease-out),
+                  color var(--dur-short) var(--ease-out),
+                  transform var(--dur-short) var(--ease-bounce);
+    }
+    .dot-btn.active {
+      background: var(--primary);
+      color: var(--on-primary);
+      box-shadow: var(--shadow-pink);
+      transform: scale(1.06);
+    }
+
+    /* Simulator Layout */
+    .sim-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.38fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+    .sim-controls {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+    .chip-btn {
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--rounded-full);
+      border: 2px solid var(--outline-variant);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: transform var(--dur-short) var(--ease-bounce),
+                  background-color var(--dur-short) var(--ease-out),
+                  border-color var(--dur-short) var(--ease-out);
+    }
+    .chip-btn:hover {
+      transform: var(--pop-scale);
+      background: var(--surface-container);
+      border-color: var(--primary);
+    }
+    .chip-btn.active-chip {
+      background: var(--primary-container);
+      border-color: var(--primary);
+      color: var(--on-primary-container);
+    }
+
+    /* Key figure cards */
+    .figures-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+    }
+    .fig-tile {
+      background: var(--surface-container);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+    }
+    .fig-tile .fig-lbl {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+    }
+    .fig-tile .fig-val {
+      display: block;
+      margin-top: var(--space-xs);
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--on-surface);
+    }
+    .fig-tile .fig-cap {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--on-surface-variant);
+      margin-top: 2px;
+    }
+    .callout-pill {
+      margin-top: var(--space-md);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--rounded);
+      background: var(--secondary-container);
+      color: var(--on-surface);
+      font-size: 0.9375rem;
+      font-weight: 500;
+    }
+    .callout-pill.ok {
+      background: var(--positive-container);
+    }
+    .callout-pill.warn {
+      background: var(--warning-container);
+    }
+
+    /* Styled math formula pill */
+    .formula-bar {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-xs);
+      background: var(--surface-container);
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--rounded-full);
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--secondary);
+    }
+
+    /* C2/C3 Conceptual Cards */
+    .c2-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      background: var(--surface-container-low);
+      padding: var(--space-sm) var(--space-lg);
+      border-radius: var(--rounded-full);
+      box-shadow: var(--shadow-sky);
+    }
+    .progress-track {
+      width: 140px;
+      height: 12px;
+      background: var(--surface-container-high);
+      border-radius: var(--rounded-full);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--tertiary);
+      border-radius: var(--rounded-full);
+      transition: width var(--dur-long) var(--ease-out);
+    }
+    .c2-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+      gap: var(--space-lg);
+    }
+    .c2-card {
+      background: var(--surface-container-low);
+      border-radius: var(--rounded);
+      box-shadow: var(--shadow-pink);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      transition: transform var(--dur-short) var(--ease-bounce),
+                  box-shadow var(--dur-short) var(--ease-out);
+    }
+    .c2-card:nth-child(3n+2) { box-shadow: var(--shadow-sky); }
+    .c2-card:nth-child(3n+3) { box-shadow: var(--shadow-grape); }
+    .c2-card:hover {
+      transform: var(--lift);
+    }
+    .c2-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .tag-cat {
+      display: inline-block;
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--rounded-full);
+      background: var(--secondary-container);
+      color: var(--secondary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .status-badge {
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--rounded-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: var(--surface-container);
+      color: var(--on-surface-variant);
+    }
+    .status-badge.mastered {
+      background: var(--positive-container);
+      color: var(--positive);
+    }
+    .c2-choices {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+    .choice-btn {
+      width: 100%;
+      min-height: 44px;
+      text-align: left;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--rounded);
+      border: 2px solid var(--outline-variant);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background-color var(--dur-short) var(--ease-out),
+                  border-color var(--dur-short) var(--ease-out),
+                  transform var(--dur-micro) var(--ease-bounce);
+    }
+    .choice-btn:hover {
+      background: var(--surface-container);
+      border-color: var(--secondary);
+    }
+    .choice-btn.selected-right {
+      background: var(--positive-container);
+      border-color: var(--positive);
+      color: var(--on-surface);
+    }
+    .choice-btn.selected-wrong {
+      background: var(--warning-container);
+      border-color: var(--warning);
+      color: var(--on-surface);
+    }
+    .reveal-box {
+      background: var(--surface-container);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      font-size: 0.92rem;
+      color: var(--on-surface);
+      animation: fadeSlide var(--dur-short) var(--ease-out);
+    }
+    .reveal-box.answer-full {
+      background: var(--primary-container);
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .c2-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: auto;
+      padding-top: var(--space-xs);
+    }
+
+    /* Footer */
+    .footer-card {
+      background: var(--surface-container-low);
+      border-radius: var(--rounded);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-pink);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+      color: var(--on-surface-variant);
+      font-size: 0.88rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 960px) {
+      .hero-panel,
+      .sim-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-md);
+        gap: var(--space-xl);
+      }
+      .hero-panel {
+        padding: var(--space-lg);
+      }
+      .carousel-shell {
+        grid-template-columns: 1fr;
+      }
+      .carousel-card {
+        grid-template-columns: 1fr;
+        text-align: left;
+        padding: var(--space-lg);
+      }
+      .top-bar {
+        border-radius: var(--rounded);
+        padding: var(--space-md);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-grid">
+
+    <!-- Top Navigation Bar -->
+    <header class="top-bar">
+      <div class="brand-group">
+        <span class="badge-course">FI1100 · Física Moderna</span>
+        <span style="font-weight: 700; color: var(--on-surface);">Laboratorio Visual Cuántico</span>
+      </div>
+      <nav class="nav-pills" aria-label="Secciones de estudio">
+        <a class="nav-pill" href="#hero-lab">Dualidad</a>
+        <a class="nav-pill" href="#constantes">Constantes</a>
+        <a class="nav-pill" href="#fotoelectrico">Fotoeléctrico</a>
+        <a class="nav-pill" href="#compton">Compton y Rayos X</a>
+        <a class="nav-pill" href="#cuantica">Incertidumbre y Pozo</a>
+        <a class="nav-pill" href="#tarjetas-c2">Preguntas C2/C3</a>
+      </nav>
+      <div class="brand-group">
+        <span id="top-progress-pill" class="val-pill highlight">0 / 6 dominadas</span>
+        <button id="btn-reset-state" type="button" class="btn btn-soft btn-sm" onclick="handleResetProgress(this)">Reiniciar progreso</button>
+      </div>
+    </header>
+
+    <!-- 1. HERO HEADER INTERACTIVO -->
+    <section id="hero-lab" class="hero-panel" aria-labelledby="hero-title">
+      <div>
+        <span class="label-kicker">Interacción Luz-Materia · Dualidad Onda-Partícula</span>
+        <h1 id="hero-title" class="display">La luz viaja como <em>cuanto</em>, la materia vibra como onda</h1>
+        <p class="lede">
+          Explora en tiempo real cómo los fotones se propagan como paquetes de ondas luminosas con energía discreta
+          <span class="mono">E = hν</span> y colisionan con electrones libres, transfiriendo momento
+          <span class="mono">p = h/λ</span>.
+        </p>
+
+        <div class="hero-controls">
+          <div class="control-group">
+            <div class="control-label-row">
+              <label for="hero-lambda" class="control-label">Longitud de onda del fotón (λ)</label>
+              <span id="hero-lambda-val" class="control-val">450 nm (Azul)</span>
+            </div>
+            <input type="range" id="hero-lambda" min="150" max="700" step="5" value="450" oninput="onHeroLambdaChange(this.value)">
+          </div>
+
+          <div class="readout-strip">
+            <div class="readout-chip">
+              <span class="r-lbl">Energía E = hc/λ</span>
+              <span id="hero-energy" class="r-val">2.76 eV</span>
+            </div>
+            <div class="readout-chip">
+              <span class="r-lbl">Frecuencia ν</span>
+              <span id="hero-freq" class="r-val">6.66 × 10¹⁴ Hz</span>
+            </div>
+            <div class="readout-chip">
+              <span class="r-lbl">Momento p = h/λ</span>
+              <span id="hero-mom" class="r-val">2.76 eV/c</span>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <span class="control-label">Modo de visualización</span>
+            <div class="segmented" role="group" aria-label="Modo de visualización del lienzo">
+              <button type="button" class="seg-btn active" id="hero-mode-dual" onclick="setHeroMode('dual')">Dualidad (Paquetes)</button>
+              <button type="button" class="seg-btn" id="hero-mode-photon" onclick="setHeroMode('photon')">Fotón-Partícula</button>
+              <button type="button" class="seg-btn" id="hero-mode-wave" onclick="setHeroMode('wave')">Ondas de Materia</button>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            <button type="button" class="btn btn-primary" id="hero-play-btn" onclick="toggleHeroPlay()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+              <span id="hero-play-label">Pausar</span>
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="spawnHeroPulse()">Emitir pulso cuántico</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="canvas-stage" style="min-height: 400px;">
+        <canvas id="hero-canvas" aria-label="Animación interactiva de paquetes de onda fotónicos colisionando con electrones"></canvas>
+        <div class="canvas-overlay-hint">Haz clic o mueve el puntero sobre el lienzo para lanzar paquetes de fotones</div>
+      </div>
+    </section>
+
+    <!-- 2. CARRUSEL DE CONSTANTES FÍSICAS FUNDAMENTALES -->
+    <section id="constantes" aria-labelledby="const-title">
+      <div class="section-head">
+        <div>
+          <span class="label-kicker">Caja de Herramientas FCFM</span>
+          <h2 id="const-title" class="section-title">Constantes físicas <em>fundamentales</em></h2>
+          <p class="lede">Un visor limpio, una constante a la vez, con sus equivalencias en unidades atómicas (<span class="mono">eV</span> y <span class="mono">nm</span>) para resolver problemas sin enredos.</p>
+        </div>
+        <div class="formula-bar" id="const-counter">Constante 1 de 7</div>
+      </div>
+
+      <div class="carousel-shell">
+        <button type="button" class="btn btn-soft" aria-label="Constante anterior" onclick="stepConstant(-1)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          Anterior
+        </button>
+
+        <article id="const-card" class="carousel-card" aria-live="polite">
+          <div id="const-symbol" class="const-symbol-badge">h</div>
+          <div class="const-meta">
+            <h3 id="const-name" class="subhead">Constante de Planck</h3>
+            <div id="const-values" class="const-values"></div>
+            <p id="const-desc" style="margin: 0; color: var(--on-surface-variant);"></p>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center;">
+              <span class="tag-cat" id="const-tag">Cuantización de energía</span>
+              <span id="const-tip" style="font-size: 0.88rem; font-weight: 600; color: var(--primary);"></span>
+            </div>
+          </div>
+        </article>
+
+        <button type="button" class="btn btn-soft" aria-label="Constante siguiente" onclick="stepConstant(1)">
+          Siguiente
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+
+      <div id="const-dots" class="carousel-dots" role="tablist" aria-label="Seleccionar constante física"></div>
+    </section>
+
+    <!-- 3. SIMULADOR 1: EFECTO FOTOELÉCTRICO -->
+    <section id="fotoelectrico" class="card" aria-labelledby="pe-title">
+      <div class="section-head">
+        <div>
+          <span class="label-kicker">Experimento 1 · Cuantización del Haz</span>
+          <h2 id="pe-title" class="section-title">Efecto <em>fotoeléctrico</em>: umbral instantáneo vs. modelo clásico</h2>
+          <p class="lede">Comprueba por qué la intensidad aumenta la corriente pero no la energía de cada electrón, y usa los datos reales del Auxiliar 8.</p>
+        </div>
+        <div class="formula-bar">K<sub>máx</sub> = eV<sub>s</sub> = hc/λ − φ</div>
+      </div>
+
+      <div class="sim-grid">
+        <div class="sim-controls">
+          <div class="control-group">
+            <label for="pe-metal" class="control-label">Placa metálica (Función trabajo φ)</label>
+            <select id="pe-metal" class="pill-select" onchange="onPeMetalChange(this.value)">
+              <option value="1.894">Metal Auxiliar 8 (φ = 1.894 eV)</option>
+              <option value="2.14">Cesio (φ = 2.14 eV)</option>
+              <option value="2.28">Sodio (φ = 2.28 eV)</option>
+              <option value="4.31">Zinc (φ = 4.31 eV)</option>
+              <option value="4.70">Cobre (φ = 4.70 eV)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <span class="control-label">Presets rápidos (Auxiliar 8 FCFM)</span>
+            <div class="preset-row">
+              <button type="button" class="chip-btn active-chip" id="pe-pre-hg" onclick="applyPePreset(546.1, 1.894, -0.376, 'pe-pre-hg')">Hg Verde (546.1 nm)</button>
+              <button type="button" class="chip-btn" id="pe-pre-he" onclick="applyPePreset(587.5, 1.894, 0, 'pe-pre-he')">He Amarillo (587.5 nm)</button>
+              <button type="button" class="chip-btn" id="pe-pre-uv" onclick="applyPePreset(250, 4.31, 0, 'pe-pre-uv')">UV sobre Zinc (250 nm)</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <label for="pe-lambda" class="control-label">Longitud de onda incidente (λ)</label>
+              <span id="pe-lambda-val" class="control-val">546.1 nm</span>
+            </div>
+            <input type="range" id="pe-lambda" min="180" max="720" step="0.5" value="546.1" oninput="onPeInput()">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <label for="pe-intensity" class="control-label">Intensidad luminosa (flujo de fotones)</label>
+              <span id="pe-intensity-val" class="control-val">60 %</span>
+            </div>
+            <input type="range" id="pe-intensity" min="10" max="100" step="5" value="60" oninput="onPeInput()">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <label for="pe-voltage" class="control-label">Voltaje aplicado al colector (V)</label>
+              <span id="pe-voltage-val" class="control-val">-0.38 V</span>
+            </div>
+            <input type="range" id="pe-voltage" min="-3.5" max="3.5" step="0.01" value="-0.376" oninput="onPeInput()">
+          </div>
+
+          <div class="control-group">
+            <span class="control-label">Teoría física en el tubo</span>
+            <div class="segmented" role="group" aria-label="Comparar modelo cuántico y clásico">
+              <button type="button" class="seg-btn active" id="pe-mode-quantum" onclick="setPeMode('quantum')">Cuántico (Einstein)</button>
+              <button type="button" class="seg-btn" id="pe-mode-classic" onclick="setPeMode('classic')">Clásico (Ondulatorio)</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="canvas-stage" style="min-height: 330px;">
+            <canvas id="pe-canvas" aria-label="Simulación del tubo fotoeléctrico con fotones y electrones eyectados"></canvas>
+          </div>
+
+          <div class="figures-row">
+            <div class="fig-tile">
+              <span class="fig-lbl">Energía fotón (hc/λ)</span>
+              <span id="pe-e-photon" class="fig-val">2.27 eV</span>
+              <span id="pe-lambda-corte" class="fig-cap">λ umbral: 655 nm</span>
+            </div>
+            <div class="fig-tile">
+              <span class="fig-lbl">K máx (e−)</span>
+              <span id="pe-kmax" class="fig-val">0.38 eV</span>
+              <span id="pe-vs" class="fig-cap">V frenado: 0.38 V</span>
+            </div>
+            <div class="fig-tile">
+              <span class="fig-lbl">Fotocorriente</span>
+              <span id="pe-current" class="fig-val">0.00 mA</span>
+              <span id="pe-current-cap" class="fig-cap">En el umbral de frenado</span>
+            </div>
+          </div>
+
+          <div id="pe-diagnosis" class="callout-pill ok">
+            En el modelo cuántico, cada fotón aporta 2.27 eV instantáneamente. Con V = −0.38 V alcanzas exactamente el potencial de frenado del Auxiliar 8.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. SIMULADOR 2: EFECTO COMPTON Y RAYOS X -->
+    <section id="compton" class="card card-sky" aria-labelledby="comp-title">
+      <div class="section-head">
+        <div>
+          <span class="label-kicker">Experimento 2 · Choque Relativista</span>
+          <h2 id="comp-title" class="section-title">Efecto <em>Compton</em>: fotón contra electrón como billar relativista</h2>
+          <p class="lede">Observa la conservación simultánea de energía y momentum relativista, el corrimiento Δλ y por qué aparece un pico sin desplazamiento en blancos reales.</p>
+        </div>
+        <div class="formula-bar">Δλ = (h / m<sub>e</sub>c)(1 − cos θ)</div>
+      </div>
+
+      <div class="sim-grid">
+        <div class="sim-controls">
+          <div class="control-group">
+            <span class="control-label">Casos de estudio</span>
+            <div class="preset-row">
+              <button type="button" class="chip-btn active-chip" id="comp-pre-mo" onclick="applyComptonPreset(0.0711, 90, 'valence', 'comp-pre-mo')">Rayos X Mo (0.071 nm, 90°)</button>
+              <button type="button" class="chip-btn" id="comp-pre-180" onclick="applyComptonPreset(0.050, 180, 'valence', 'comp-pre-180')">Retrodispersión 180° (Aux. 8)</button>
+              <button type="button" class="chip-btn" id="comp-pre-inner" onclick="applyComptonPreset(0.0711, 90, 'inner', 'comp-pre-inner')">Electrón interno (Pico fijo)</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <label for="comp-lambda" class="control-label">Longitud de onda incidente (λ)</label>
+              <span id="comp-lambda-val" class="control-val">0.0711 nm (17.4 keV)</span>
+            </div>
+            <input type="range" id="comp-lambda" min="0.015" max="0.160" step="0.001" value="0.0711" oninput="onComptonInput()">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <label for="comp-theta" class="control-label">Ángulo de dispersión del fotón (θ)</label>
+              <span id="comp-theta-val" class="control-val">90°</span>
+            </div>
+            <input type="range" id="comp-theta" min="0" max="180" step="1" value="90" oninput="onComptonInput()">
+          </div>
+
+          <div class="control-group">
+            <span class="control-label">Blanco de colisión en el grafito</span>
+            <div class="segmented" role="group" aria-label="Tipo de electrón blanco">
+              <button type="button" class="seg-btn active" id="comp-target-val" onclick="setComptonTarget('valence')">Electrón de valencia (libre)</button>
+              <button type="button" class="seg-btn" id="comp-target-in" onclick="setComptonTarget('inner')">Electrón interno (todo el átomo)</button>
+            </div>
+          </div>
+
+          <div id="comp-note" class="callout-pill">
+            Cuando el fotón choca con un electrón de valencia casi libre (masa m<sub>e</sub>), el fotón pierde energía y emerge con mayor longitud de onda λ' = λ + Δλ.
+          </div>
+        </div>
+
+        <div>
+          <div class="canvas-stage" style="min-height: 360px;">
+            <canvas id="comp-canvas" aria-label="Diagrama animado de dispersión Compton y espectro de intensidad con pico desplazado y no desplazado"></canvas>
+          </div>
+
+          <div class="figures-row">
+            <div class="fig-tile">
+              <span class="fig-lbl">Corrimiento Δλ</span>
+              <span id="comp-dlambda" class="fig-val">0.00243 nm</span>
+              <span class="fig-cap">Máx: 0.00485 nm a 180°</span>
+            </div>
+            <div class="fig-tile">
+              <span class="fig-lbl">λ dispersada (λ')</span>
+              <span id="comp-lambdap" class="fig-val">0.0735 nm</span>
+              <span id="comp-e-scat" class="fig-cap">E' = 16.86 keV</span>
+            </div>
+            <div class="fig-tile">
+              <span class="fig-lbl">Energía cinética e−</span>
+              <span id="comp-ke" class="fig-val">0.58 keV</span>
+              <span id="comp-phi" class="fig-cap">Ángulo retroceso φ: 43.1°</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. SIMULADOR 3: INCERTIDUMBRE DE HEISENBERG Y POZO CUÁNTICO -->
+    <section id="cuantica" class="card card-grape" aria-labelledby="qm-title">
+      <div class="section-head">
+        <div>
+          <span class="label-kicker">Experimento 3 · Ondas de Materia y Schrödinger</span>
+          <h2 id="qm-title" class="section-title">Principio de <em>incertidumbre</em> y partícula en una caja</h2>
+          <p class="lede">Alterna entre el paquete gaussiano (Auxiliar 11 P1 / Auxiliar 10) y los estados estacionarios en un pozo infinito (Clase 21 / Auxiliar 11 P2).</p>
+        </div>
+        <div class="segmented" role="group" aria-label="Elegir laboratorio cuántico">
+          <button type="button" class="seg-btn active" id="qm-tab-heis" onclick="setQmMode('heisenberg')">Paquete de Ondas (Δx · Δp)</button>
+          <button type="button" class="seg-btn" id="qm-tab-box" onclick="setQmMode('box')">Pozo Cuántico (ψₙ y Eₙ)</button>
+        </div>
+      </div>
+
+      <!-- Sub-vista A: Heisenberg -->
+      <div id="qm-panel-heis" class="sim-grid">
+        <div class="sim-controls">
+          <div class="control-group">
+            <span class="control-label">Partícula de estudio (Auxiliar 10)</span>
+            <div class="segmented" role="group" aria-label="Elegir partícula para incertidumbre">
+              <button type="button" class="seg-btn active" id="heis-part-e" onclick="setHeisParticle('electron')">Electrón (m<sub>e</sub>)</button>
+              <button type="button" class="seg-btn" id="heis-part-m" onclick="setHeisParticle('marble')">Canica 10.0 g (Aux. 10 P3)</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <label for="heis-dx" class="control-label">Ancho espacial del paquete (Δx)</label>
+              <span id="heis-dx-val" class="control-val">0.20 nm</span>
+            </div>
+            <input type="range" id="heis-dx" min="0.05" max="1.00" step="0.01" value="0.20" oninput="onHeisInput()">
+          </div>
+
+          <div class="formula-bar">ψ(x) = A · e<sup>−a x²</sup> &nbsp;|&nbsp; Δx · Δp<sub>x</sub> ≥ ħ/2</div>
+
+          <div class="figures-row">
+            <div class="fig-tile">
+              <span class="fig-lbl">Incertidumbre Δp<sub>x</sub> mín</span>
+              <span id="heis-dp" class="fig-val">2.64×10⁻²⁵</span>
+              <span class="fig-cap">kg·m/s</span>
+            </div>
+            <div class="fig-tile">
+              <span class="fig-lbl">Incertidumbre Δv<sub>x</sub> mín</span>
+              <span id="heis-dv" class="fig-val">2.89×10⁵ m/s</span>
+              <span id="heis-dv-cap" class="fig-cap">Efecto cuántico enorme</span>
+            </div>
+          </div>
+
+          <div id="heis-note" class="callout-pill ok">
+            Al comprimir Δx en el espacio real, se superponen más frecuencias espaciales k = p/ħ y el espectro de momentum Δp se ensancha inevitablemente.
+          </div>
+        </div>
+
+        <div class="canvas-stage" style="min-height: 360px;">
+          <canvas id="heis-canvas" aria-label="Gráfico dual de densidad de probabilidad espacial y distribución de momentum"></canvas>
+        </div>
+      </div>
+
+      <!-- Sub-vista B: Pozo Cuántico -->
+      <div id="qm-panel-box" class="sim-grid" style="display: none;">
+        <div class="sim-controls">
+          <div class="control-group">
+            <div class="control-label-row">
+              <label for="box-n" class="control-label">Número cuántico (n)</label>
+              <span id="box-n-val" class="control-val">n = 1 (Estado fundamental)</span>
+            </div>
+            <input type="range" id="box-n" min="1" max="5" step="1" value="1" oninput="onBoxInput()">
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <label for="box-L" class="control-label">Ancho del pozo infinito (L)</label>
+              <span id="box-L-val" class="control-val">1.00 nm</span>
+            </div>
+            <input type="range" id="box-L" min="0.30" max="2.00" step="0.05" value="1.00" oninput="onBoxInput()">
+          </div>
+
+          <div class="formula-bar">ψ<sub>n</sub>(x) = √(2/L) sen(nπx/L) &nbsp;|&nbsp; E<sub>n</sub> = n²h² / (8mL²)</div>
+
+          <div class="figures-row">
+            <div class="fig-tile">
+              <span class="fig-lbl">Energía cuantizada E<sub>n</sub></span>
+              <span id="box-en" class="fig-val">0.376 eV</span>
+              <span id="box-e1-cap" class="fig-cap">E₁ = 0.376 eV (&gt; 0 siempre)</span>
+            </div>
+            <div class="fig-tile">
+              <span class="fig-lbl">Valor esperado ⟨x⟩</span>
+              <span id="box-ex" class="fig-val">0.500 nm</span>
+              <span class="fig-cap">Siempre L/2 por simetría</span>
+            </div>
+          </div>
+
+          <div id="box-note" class="callout-pill">
+            Aun en n = 1, la partícula posee energía de punto cero E₁ &gt; 0: confinarla en L impone Δx &lt; L, lo que obliga a tener Δp<sub>x</sub> &gt; 0.
+          </div>
+        </div>
+
+        <div class="canvas-stage" style="min-height: 360px;">
+          <canvas id="box-canvas" aria-label="Función de onda y densidad de probabilidad para partícula en una caja"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. ZONA DE TARJETAS CONCEPTUALES C2 / C3 -->
+    <section id="tarjetas-c2" aria-labelledby="c2-title">
+      <div class="section-head">
+        <div>
+          <span class="label-kicker">Entrenamiento Conceptual · Estilo Controles FCFM</span>
+          <h2 id="c2-title" class="section-title">Tarjetas de justificación física <em>C2 / C3</em></h2>
+          <p class="lede">Pon a prueba tu intuición antes de mirar la pauta: elige una hipótesis inicial, destapa la pista clave y revisa la argumentación física completa.</p>
+        </div>
+
+        <div class="progress-wrap">
+          <div>
+            <span class="control-label" style="display: block;">Dominio del módulo</span>
+            <span id="c2-progress-text" class="mono" style="font-weight: 800; color: var(--primary);">0 / 6 conceptos</span>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <div id="c2-progress-fill" class="progress-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="c2-toolbar">
+        <div class="segmented" role="group" aria-label="Filtrar tarjetas por tema">
+          <button type="button" class="seg-btn active" id="filter-all" onclick="filterC2('all')">Todas (6)</button>
+          <button type="button" class="seg-btn" id="filter-luz" onclick="filterC2('luz')">Luz y Fotones</button>
+          <button type="button" class="seg-btn" id="filter-xray" onclick="filterC2('xray')">Rayos X y Compton</button>
+          <button type="button" class="seg-btn" id="filter-qm" onclick="filterC2('qm')">Cuántica</button>
+        </div>
+      </div>
+
+      <div id="c2-cards-container" class="c2-grid"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-card">
+      <div>
+        <strong>FI1100-7 Introducción a la Física Moderna</strong> · Material interactivo basado en los auxiliares 8, 10, 11 y apuntes de clases (Departamento de Física, FCFM).
+      </div>
+      <div>
+        Tu progreso en tarjetas y configuración de laboratorio se guarda automáticamente en tu sesión.
+      </div>
+    </footer>
+
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    (function () {
+      'use strict';
+
+      /* ---------- Estado persistente ---------- */
+      var appState = {
+        heroLambda: 450,
+        heroMode: 'dual',
+        constIdx: 0,
+        masteredIds: [],
+        c2StepState: {},
+        c2ChoiceState: {},
+        c2Filter: 'all'
+      };
+
+      var saveTimeout = null;
+      function scheduleSave() {
+        if (saveTimeout) clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(async function () {
+          try {
+            if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+              await window.notebookAppApi.setAppState(appState);
+            }
+          } catch (e) {
+            /* ignore */
+          }
+        }, 180);
+      }
+
+      /* ---------- Utilidades CSS & Color físico ---------- */
+      function cssVar(name, fallback) {
+        var val = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return val || fallback;
+      }
+
+      function wavelengthToColor(nm, alpha) {
+        var r = 190, g = 37, b = 118;
+        if (nm < 380) {
+          r = 145; g = 65; b = 210; // UV violeta
+        } else if (nm < 440) {
+          r = Math.round(255 * (-(nm - 440) / 60)); g = 40; b = 235;
+        } else if (nm < 490) {
+          r = 25; g = Math.round(210 * ((nm - 440) / 50)); b = 240;
+        } else if (nm < 510) {
+          r = 20; g = 205; b = Math.round(230 * (-(nm - 510) / 20));
+        } else if (nm < 580) {
+          r = Math.round(235 * ((nm - 510) / 70)); g = 195; b = 30;
+        } else if (nm < 645) {
+          r = 235; g = Math.round(195 * (-(nm - 645) / 65)); b = 45;
+        } else {
+          r = 215; g = 45; b = 75;
+        }
+        return 'rgba(' + r + ',' + g + ',' + b + ',' + (alpha === undefined ? 1 : alpha) + ')';
+      }
+
+      function wavelengthRegionName(nm) {
+        if (nm < 380) return 'Ultravioleta';
+        if (nm < 450) return 'Violeta';
+        if (nm < 495) return 'Azul';
+        if (nm < 570) return 'Verde';
+        if (nm < 590) return 'Amarillo';
+        if (nm < 620) return 'Naranja';
+        return 'Rojo';
+      }
+
+      function setupCanvasHiDPI(canvas) {
+        if (!canvas) return null;
+        var parent = canvas.parentElement;
+        var w = parent ? parent.clientWidth : 600;
+        var h = parent ? Math.max(parent.clientHeight, 320) : 360;
+        if (w <= 0) w = 600;
+        if (h <= 0) h = 360;
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+          canvas.width = Math.floor(w * dpr);
+          canvas.height = Math.floor(h * dpr);
+        }
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return null;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { ctx: ctx, w: w, h: h };
+      }
+
+      /* ---------- 1. HERO INTERACTIVO ---------- */
+      var heroPlaying = true;
+      var heroPhotons = [];
+      var heroElectrons = [];
+      var heroRipples = [];
+      var heroMouse = { x: -1, y: -1, active: false };
+      var heroAnimId = null;
+      var heroLastTs = 0;
+
+      function initHeroParticles() {
+        heroElectrons = [];
+        for (var i = 0; i < 6; i++) {
+          heroElectrons.push({
+            x: 160 + (i % 3) * 140 + (Math.random() * 30 - 15),
+            y: 110 + Math.floor(i / 3) * 165 + (Math.random() * 25 - 12),
+            vx: (Math.random() - 0.5) * 18,
+            vy: (Math.random() - 0.5) * 18,
+            phase: Math.random() * Math.PI * 2,
+            flash: 0
+          });
+        }
+        heroPhotons = [];
+        for (var j = 0; j < 4; j++) {
+          spawnHeroPhoton(j * 130, 80 + j * 70, 1, (Math.random() - 0.5) * 0.12);
+        }
+      }
+
+      function spawnHeroPhoton(x, y, dirX, angle) {
+        var a = angle || 0;
+        var speed = 155;
+        heroPhotons.push({
+          x: x,
+          y: y,
+          vx: Math.cos(a) * speed * (dirX || 1),
+          vy: Math.sin(a) * speed,
+          age: 0,
+          trail: []
+        });
+        if (heroPhotons.length > 16) heroPhotons.shift();
+      }
+
+      window.spawnHeroPulse = function () {
+        var canvas = document.getElementById('hero-canvas');
+        var h = canvas ? (canvas.clientHeight || 380) : 380;
+        for (var k = 0; k < 3; k++) {
+          spawnHeroPhoton(20, h * (0.25 + k * 0.25), 1, (Math.random() - 0.5) * 0.14);
+        }
+      };
+
+      window.onHeroLambdaChange = function (val) {
+        appState.heroLambda = Number(val);
+        updateHeroReadouts();
+        scheduleSave();
+      };
+
+      window.setHeroMode = function (mode) {
+        appState.heroMode = mode;
+        var ids = { dual: 'hero-mode-dual', photon: 'hero-mode-photon', wave: 'hero-mode-wave' };
+        Object.keys(ids).forEach(function (k) {
+          var el = document.getElementById(ids[k]);
+          if (el) el.classList.toggle('active', k === mode);
+        });
+        scheduleSave();
+      };
+
+      window.toggleHeroPlay = function () {
+        heroPlaying = !heroPlaying;
+        var lbl = document.getElementById('hero-play-label');
+        if (lbl) lbl.textContent = heroPlaying ? 'Pausar' : 'Reanudar';
+      };
+
+      function updateHeroReadouts() {
+        var nm = appState.heroLambda;
+        var eV = 1239.84 / nm;
+        var freq = (2.998e8 / (nm * 1e-9)) / 1e14;
+        var lVal = document.getElementById('hero-lambda-val');
+        var eEl = document.getElementById('hero-energy');
+        var fEl = document.getElementById('hero-freq');
+        var mEl = document.getElementById('hero-mom');
+        var slider = document.getElementById('hero-lambda');
+        if (slider && Number(slider.value) !== nm) slider.value = nm;
+        if (lVal) lVal.textContent = nm + ' nm (' + wavelengthRegionName(nm) + ')';
+        if (eEl) eEl.textContent = eV.toFixed(2) + ' eV';
+        if (fEl) fEl.textContent = freq.toFixed(2) + ' × 10¹⁴ Hz';
+        if (mEl) mEl.textContent = eV.toFixed(2) + ' eV/c';
+      }
+
+      function renderHero(ts) {
+        var canvas = document.getElementById('hero-canvas');
+        var info = setupCanvasHiDPI(canvas);
+        if (!info) {
+          heroAnimId = requestAnimationFrame(renderHero);
+          return;
+        }
+        var ctx = info.ctx, w = info.w, h = info.h;
+        if (!heroLastTs) heroLastTs = ts;
+        var dt = Math.min((ts - heroLastTs) / 1000, 0.05);
+        heroLastTs = ts;
+
+        var bg = cssVar('--surface-container', '#fdebf4');
+        var gridCol = cssVar('--outline-variant', '#ecd2e2');
+        var plum = cssVar('--on-surface', '#361b2e');
+        var grape = cssVar('--secondary', '#754c9e');
+        var sky = cssVar('--tertiary', '#1989b8');
+        var primary = cssVar('--primary', '#be2576');
+
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        // Subtle coordinate grid
+        ctx.strokeStyle = gridCol;
+        ctx.lineWidth = 1;
+        for (var gx = 30; gx < w; gx += 40) {
+          ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+        }
+        for (var gy = 30; gy < h; gy += 40) {
+          ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+        }
+
+        if (heroPlaying) {
+          // Spawn periodic photons
+          if (heroPhotons.length < 5 && Math.random() < dt * 1.4) {
+            spawnHeroPhoton(-40, 55 + Math.random() * (h - 110), 1, (Math.random() - 0.5) * 0.16);
+          }
+
+          // Update electrons
+          heroElectrons.forEach(function (e) {
+            e.x += e.vx * dt;
+            e.y += e.vy * dt;
+            e.phase += dt * (appState.heroMode === 'wave' ? 6.5 : 3.2);
+            if (e.flash > 0) e.flash = Math.max(0, e.flash - dt * 2.2);
+            if (e.x < 55 || e.x > w - 45) e.vx *= -1;
+            if (e.y < 55 || e.y > h - 55) e.vy *= -1;
+            e.x = Math.max(55, Math.min(w - 45, e.x));
+            e.y = Math.max(55, Math.min(h - 55, e.y));
+            // Dampen high recoil speeds gently
+            var sp = Math.hypot(e.vx, e.vy);
+            if (sp > 24) {
+              e.vx *= (1 - dt * 0.5);
+              e.vy *= (1 - dt * 0.5);
+            }
+          });
+
+          // Update photons + collisions
+          for (var i = heroPhotons.length - 1; i >= 0; i--) {
+            var p = heroPhotons[i];
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.age += dt;
+            p.trail.push({ x: p.x, y: p.y });
+            if (p.trail.length > 22) p.trail.shift();
+
+            // Check electron collisions
+            for (var j = 0; j < heroElectrons.length; j++) {
+              var el = heroElectrons[j];
+              var dx = p.x - el.x;
+              var dy = p.y - el.y;
+              if (dx * dx + dy * dy < 576) {
+                // Elastic Compton-like deflection
+                var eRatio = (1240 / appState.heroLambda) / 5.0;
+                var nAngle = Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.8;
+                var spP = Math.hypot(p.vx, p.vy);
+                p.vx = Math.cos(nAngle) * spP;
+                p.vy = Math.sin(nAngle) * spP;
+                p.x = el.x + Math.cos(nAngle) * 26;
+                p.y = el.y + Math.sin(nAngle) * 26;
+                el.vx += Math.cos(nAngle + Math.PI) * (25 + eRatio * 18);
+                el.vy += Math.sin(nAngle + Math.PI) * (25 + eRatio * 18);
+                el.flash = 1;
+                heroRipples.push({ x: el.x, y: el.y, r: 8, maxR: 64, alpha: 0.9 });
+                break;
+              }
+            }
+
+            if (p.x < -80 || p.x > w + 80 || p.y < -80 || p.y > h + 80) {
+              heroPhotons.splice(i, 1);
+            }
+          }
+
+          // Update ripples
+          for (var rIdx = heroRipples.length - 1; rIdx >= 0; rIdx--) {
+            var rp = heroRipples[rIdx];
+            rp.r += dt * 95;
+            rp.alpha -= dt * 1.4;
+            if (rp.alpha <= 0) heroRipples.splice(rIdx, 1);
+          }
+        }
+
+        // Draw ripples
+        heroRipples.forEach(function (rp) {
+          ctx.save();
+          ctx.strokeStyle = primary;
+          ctx.globalAlpha = Math.max(0, rp.alpha);
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        });
+
+        // Draw electrons
+        heroElectrons.forEach(function (el) {
+          ctx.save();
+          // de Broglie matter wave halo
+          var rings = appState.heroMode === 'wave' ? 3 : 2;
+          for (var rg = 1; rg <= rings; rg++) {
+            var rad = 14 + rg * 10 + Math.sin(el.phase + rg) * 3;
+            ctx.strokeStyle = el.flash > 0.2 ? primary : grape;
+            ctx.globalAlpha = (appState.heroMode === 'wave' ? 0.35 : 0.18) / rg;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(el.x, el.y, rad, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+
+          // Electron core
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = el.flash > 0.2 ? primary : sky;
+          ctx.beginPath();
+          ctx.arc(el.x, el.y, 10, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '700 10px "JetBrains Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('e⁻', el.x, el.y + 0.5);
+          ctx.restore();
+        });
+
+        // Draw photons
+        var nm = appState.heroLambda;
+        var pCol = wavelengthToColor(nm, 1);
+        var pGlow = wavelengthToColor(nm, 0.24);
+        var waveFreq = 0.09 + (700 - nm) / 550 * 0.22;
+
+        heroPhotons.forEach(function (p) {
+          var dirAngle = Math.atan2(p.vy, p.vx);
+
+          // Soft trail
+          if (p.trail.length > 2) {
+            ctx.save();
+            ctx.strokeStyle = pGlow;
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(p.trail[0].x, p.trail[0].y);
+            for (var t = 1; t < p.trail.length; t++) {
+              ctx.lineTo(p.trail[t].x, p.trail[t].y);
+            }
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(dirAngle);
+
+          if (appState.heroMode === 'photon') {
+            // Luminous quantized bead
+            ctx.fillStyle = pGlow;
+            ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = pCol;
+            ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = plum;
+            ctx.font = '700 11px "JetBrains Mono", monospace';
+            ctx.fillText('γ (hν)', 12, -10);
+          } else {
+            // Gaussian wave packet
+            var halfLen = 46;
+            ctx.strokeStyle = pCol;
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            for (var s = -halfLen; s <= halfLen; s += 2) {
+              var env = Math.exp(-(s * s) / (2 * 18 * 18));
+              var yOff = Math.sin(s * waveFreq - p.age * 16) * 14 * env;
+              if (s === -halfLen) ctx.moveTo(s, yOff);
+              else ctx.lineTo(s, yOff);
+            }
+            ctx.stroke();
+
+            // Central quantum bead
+            ctx.fillStyle = pCol;
+            ctx.beginPath();
+            ctx.arc(0, 0, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        });
+
+        // Mouse reticle
+        if (heroMouse.active) {
+          ctx.save();
+          ctx.strokeStyle = primary;
+          ctx.setLineDash([4, 4]);
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(heroMouse.x, heroMouse.y, 18, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        heroAnimId = requestAnimationFrame(renderHero);
+      }
+
+      function bindHeroEvents() {
+        var canvas = document.getElementById('hero-canvas');
+        if (!canvas) return;
+        canvas.addEventListener('pointermove', function (ev) {
+          var rect = canvas.getBoundingClientRect();
+          heroMouse.x = ev.clientX - rect.left;
+          heroMouse.y = ev.clientY - rect.top;
+          heroMouse.active = true;
+        });
+        canvas.addEventListener('pointerleave', function () {
+          heroMouse.active = false;
+        });
+        canvas.addEventListener('pointerdown', function (ev) {
+          var rect = canvas.getBoundingClientRect();
+          var cx = ev.clientX - rect.left;
+          var cy = ev.clientY - rect.top;
+          var angle = Math.atan2(cy - (rect.height / 2), cx);
+          spawnHeroPhoton(18, rect.height / 2, 1, angle);
+          heroRipples.push({ x: cx, y: cy, r: 4, maxR: 48, alpha: 0.85 });
+        });
+      }
+
+      /* ---------- 2. CARRUSEL DE CONSTANTES ---------- */
+      var CONSTANTS = [
+        {
+          symbol: `h`,
+          name: `Constante de Planck`,
+          si: `6.626 × 10⁻³⁴ J·s`,
+          ev: `4.136 × 10⁻¹⁵ eV·s`,
+          desc: `Conecta la frecuencia de una onda electromagnética con la energía discreta de cada fotón (E = hν) y fija la escala fundamental de la mecánica cuántica.`,
+          tag: `Fotones y Cuantización`,
+          tip: `Tip FCFM: usa 4.136×10⁻¹⁵ eV·s si tu frecuencia está en Hz y quieres eV directo.`
+        },
+        {
+          symbol: `ħ`,
+          name: `Constante reducida de Planck (h / 2π)`,
+          si: `1.055 × 10⁻³⁴ J·s`,
+          ev: `6.582 × 10⁻¹⁶ eV·s`,
+          desc: `Aparece de forma natural al trabajar con frecuencia angular ω = 2πν, en la ecuación de Schrödinger y en el principio de incertidumbre Δx·Δp ≥ ħ/2.`,
+          tag: `Schrödinger e Incertidumbre`,
+          tip: `Tip FCFM: recuerda que ħ/2 ≈ 5.27×10⁻³⁵ J·s es el piso exacto de Δx·Δpₓ.`
+        },
+        {
+          symbol: `hc`,
+          name: `Producto útil h · c`,
+          si: `1.986 × 10⁻²⁵ J·m`,
+          ev: `1240 eV·nm`,
+          desc: `Permite convertir instantáneamente la longitud de onda λ (en nanómetros) a energía del fotón en electrón-volts mediante E = 1240 / λ(nm).`,
+          tag: `Atajo Efecto Fotoeléctrico y Rayos X`,
+          tip: `Tip FCFM: ¡El favorito del Auxiliar 8! También vale 1.24 keV·nm para Rayos X.`
+        },
+        {
+          symbol: `c`,
+          name: `Velocidad de la luz en el vacío`,
+          si: `2.998 × 10⁸ m/s`,
+          ev: `c = λ · ν`,
+          desc: `Rapidez límite universal a la que viajan todos los fotones en el vacío; relaciona energía y momentum de una partícula sin masa mediante E = p·c.`,
+          tag: `Relatividad y Fotones`,
+          tip: `Tip FCFM: en unidades naturales de física moderna, p = E/c en eV/c.`
+        },
+        {
+          symbol: `e`,
+          name: `Carga elemental (y factor 1 eV)`,
+          si: `1.602 × 10⁻¹⁹ C`,
+          ev: `1 eV = 1.602 × 10⁻¹⁹ J`,
+          desc: `Magnitud de la carga de un electrón o protón. Un electrón acelerado por 1 V gana exactamente 1 eV de energía cinética.`,
+          tag: `Potencial de Frenado y Rayos X`,
+          tip: `Tip FCFM: K_máx en eV es numéricamente igual al potencial de frenado V_s en Volts.`
+        },
+        {
+          symbol: `mₑ`,
+          name: `Masa en reposo del electrón`,
+          si: `9.109 × 10⁻³¹ kg`,
+          ev: `mₑc² = 0.511 MeV`,
+          desc: `Masa fundamental para calcular la longitud de onda de de Broglie de electrones, el espectro de pozo cuántico y la dispersión Compton.`,
+          tag: `Electrones y Ondas de Materia`,
+          tip: `Tip FCFM: usando mₑc² = 511 keV evitas potencias de 10⁻³¹ en choques relativistas.`
+        },
+        {
+          symbol: `λC`,
+          name: `Longitud de onda de Compton (h / mₑc)`,
+          si: `2.426 × 10⁻¹² m`,
+          ev: `0.00243 nm`,
+          desc: `Escala característica del corrimiento en el efecto Compton cuando un fotón dispersado a 90° choca contra un electrón libre.`,
+          tag: `Efecto Compton`,
+          tip: `Tip FCFM: a θ = 180° (retrodispersión), el corrimiento máximo siempre es 2λ_C ≈ 0.00485 nm.`
+        }
+      ];
+
+      function renderConstantsCarousel(animate) {
+        var c = CONSTANTS[appState.constIdx];
+        var card = document.getElementById('const-card');
+        var sym = document.getElementById('const-symbol');
+        var name = document.getElementById('const-name');
+        var vals = document.getElementById('const-values');
+        var desc = document.getElementById('const-desc');
+        var tag = document.getElementById('const-tag');
+        var tip = document.getElementById('const-tip');
+        var counter = document.getElementById('const-counter');
+
+        if (animate && card) {
+          card.classList.remove('anim-swap');
+          void card.offsetWidth;
+          card.classList.add('anim-swap');
+        }
+        if (sym) sym.textContent = c.symbol;
+        if (name) name.textContent = c.name;
+        if (vals) {
+          vals.innerHTML = '';
+          var s1 = document.createElement('span');
+          s1.className = 'val-pill';
+          s1.textContent = 'SI: ' + c.si;
+          var s2 = document.createElement('span');
+          s2.className = 'val-pill highlight';
+          s2.textContent = 'Atómico: ' + c.ev;
+          vals.appendChild(s1);
+          vals.appendChild(s2);
+        }
+        if (desc) desc.textContent = c.desc;
+        if (tag) tag.textContent = c.tag;
+        if (tip) tip.textContent = c.tip;
+        if (counter) counter.textContent = 'Constante ' + (appState.constIdx + 1) + ' de ' + CONSTANTS.length;
+
+        var dots = document.getElementById('const-dots');
+        if (dots) {
+          dots.innerHTML = '';
+          CONSTANTS.forEach(function (item, idx) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'dot-btn' + (idx === appState.constIdx ? ' active' : '');
+            b.textContent = item.symbol;
+            b.setAttribute('aria-label', item.name);
+            b.onclick = function () {
+              appState.constIdx = idx;
+              renderConstantsCarousel(true);
+              scheduleSave();
+            };
+            dots.appendChild(b);
+          });
+        }
+      }
+
+      window.stepConstant = function (delta) {
+        appState.constIdx = (appState.constIdx + delta + CONSTANTS.length) % CONSTANTS.length;
+        renderConstantsCarousel(true);
+        scheduleSave();
+      };
+
+      /* ---------- 3. SIMULADOR EFECTO FOTOELÉCTRICO ---------- */
+      var peState = {
+        phi: 1.894,
+        lambda: 546.1,
+        intensity: 60,
+        voltage: -0.376,
+        mode: 'quantum'
+      };
+      var pePhotons = [];
+      var peElectrons = [];
+      var peAnimId = null;
+      var peLastTs = 0;
+
+      window.onPeMetalChange = function (val) {
+        peState.phi = Number(val);
+        clearPeChipActive();
+        updatePeReadouts();
+      };
+
+      function clearPeChipActive() {
+        ['pe-pre-hg', 'pe-pre-he', 'pe-pre-uv'].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.classList.remove('active-chip');
+        });
+      }
+
+      window.applyPePreset = function (lambda, phi, volt, btnId) {
+        peState.lambda = lambda;
+        peState.phi = phi;
+        peState.voltage = volt;
+        var sL = document.getElementById('pe-lambda');
+        var sV = document.getElementById('pe-voltage');
+        var mSel = document.getElementById('pe-metal');
+        if (sL) sL.value = lambda;
+        if (sV) sV.value = volt;
+        if (mSel) mSel.value = String(phi);
+        clearPeChipActive();
+        var btn = document.getElementById(btnId);
+        if (btn) btn.classList.add('active-chip');
+        updatePeReadouts();
+      };
+
+      window.onPeInput = function () {
+        var sL = document.getElementById('pe-lambda');
+        var sI = document.getElementById('pe-intensity');
+        var sV = document.getElementById('pe-voltage');
+        if (sL) peState.lambda = Number(sL.value);
+        if (sI) peState.intensity = Number(sI.value);
+        if (sV) peState.voltage = Number(sV.value);
+        clearPeChipActive();
+        updatePeReadouts();
+      };
+
+      window.setPeMode = function (mode) {
+        peState.mode = mode;
+        var qBtn = document.getElementById('pe-mode-quantum');
+        var cBtn = document.getElementById('pe-mode-classic');
+        if (qBtn) qBtn.classList.toggle('active', mode === 'quantum');
+        if (cBtn) cBtn.classList.toggle('active', mode === 'classic');
+        updatePeReadouts();
+      };
+
+      function updatePeReadouts() {
+        var ePhoton = 1239.84 / peState.lambda;
+        var lambdaUmbral = 1239.84 / peState.phi;
+        var kMax = Math.max(0, ePhoton - peState.phi);
+        var vs = kMax;
+
+        // Photocurrent model
+        var current = 0;
+        if (peState.mode === 'quantum') {
+          if (kMax > 0 && (kMax + peState.voltage) > 0.002) {
+            var frac = Math.min(1, (kMax + peState.voltage) / Math.max(0.25, kMax + 0.4));
+            current = (peState.intensity / 100) * 4.5 * frac;
+          }
+        } else {
+          // Classical flawed prediction: depends on intensity, no cutoff wavelength
+          var kClassic = (peState.intensity / 100) * 1.8;
+          if (kClassic + peState.voltage > 0) {
+            current = (peState.intensity / 100) * 3.8;
+          }
+        }
+
+        var elL = document.getElementById('pe-lambda-val');
+        var elI = document.getElementById('pe-intensity-val');
+        var elV = document.getElementById('pe-voltage-val');
+        var elEp = document.getElementById('pe-e-photon');
+        var elLc = document.getElementById('pe-lambda-corte');
+        var elKm = document.getElementById('pe-kmax');
+        var elVs = document.getElementById('pe-vs');
+        var elCur = document.getElementById('pe-current');
+        var elCurCap = document.getElementById('pe-current-cap');
+        var elDiag = document.getElementById('pe-diagnosis');
+
+        if (elL) elL.textContent = peState.lambda.toFixed(1) + ' nm (' + wavelengthRegionName(peState.lambda) + ')';
+        if (elI) elI.textContent = peState.intensity + ' %';
+        if (elV) elV.textContent = (peState.voltage >= 0 ? '+' : '') + peState.voltage.toFixed(2) + ' V';
+        if (elEp) elEp.textContent = ePhoton.toFixed(3) + ' eV';
+        if (elLc) elLc.textContent = 'λ umbral: ' + lambdaUmbral.toFixed(0) + ' nm';
+
+        if (peState.mode === 'quantum') {
+          if (elKm) elKm.textContent = kMax.toFixed(3) + ' eV';
+          if (elVs) elVs.textContent = 'V frenado: ' + vs.toFixed(3) + ' V';
+        } else {
+          if (elKm) elKm.textContent = ((peState.intensity / 100) * 1.8).toFixed(2) + ' eV*';
+          if (elVs) elVs.textContent = 'Clásico: depende de I';
+        }
+
+        if (elCur) elCur.textContent = current.toFixed(2) + ' mA';
+
+        if (elDiag && elCurCap) {
+          if (peState.mode === 'classic') {
+            elDiag.className = 'callout-pill warn';
+            elDiag.textContent = 'Predicción clásica (refutada): asume una onda continua que acumula energía lentamente sin importar λ, y predice erróneamente que mayor intensidad aumenta K_máx.';
+            elCurCap.textContent = 'Corriente clásica hipotética';
+          } else if (ePhoton < peState.phi) {
+            elDiag.className = 'callout-pill warn';
+            elDiag.textContent = 'Bajo el umbral: E_fotón (' + ePhoton.toFixed(2) + ' eV) < φ (' + peState.phi.toFixed(2) + ' eV). Aunque subas la intensidad al 100 %, no se desprende ningún electrón.';
+            elCurCap.textContent = 'Sin emisión fotoeléctrica';
+          } else if (kMax + peState.voltage <= 0.002) {
+            elDiag.className = 'callout-pill';
+            elDiag.textContent = 'Frenado total: los fotoelectrones salen con K_máx = ' + kMax.toFixed(3) + ' eV, pero el potencial contrario los devuelve antes de llegar al ánodo (|V| ≥ V_s).';
+            elCurCap.textContent = 'Frenados antes del ánodo';
+          } else {
+            elDiag.className = 'callout-pill ok';
+            elDiag.textContent = 'Emisión instantánea: cada fotón transfiere ' + ePhoton.toFixed(2) + ' eV a un electrón. Alcanza el colector con K_máx = ' + kMax.toFixed(3) + ' eV. Subir intensidad solo añade más electrones.';
+            elCurCap.textContent = 'Fotoelectrones recolectados';
+          }
+        }
+      }
+
+      function renderPhotoelectric(ts) {
+        var canvas = document.getElementById('pe-canvas');
+        var info = setupCanvasHiDPI(canvas);
+        if (!info) {
+          peAnimId = requestAnimationFrame(renderPhotoelectric);
+          return;
+        }
+        var ctx = info.ctx, w = info.w, h = info.h;
+        if (!peLastTs) peLastTs = ts;
+        var dt = Math.min((ts - peLastTs) / 1000, 0.05);
+        peLastTs = ts;
+
+        var bg = cssVar('--surface-container', '#fdebf4');
+        var plum = cssVar('--on-surface', '#361b2e');
+        var plumVar = cssVar('--on-surface-variant', '#6b4661');
+        var primary = cssVar('--primary', '#be2576');
+        var grape = cssVar('--secondary', '#754c9e');
+        var sky = cssVar('--tertiary', '#1989b8');
+
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        var plateX = 92;
+        var anodeX = w - 68;
+        var topY = 46;
+        var botY = h - 42;
+
+        // Draw vacuum chamber outline
+        ctx.strokeStyle = cssVar('--outline', '#b993ab');
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(45, topY - 12, w - 75, botY - topY + 24, 24);
+        ctx.stroke();
+
+        // Cathode plate (metal)
+        ctx.fillStyle = grape;
+        ctx.beginPath();
+        ctx.roundRect(plateX - 16, topY + 12, 18, botY - topY - 24, 9);
+        ctx.fill();
+
+        // Anode collector
+        ctx.fillStyle = peState.voltage < 0 ? primary : sky;
+        ctx.beginPath();
+        ctx.roundRect(anodeX, topY + 18, 14, botY - topY - 36, 7);
+        ctx.fill();
+
+        ctx.fillStyle = plum;
+        ctx.font = '700 12px "DM Sans", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Placa (φ)', plateX - 7, topY - 18);
+        ctx.fillText('Colector (' + (peState.voltage >= 0 ? '+' : '') + peState.voltage.toFixed(2) + 'V)', anodeX + 7, topY - 18);
+
+        var ePhoton = 1239.84 / peState.lambda;
+        var kMax = Math.max(0, ePhoton - peState.phi);
+        var pColor = wavelengthToColor(peState.lambda, 1);
+
+        // Spawn incoming photons or draw classical wave
+        if (peState.mode === 'quantum') {
+          var spawnRate = (peState.intensity / 100) * 14;
+          if (Math.random() < dt * spawnRate) {
+            var targetY = topY + 35 + Math.random() * (botY - topY - 70);
+            pePhotons.push({ x: plateX + 190, y: targetY - 70, tx: plateX + 2, ty: targetY, t: 0 });
+          }
+          for (var i = pePhotons.length - 1; i >= 0; i--) {
+            var ph = pePhotons[i];
+            ph.t += dt * 2.1;
+            var curX = ph.x + (ph.tx - ph.x) * ph.t;
+            var curY = ph.y + (ph.ty - ph.y) * ph.t;
+
+            // Draw wavy photon packet
+            ctx.save();
+            ctx.translate(curX, curY);
+            ctx.rotate(Math.atan2(ph.ty - ph.y, ph.tx - ph.x));
+            ctx.strokeStyle = pColor;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for (var s = -18; s <= 18; s += 2) {
+              var yy = Math.sin(s * 0.45 - ph.t * 16) * 5 * Math.exp(-(s * s) / 140);
+              if (s === -18) ctx.moveTo(s, yy); else ctx.lineTo(s, yy);
+            }
+            ctx.stroke();
+            ctx.fillStyle = pColor;
+            ctx.beginPath(); ctx.arc(0, 0, 3.5, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+
+            if (ph.t >= 1) {
+              pePhotons.splice(i, 1);
+              if (kMax > 0) {
+                var speedScale = 0.55 + 0.45 * Math.random();
+                var kInit = kMax * speedScale;
+                peElectrons.push({
+                  x: plateX + 6,
+                  y: ph.ty,
+                  vx: 115 * Math.sqrt(kInit + 0.08),
+                  vy: (Math.random() - 0.5) * 26,
+                  kInit: kInit
+                });
+              }
+            }
+          }
+        } else {
+          // Classical continuous wave front hitting plate
+          ctx.save();
+          ctx.strokeStyle = wavelengthToColor(peState.lambda, 0.7);
+          ctx.lineWidth = 2 + (peState.intensity / 100) * 4;
+          for (var row = 0; row < 4; row++) {
+            var cy = topY + 45 + row * ((botY - topY - 90) / 3);
+            ctx.beginPath();
+            for (var px = plateX + 8; px < plateX + 185; px += 4) {
+              var wy = cy - (px - plateX) * 0.35 + Math.sin(px * 0.14 + ts * 0.01) * 7;
+              if (px === plateX + 8) ctx.moveTo(px, wy); else ctx.lineTo(px, wy);
+            }
+            ctx.stroke();
+          }
+          ctx.restore();
+
+          if (Math.random() < dt * (peState.intensity / 15)) {
+            peElectrons.push({
+              x: plateX + 6,
+              y: topY + 35 + Math.random() * (botY - topY - 70),
+              vx: 95 * Math.sqrt((peState.intensity / 100) * 1.8 + 0.1),
+              vy: (Math.random() - 0.5) * 20,
+              kInit: (peState.intensity / 100) * 1.8
+            });
+          }
+        }
+
+        // Update & draw electrons under electric field
+        var dist = Math.max(80, anodeX - plateX);
+        // Accelerating/retarding acceleration proportional to voltage / dist
+        var accel = (peState.voltage / Math.max(0.2, 1)) * 220;
+
+        for (var eIdx = peElectrons.length - 1; eIdx >= 0; eIdx--) {
+          var el = peElectrons[eIdx];
+          // Force balance: if kInit + peState.voltage <= 0, max distance = kInit / (-peState.voltage) * dist
+          var aPx = 0;
+          if (peState.voltage < 0) {
+            var vInit = 115 * Math.sqrt(el.kInit + 0.08);
+            var vStopReq = (vInit * vInit) / (2 * dist);
+            aPx = (peState.voltage / (-Math.max(0.01, el.kInit))) * vStopReq;
+          } else {
+            aPx = peState.voltage * 180;
+          }
+          el.vx += aPx * dt;
+          el.x += el.vx * dt;
+          el.y += el.vy * dt;
+
+          // Keep inside vertical bounds
+          if (el.y < topY + 14) { el.y = topY + 14; el.vy *= -0.5; }
+          if (el.y > botY - 14) { el.y = botY - 14; el.vy *= -0.5; }
+
+          ctx.fillStyle = sky;
+          ctx.beginPath(); ctx.arc(el.x, el.y, 6, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '700 8px "JetBrains Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('−', el.x, el.y);
+
+          if (el.x >= anodeX || el.x < plateX + 2) {
+            peElectrons.splice(eIdx, 1);
+          }
+        }
+
+        // Legend label inside canvas
+        ctx.fillStyle = plumVar;
+        ctx.font = '600 11px "DM Sans", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(peState.mode === 'quantum' ? 'Haz cuantizado (fotones)' : 'Onda clásica continua', 58, botY + 26);
+
+        peAnimId = requestAnimationFrame(renderPhotoelectric);
+      }
+
+      /* ---------- 4. SIMULADOR EFECTO COMPTON ---------- */
+      var compState = {
+        lambda: 0.0711,
+        theta: 90,
+        target: 'valence'
+      };
+      var compAnimId = null;
+      var compLastTs = 0;
+      var compPhase = 0;
+
+      function clearCompChipActive() {
+        ['comp-pre-mo', 'comp-pre-180', 'comp-pre-inner'].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.classList.remove('active-chip');
+        });
+      }
+
+      window.applyComptonPreset = function (lambda, theta, target, btnId) {
+        compState.lambda = lambda;
+        compState.theta = theta;
+        var sL = document.getElementById('comp-lambda');
+        var sT = document.getElementById('comp-theta');
+        if (sL) sL.value = lambda;
+        if (sT) sT.value = theta;
+        setComptonTarget(target);
+        clearCompChipActive();
+        var btn = document.getElementById(btnId);
+        if (btn) btn.classList.add('active-chip');
+        updateComptonReadouts();
+      };
+
+      window.onComptonInput = function () {
+        var sL = document.getElementById('comp-lambda');
+        var sT = document.getElementById('comp-theta');
+        if (sL) compState.lambda = Number(sL.value);
+        if (sT) compState.theta = Number(sT.value);
+        clearCompChipActive();
+        updateComptonReadouts();
+      };
+
+      window.setComptonTarget = function (target) {
+        compState.target = target;
+        var vBtn = document.getElementById('comp-target-val');
+        var iBtn = document.getElementById('comp-target-in');
+        if (vBtn) vBtn.classList.toggle('active', target === 'valence');
+        if (iBtn) iBtn.classList.toggle('active', target === 'inner');
+        updateComptonReadouts();
+      };
+
+      function getComptonPhysics() {
+        var lambdaC = 0.0024263; // nm for electron
+        var effLambdaC = compState.target === 'valence' ? lambdaC : (lambdaC / 22000);
+        var rad = (compState.theta * Math.PI) / 180;
+        var dLambda = effLambdaC * (1 - Math.cos(rad));
+        var lambdaP = compState.lambda + dLambda;
+        var E = 1.23984 / compState.lambda; // keV
+        var Ep = 1.23984 / lambdaP; // keV
+        var Ke = Math.max(0, E - Ep);
+        // Electron recoil angle phi from momentum conservation
+        var px = E - Ep * Math.cos(rad);
+        var py = Ep * Math.sin(rad);
+        var phi = Math.atan2(py, px) * 180 / Math.PI;
+        if (compState.theta === 0) phi = 90;
+        return { dLambda: dLambda, lambdaP: lambdaP, E: E, Ep: Ep, Ke: Ke, phi: phi };
+      }
+
+      function updateComptonReadouts() {
+        var ph = getComptonPhysics();
+        var lVal = document.getElementById('comp-lambda-val');
+        var tVal = document.getElementById('comp-theta-val');
+        var dVal = document.getElementById('comp-dlambda');
+        var lpVal = document.getElementById('comp-lambdap');
+        var esVal = document.getElementById('comp-e-scat');
+        var keVal = document.getElementById('comp-ke');
+        var phiVal = document.getElementById('comp-phi');
+        var note = document.getElementById('comp-note');
+
+        if (lVal) lVal.textContent = compState.lambda.toFixed(4) + ' nm (' + ph.E.toFixed(1) + ' keV)';
+        if (tVal) tVal.textContent = compState.theta + '°';
+        if (dVal) dVal.textContent = ph.dLambda.toFixed(5) + ' nm';
+        if (lpVal) lpVal.textContent = ph.lambdaP.toFixed(4) + ' nm';
+        if (esVal) esVal.textContent = 'E\' = ' + ph.Ep.toFixed(2) + ' keV';
+        if (keVal) keVal.textContent = ph.Ke.toFixed(3) + ' keV';
+        if (phiVal) phiVal.textContent = 'Ángulo retroceso φ: ' + ph.phi.toFixed(1) + '°';
+
+        if (note) {
+          if (compState.target === 'inner') {
+            note.className = 'callout-pill ok';
+            note.textContent = 'Electrón interno fuertemente ligado: el fotón interactúa con todo el átomo (M ≫ mₑ), por lo que Δλ ≈ 0 y aparece el pico no desplazado en el espectro.';
+          } else {
+            note.className = 'callout-pill';
+            note.textContent = 'Electrón de valencia libre: al aumentar θ hacia 180°, el fotón transfiere más energía al electrón y el pico Compton se separa claramente del pico original.';
+          }
+        }
+      }
+
+      function renderCompton(ts) {
+        var canvas = document.getElementById('comp-canvas');
+        var info = setupCanvasHiDPI(canvas);
+        if (!info) {
+          compAnimId = requestAnimationFrame(renderCompton);
+          return;
+        }
+        var ctx = info.ctx, w = info.w, h = info.h;
+        if (!compLastTs) compLastTs = ts;
+        var dt = Math.min((ts - compLastTs) / 1000, 0.05);
+        compLastTs = ts;
+        compPhase = (compPhase + dt * 0.65) % 1;
+
+        var bg = cssVar('--surface-container', '#fdebf4');
+        var cardBg = cssVar('--surface-container-low', '#ffffff');
+        var plum = cssVar('--on-surface', '#361b2e');
+        var plumVar = cssVar('--on-surface-variant', '#6b4661');
+        var primary = cssVar('--primary', '#be2576');
+        var grape = cssVar('--secondary', '#754c9e');
+        var sky = cssVar('--tertiary', '#1989b8');
+        var gridCol = cssVar('--outline-variant', '#ecd2e2');
+
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        // Split: Left 62% collision diagram, Right 38% intensity spectrum plot
+        var splitX = Math.floor(w * 0.62);
+        var cx = Math.floor(splitX * 0.45);
+        var cy = Math.floor(h * 0.54);
+
+        // Axis line
+        ctx.strokeStyle = gridCol;
+        ctx.setLineDash([5, 5]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(20, cy); ctx.lineTo(splitX - 20, cy); ctx.stroke();
+        ctx.setLineDash([]);
+
+        var ph = getComptonPhysics();
+        var radTheta = (compState.theta * Math.PI) / 180;
+        var radPhi = (ph.phi * Math.PI) / 180;
+
+        // Target particle at origin
+        ctx.fillStyle = compState.target === 'inner' ? grape : sky;
+        ctx.beginPath();
+        ctx.arc(cx, cy, compState.target === 'inner' ? 15 : 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '700 10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(compState.target === 'inner' ? 'Át.' : 'e⁻', cx, cy);
+
+        // Draw angle arc theta
+        if (compState.theta > 5) {
+          ctx.strokeStyle = primary;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(cx, cy, 38, -radTheta, 0);
+          ctx.stroke();
+          ctx.fillStyle = primary;
+          ctx.font = '700 11px "DM Sans", sans-serif';
+          ctx.fillText('θ=' + compState.theta + '°', cx + 52, cy - 16);
+        }
+
+        // Photon animation: compPhase < 0.45 incoming; >= 0.45 outgoing
+        if (compPhase < 0.45) {
+          var tIn = compPhase / 0.45;
+          var pxIn = 26 + (cx - 38 - 26) * tIn;
+          drawWavePacketLine(ctx, pxIn, cy, 0, 34, 0.42, primary, ts * 0.015);
+          ctx.fillStyle = primary;
+          ctx.font = '700 11px "JetBrains Mono", monospace';
+          ctx.fillText('λ', pxIn, cy - 18);
+        } else {
+          var tOut = (compPhase - 0.45) / 0.55;
+          var distOut = 135 * tOut;
+          // Scattered photon (longer wavelength -> lower spatial wave freq)
+          var sx = cx + Math.cos(-radTheta) * (16 + distOut);
+          var sy = cy + Math.sin(-radTheta) * (16 + distOut);
+          var stretchFactor = compState.target === 'valence' ? (1 - (compState.theta / 180) * 0.48) : 1;
+          drawWavePacketLine(ctx, sx, sy, -radTheta, 34, 0.42 * stretchFactor, grape, ts * 0.012);
+          ctx.fillStyle = grape;
+          ctx.font = '700 11px "JetBrains Mono", monospace';
+          ctx.fillText("λ'", sx + 12, sy - 14);
+
+          // Recoiling electron vector
+          if (compState.target === 'valence' && compState.theta > 0) {
+            var eDist = (105 * (ph.Ke / Math.max(0.5, ph.E)) * 2.2 + 35) * tOut;
+            var ex = cx + Math.cos(radPhi) * eDist;
+            var ey = cy + Math.sin(radPhi) * eDist;
+            ctx.strokeStyle = sky;
+            ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey); ctx.stroke();
+            ctx.fillStyle = sky;
+            ctx.beginPath(); ctx.arc(ex, ey, 7, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = plum;
+            ctx.font = '700 10px "JetBrains Mono", monospace';
+            ctx.fillText('e⁻ (φ=' + ph.phi.toFixed(0) + '°)', ex + 14, ey + 14);
+          }
+        }
+
+        // Right panel: Spectrum plot (Intensity vs Wavelength)
+        var pad = 16;
+        var boxX = splitX + 8;
+        var boxY = pad;
+        var boxW = w - splitX - pad - 8;
+        var boxH = h - pad * 2;
+
+        ctx.fillStyle = cardBg;
+        ctx.beginPath();
+        ctx.roundRect(boxX, boxY, boxW, boxH, 16);
+        ctx.fill();
+
+        ctx.fillStyle = plum;
+        ctx.font = '700 12px "DM Sans", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Espectro dispersado I(λ)', boxX + 14, boxY + 24);
+
+        var plotX = boxX + 16;
+        var plotW = boxW - 32;
+        var plotBaseY = boxY + boxH - 34;
+        var plotMaxH = boxH - 76;
+
+        // Baseline
+        ctx.strokeStyle = gridCol;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(plotX, plotBaseY); ctx.lineTo(plotX + plotW, plotBaseY); ctx.stroke();
+
+        // Plot two Lorentzian/Gaussian peaks: Unshifted at 0.30, Shifted at 0.30 + offset
+        var shiftFrac = compState.target === 'valence' ? (ph.dLambda / 0.0049) * 0.48 : 0.0;
+        var pos0 = 0.28;
+        var pos1 = pos0 + shiftFrac;
+
+        ctx.strokeStyle = primary;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        for (var k = 0; k <= 80; k++) {
+          var u = k / 80;
+          var peak0 = 0.52 * Math.exp(-Math.pow((u - pos0) / 0.055, 2));
+          var peak1 = (compState.target === 'valence' ? 0.88 : 0.55) * Math.exp(-Math.pow((u - pos1) / 0.065, 2));
+          var amp = Math.min(1, peak0 + peak1);
+          var pxS = plotX + u * plotW;
+          var pyS = plotBaseY - amp * plotMaxH;
+          if (k === 0) ctx.moveTo(pxS, pyS); else ctx.lineTo(pxS, pyS);
+        }
+        ctx.stroke();
+
+        // Annotations
+        ctx.fillStyle = plumVar;
+        ctx.font = '600 10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('λ₀', plotX + pos0 * plotW, plotBaseY + 14);
+        if (shiftFrac > 0.08) {
+          ctx.fillStyle = grape;
+          ctx.fillText("λ'", plotX + pos1 * plotW, plotBaseY + 14);
+          // Arrow for delta lambda
+          var arrowY = plotBaseY - plotMaxH * 0.94;
+          ctx.strokeStyle = grape;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(plotX + pos0 * plotW, arrowY);
+          ctx.lineTo(plotX + pos1 * plotW, arrowY);
+          ctx.stroke();
+          ctx.fillText('Δλ', plotX + ((pos0 + pos1) / 2) * plotW, arrowY - 8);
+        } else {
+          ctx.fillStyle = plumVar;
+          ctx.fillText('Pico único (Δλ≈0)', plotX + pos0 * plotW + 30, plotBaseY - plotMaxH * 0.92);
+        }
+
+        compAnimId = requestAnimationFrame(renderCompton);
+      }
+
+      function drawWavePacketLine(ctx, x, y, angle, halfLen, freq, color, phase) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.6;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        for (var s = -halfLen; s <= halfLen; s += 2) {
+          var env = Math.exp(-(s * s) / (2 * 14 * 14));
+          var yy = Math.sin(s * freq - phase) * 9 * env;
+          if (s === -halfLen) ctx.moveTo(s, yy); else ctx.lineTo(s, yy);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      /* ---------- 5. SIMULADOR CUÁNTICA (HEISENBERG Y POZO) ---------- */
+      var qmMode = 'heisenberg';
+      var heisState = { dxNm: 0.20, particle: 'electron' };
+      var boxState = { n: 1, L: 1.00 };
+
+      window.setQmMode = function (mode) {
+        qmMode = mode;
+        var pH = document.getElementById('qm-panel-heis');
+        var pB = document.getElementById('qm-panel-box');
+        var tH = document.getElementById('qm-tab-heis');
+        var tB = document.getElementById('qm-tab-box');
+        if (pH) pH.style.display = mode === 'heisenberg' ? '' : 'none';
+        if (pB) pB.style.display = mode === 'box' ? '' : 'none';
+        if (tH) tH.classList.toggle('active', mode === 'heisenberg');
+        if (tB) tB.classList.toggle('active', mode === 'box');
+        if (mode === 'heisenberg') drawHeisenberg();
+        else drawQuantumBox();
+      };
+
+      window.setHeisParticle = function (p) {
+        heisState.particle = p;
+        var bE = document.getElementById('heis-part-e');
+        var bM = document.getElementById('heis-part-m');
+        if (bE) bE.classList.toggle('active', p === 'electron');
+        if (bM) bM.classList.toggle('active', p === 'marble');
+        onHeisInput();
+      };
+
+      window.onHeisInput = function () {
+        var s = document.getElementById('heis-dx');
+        if (s) heisState.dxNm = Number(s.value);
+        var dxMeters = heisState.dxNm * 1e-9;
+        var hbar = 1.05457e-34;
+        var dp = hbar / (2 * dxMeters);
+        var mass = heisState.particle === 'electron' ? 9.10938e-31 : 0.010;
+        var dv = dp / mass;
+
+        var elDx = document.getElementById('heis-dx-val');
+        var elDp = document.getElementById('heis-dp');
+        var elDv = document.getElementById('heis-dv');
+        var elCap = document.getElementById('heis-dv-cap');
+        var elNote = document.getElementById('heis-note');
+
+        if (elDx) elDx.textContent = heisState.dxNm.toFixed(2) + ' nm';
+        if (elDp) elDp.textContent = dp.toExponential(2);
+        if (elDv) elDv.textContent = dv.toExponential(2) + ' m/s';
+        if (elCap && elNote) {
+          if (heisState.particle === 'marble') {
+            elCap.textContent = 'Imperceptible macroscópicamente';
+            elNote.className = 'callout-pill';
+            elNote.textContent = 'Canica de 10.0 g (Auxiliar 10 P3): aunque ħ/2 es exacto, su masa es tan enorme frente a ħ que Δv resulta ~10⁻²³ m/s (tardaría trillones de veces la edad del Universo en caer de la mesa).';
+          } else {
+            elCap.textContent = 'Agudo efecto cuántico';
+            elNote.className = 'callout-pill ok';
+            elNote.textContent = 'Electrón: al comprimir Δx a escala atómica (< 0.1 nm), Δv supera los 5×10⁵ m/s. La localización espacial destruye la certeza en el momentum.';
+          }
+        }
+        drawHeisenberg();
+      };
+
+      function drawHeisenberg() {
+        var canvas = document.getElementById('heis-canvas');
+        var info = setupCanvasHiDPI(canvas);
+        if (!info) return;
+        var ctx = info.ctx, w = info.w, h = info.h;
+
+        var bg = cssVar('--surface-container', '#fdebf4');
+        var cardBg = cssVar('--surface-container-low', '#ffffff');
+        var plum = cssVar('--on-surface', '#361b2e');
+        var primary = cssVar('--primary', '#be2576');
+        var grape = cssVar('--secondary', '#754c9e');
+        var sky = cssVar('--tertiary', '#1989b8');
+        var gridCol = cssVar('--outline-variant', '#ecd2e2');
+
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        var pad = 16;
+        var halfH = (h - pad * 3) / 2;
+        var sigX = (heisState.dxNm - 0.05) / 0.95; // 0..1
+        var pxWidth = 14 + sigX * (w * 0.24);
+        var pWidth = 14 + (1 - sigX) * (w * 0.24);
+
+        // Top panel: Position space |psi(x)|^2
+        drawGaussianPlot(ctx, pad, pad, w - pad * 2, halfH, pxWidth, primary, cardBg, gridCol, plum,
+          'Espacio de posición |ψ(x)|²  (Δx = ' + heisState.dxNm.toFixed(2) + ' nm)', true);
+
+        // Bottom panel: Momentum space |phi(p)|^2
+        drawGaussianPlot(ctx, pad, pad * 2 + halfH, w - pad * 2, halfH, pWidth, grape, cardBg, gridCol, plum,
+          'Espacio de momentum |φ(pₓ)|²  (Δpₓ ∝ 1 / Δx)', false);
+      }
+
+      function drawGaussianPlot(ctx, x, y, w, h, sigmaPx, color, cardBg, gridCol, textCol, title, showCarrier) {
+        ctx.fillStyle = cardBg;
+        ctx.beginPath(); ctx.roundRect(x, y, w, h, 16); ctx.fill();
+
+        ctx.fillStyle = textCol;
+        ctx.font = '700 12px "DM Sans", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText(title, x + 16, y + 22);
+
+        var baseY = y + h - 18;
+        var peakH = h - 48;
+        var cx = x + w / 2;
+
+        ctx.strokeStyle = gridCol;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x + 16, baseY); ctx.lineTo(x + w - 16, baseY); ctx.stroke();
+
+        // Area fill
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.16;
+        ctx.beginPath();
+        ctx.moveTo(x + 16, baseY);
+        for (var px = x + 16; px <= x + w - 16; px += 3) {
+          var d = px - cx;
+          var val = Math.exp(-(d * d) / (2 * sigmaPx * sigmaPx));
+          ctx.lineTo(px, baseY - val * peakH);
+        }
+        ctx.lineTo(x + w - 16, baseY);
+        ctx.closePath();
+        ctx.fill();
+
+        // Curve
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        for (var px2 = x + 16; px2 <= x + w - 16; px2 += 3) {
+          var d2 = px2 - cx;
+          var val2 = Math.exp(-(d2 * d2) / (2 * sigmaPx * sigmaPx));
+          if (px2 === x + 16) ctx.moveTo(px2, baseY - val2 * peakH);
+          else ctx.lineTo(px2, baseY - val2 * peakH);
+        }
+        ctx.stroke();
+
+        // Optional internal real wave oscillation Re(psi)
+        if (showCarrier) {
+          ctx.strokeStyle = cssVar('--tertiary', '#1989b8');
+          ctx.lineWidth = 1.6;
+          ctx.globalAlpha = 0.6;
+          ctx.beginPath();
+          var midY = baseY - peakH * 0.45;
+          for (var px3 = x + 16; px3 <= x + w - 16; px3 += 2) {
+            var d3 = px3 - cx;
+            var env = Math.exp(-(d3 * d3) / (2 * sigmaPx * sigmaPx));
+            var osc = Math.cos(d3 * 0.25) * env * peakH * 0.35;
+            if (px3 === x + 16) ctx.moveTo(px3, midY - osc);
+            else ctx.lineTo(px3, midY - osc);
+          }
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+      }
+
+      window.onBoxInput = function () {
+        var sN = document.getElementById('box-n');
+        var sL = document.getElementById('box-L');
+        if (sN) boxState.n = Number(sN.value);
+        if (sL) boxState.L = Number(sL.value);
+
+        var e1 = 0.37603 / (boxState.L * boxState.L);
+        var en = boxState.n * boxState.n * e1;
+        var ex = boxState.L / 2;
+
+        var elN = document.getElementById('box-n-val');
+        var elL = document.getElementById('box-L-val');
+        var elEn = document.getElementById('box-en');
+        var elE1 = document.getElementById('box-e1-cap');
+        var elEx = document.getElementById('box-ex');
+        var elNote = document.getElementById('box-note');
+
+        if (elN) elN.textContent = 'n = ' + boxState.n + (boxState.n === 1 ? ' (Fundamental)' : ' (Excitado)');
+        if (elL) elL.textContent = boxState.L.toFixed(2) + ' nm';
+        if (elEn) elEn.textContent = en.toFixed(3) + ' eV';
+        if (elE1) elE1.textContent = 'E₁ = ' + e1.toFixed(3) + ' eV (> 0 siempre)';
+        if (elEx) elEx.textContent = ex.toFixed(3) + ' nm';
+        if (elNote) {
+          var nodes = boxState.n - 1;
+          elNote.textContent = 'Para n = ' + boxState.n + ', la densidad de probabilidad |ψₙ(x)|² tiene ' + boxState.n + ' lóbulo(s) y ' + nodes + ' nodo(s) internos. Por simetría par/impar alrededor del centro, ⟨x⟩ = L/2 siempre.';
+        }
+        drawQuantumBox();
+      };
+
+      function drawQuantumBox() {
+        var canvas = document.getElementById('box-canvas');
+        var info = setupCanvasHiDPI(canvas);
+        if (!info) return;
+        var ctx = info.ctx, w = info.w, h = info.h;
+
+        var bg = cssVar('--surface-container', '#fdebf4');
+        var cardBg = cssVar('--surface-container-low', '#ffffff');
+        var plum = cssVar('--on-surface', '#361b2e');
+        var primary = cssVar('--primary', '#be2576');
+        var grape = cssVar('--secondary', '#754c9e');
+        var sky = cssVar('--tertiary', '#1989b8');
+        var gridCol = cssVar('--outline-variant', '#ecd2e2');
+
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        var padX = 48;
+        var padY = 28;
+        var boxW = w - padX * 2;
+        var boxH = h - padY * 2;
+
+        ctx.fillStyle = cardBg;
+        ctx.beginPath(); ctx.roundRect(padX, padY, boxW, boxH, 16); ctx.fill();
+
+        // Infinite walls
+        ctx.fillStyle = grape;
+        ctx.fillRect(padX - 6, padY, 6, boxH);
+        ctx.fillRect(padX + boxW, padY, 6, boxH);
+
+        // Top half: psi_n(x), Bottom half: |psi_n(x)|^2
+        var midTop = padY + boxH * 0.28;
+        var baseBot = padY + boxH - 26;
+        var ampTop = boxH * 0.18;
+        var ampBot = boxH * 0.30;
+
+        // Symmetry center <x> = L/2
+        var centerX = padX + boxW / 2;
+        ctx.strokeStyle = sky;
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(centerX, padY + 10); ctx.lineTo(centerX, padY + boxH - 10); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Zero lines
+        ctx.strokeStyle = gridCol;
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(padX, midTop); ctx.lineTo(padX + boxW, midTop); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(padX, baseBot); ctx.lineTo(padX + boxW, baseBot); ctx.stroke();
+
+        // |psi|^2 fill
+        ctx.fillStyle = primary;
+        ctx.globalAlpha = 0.18;
+        ctx.beginPath();
+        ctx.moveTo(padX, baseBot);
+        for (var i = 0; i <= 120; i++) {
+          var u = i / 120;
+          var s = Math.sin(boxState.n * Math.PI * u);
+          ctx.lineTo(padX + u * boxW, baseBot - s * s * ampBot);
+        }
+        ctx.lineTo(padX + boxW, baseBot);
+        ctx.closePath();
+        ctx.fill();
+
+        // |psi|^2 stroke
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = primary;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        for (var j = 0; j <= 120; j++) {
+          var u2 = j / 120;
+          var s2 = Math.sin(boxState.n * Math.PI * u2);
+          var py = baseBot - s2 * s2 * ampBot;
+          if (j === 0) ctx.moveTo(padX, py); else ctx.lineTo(padX + u2 * boxW, py);
+        }
+        ctx.stroke();
+
+        // psi_n(x) stroke
+        ctx.strokeStyle = grape;
+        ctx.lineWidth = 2.8;
+        ctx.beginPath();
+        for (var k = 0; k <= 120; k++) {
+          var u3 = k / 120;
+          var s3 = Math.sin(boxState.n * Math.PI * u3);
+          var py3 = midTop - s3 * ampTop;
+          if (k === 0) ctx.moveTo(padX, py3); else ctx.lineTo(padX + u3 * boxW, py3);
+        }
+        ctx.stroke();
+
+        // Labels
+        ctx.fillStyle = grape;
+        ctx.font = '700 12px "DM Sans", sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('Función de onda ψₙ(x)', padX + 14, padY + 20);
+
+        ctx.fillStyle = primary;
+        ctx.fillText('Densidad de probabilidad |ψₙ(x)|²', padX + 14, baseBot - ampBot - 8);
+
+        ctx.fillStyle = plum;
+        ctx.textAlign = 'center';
+        ctx.font = '600 11px "JetBrains Mono", monospace';
+        ctx.fillText('x = 0', padX, padY + boxH - 8);
+        ctx.fillText('⟨x⟩ = L/2', centerX, padY + boxH - 8);
+        ctx.fillText('x = L', padX + boxW, padY + boxH - 8);
+      }
+
+      /* ---------- 6. TARJETAS CONCEPTUALES C2/C3 ---------- */
+      var C2_CARDS = [
+        {
+          id: `c2-linternas`,
+          cat: `luz`,
+          catLabel: `Luz y Fotones`,
+          question: `¿Por qué no observamos un patrón de interferencia estable al cruzar los haces de dos linternas comunes?`,
+          choices: [
+            `Porque la luz de linterna está compuesta de partículas sin propiedades ondulatorias.`,
+            `Porque emiten con fases aleatorias independientes (fuentes incoherentes) que promedian la interferencia en ~10⁻¹⁴ s.`,
+            `Porque los fotones de una linterna chocan elásticamente y se anulan entre sí.`
+          ],
+          correctIdx: 1,
+          hint: `Pista: piensa en millones de átomos emitiendo de forma independiente y en el tiempo de respuesta de nuestro ojo (~0.05 s) frente a la frecuencia óptica (~10¹⁴ Hz).`,
+          answer: `Dos linternas son fuentes incoherentes: millones de átomos emiten trenes de onda cortos con saltos de fase aleatorios cada ~10⁻⁸ s. Además, si difieren levemente en frecuencia, el desfase varía a ~10¹⁴ Hz. El patrón de interferencia cambia millones de veces por segundo y el ojo o detector solo registra el promedio uniforme I₁ + I₂.`
+        },
+        {
+          id: `c2-intensidad`,
+          cat: `luz`,
+          catLabel: `Luz y Fotones`,
+          question: `En el efecto fotoeléctrico (sobre la frecuencia de corte), ¿por qué subir la intensidad de la luz aumenta la corriente pero NO la energía cinética máxima K_máx?`,
+          choices: [
+            `Porque cada fotón tiene energía fija hν y se absorbe uno a uno; mayor intensidad solo envía más fotones por segundo.`,
+            `Porque el metal disipa la energía sobrante en calor antes de liberar el electrón.`,
+            `Porque el voltaje de frenado limita automáticamente la velocidad de los electrones.`
+          ],
+          correctIdx: 0,
+          hint: `Pista: separa qué cantidad macroscópica controla el número de cuantos por segundo y qué propiedad determina la energía de cada cuanto individual.`,
+          answer: `Según Einstein, la energía viene empaquetada en fotones de energía individual E = hν. Aumentar la intensidad (a ν constante) incrementa el flujo de fotones por segundo, liberando más fotoelectrones por unidad de tiempo (mayor fotocorriente). Pero cada electrón absorbe un único fotón, por lo que su energía cinética máxima sigue acotada por K_máx = hν − φ.`
+        },
+        {
+          id: `c2-rayosx`,
+          cat: `xray`,
+          catLabel: `Rayos X y Compton`,
+          question: `En un tubo de Rayos X, ¿qué distingue físicamente al espectro continuo (Bremsstrahlung) con corte λ_mín de las líneas características (K_α, K_β)?`,
+          choices: [
+            `El continuo depende solo de la corriente del filamento y las líneas dependen del voltaje acelerador.`,
+            `El continuo nace del frenado de electrones (corte hc/λ_mín = eV); las líneas nacen de transiciones atómicas discretas del ánodo.`,
+            `Las líneas características aparecen por difracción de Bragg en la ventana del tubo.`
+          ],
+          correctIdx: 1,
+          hint: `Pista: compara qué parte del espectro cambia al modificar el voltaje V del tubo frente a qué parte cambia al reemplazar el metal del ánodo (ej. Molibdeno vs Cobre).`,
+          answer: `La radiación de frenado (Bremsstrahlung) se produce cuando electrones acelerados por ΔV pierden parte o toda su energía cinética eV al desacelerar cerca de los núcleos del ánodo; el corte abrupto λ_mín = hc/(eV) ocurre si un electrón entrega el 100 % de eV a un único fotón. En cambio, las líneas características ocurren cuando un electrón incidente expulsa un electrón interno (ej. capa K) y otro de capa superior (L o M) cae emitiendo un fotón de energía fija propia del elemento del ánodo.`
+        },
+        {
+          id: `c2-pozo`,
+          cat: `qm`,
+          catLabel: `Cuántica`,
+          question: `¿Por qué una partícula confinada en un pozo de potencial infinito de ancho L no puede tener energía cinética cero (E = 0)?`,
+          choices: [
+            `Porque si E = 0 la partícula tendría p = 0 exacto (Δp = 0) mientras Δx ≤ L, violando el principio de incertidumbre.`,
+            `Porque la masa de la partícula aumenta al estar confinada.`,
+            `Porque las paredes del pozo transfieren energía térmica continuamente.`
+          ],
+          correctIdx: 0,
+          hint: `Pista: examina qué implicaría E = 0 sobre Δpₓ y qué pasaría con la función de onda normalizada ψ(x) si k = 0.`,
+          answer: `Si E = 0 dentro del pozo (donde U = 0), entonces p = 0 con certeza absoluta (Δpₓ = 0). Como la partícula está confinada en [0, L], su incertidumbre espacial es finita (Δx < L), lo cual violaría Δx·Δpₓ ≥ ħ/2. Matemáticamente, k = 0 anularía la función de onda ψ(x) = 0 en todas partes, haciendo imposible normalizar ∫|ψ|²dx = 1.`
+        },
+        {
+          id: `c2-compton-pico`,
+          cat: `xray`,
+          catLabel: `Rayos X y Compton`,
+          question: `En la dispersión de Compton sobre grafito, ¿por qué se mide un pico SIN desplazamiento (Δλ = 0) además del pico desplazado a λ' > λ?`,
+          choices: [
+            `Porque algunos fotones atraviesan el grafito sin tocar ningún átomo.`,
+            `Porque al chocar con electrones internos fuertemente ligados retrocede todo el átomo (M ≫ mₑ), haciendo Δλ ≈ 0.`,
+            `Porque los fotones recuperan energía al rebotar en electrones que viajan hacia la fuente.`
+          ],
+          correctIdx: 1,
+          hint: `Pista: reemplaza mₑ por la masa total del átomo M en la fórmula Δλ = (h / Mc)(1 − cos θ).`,
+          answer: `El pico desplazado corresponde a colisiones con electrones de valencia débilmente ligados, que responden como electrones libres de masa mₑ. En cambio, cuando un fotón interactúa con electrones internos fuertemente ligados al núcleo, la energía del fotón no basta para desligarlos y retrocede el átomo completo (masa M ≈ 22.000 mₑ para carbono), reduciendo Δλ = (h/Mc)(1−cos θ) prácticamente a cero.`
+        },
+        {
+          id: `c2-heis-ejes`,
+          cat: `qm`,
+          catLabel: `Cuántica`,
+          question: `Se mide la posición de una partícula en x = 0 con incertidumbre cero (Δx = 0). ¿Cómo afecta esto a la incertidumbre de su velocidad en el eje Y (Δv_y)?`,
+          choices: [
+            `Hace que Δv_y tienda a infinito por simetría esférica.`,
+            `No la afecta: las relaciones de incertidumbre vinculan solo variables conjugadas en el mismo eje (x con pₓ).`,
+            `La reduce a cero para compensar la incertidumbre en X.`
+          ],
+          correctIdx: 1,
+          hint: `Pista (Auxiliar 10 P1): revisa las componentes en el principio de incertidumbre Δx·Δpₓ ≥ ħ/2 frente a Δy·Δp_y ≥ ħ/2.`,
+          answer: `No la afecta en absoluto. El principio de incertidumbre de Heisenberg aplica a pares de variables canónicamente conjugadas a lo largo de la misma coordenada: Δx·Δpₓ ≥ ħ/2. Conocer x con precisión infinita dispara Δpₓ → ∞ (y por tanto Δvₓ), pero la componente y su momentum ortogonal p_y permanecen independientes.`
+        }
+      ];
+
+      window.filterC2 = function (cat) {
+        appState.c2Filter = cat;
+        var map = { all: 'filter-all', luz: 'filter-luz', xray: 'filter-xray', qm: 'filter-qm' };
+        Object.keys(map).forEach(function (k) {
+          var el = document.getElementById(map[k]);
+          if (el) el.classList.toggle('active', k === cat);
+        });
+        renderC2Cards();
+        scheduleSave();
+      };
+
+      function renderC2Cards() {
+        var container = document.getElementById('c2-cards-container');
+        if (!container) return;
+        container.innerHTML = '';
+
+        var filtered = C2_CARDS.filter(function (c) {
+          return appState.c2Filter === 'all' || c.cat === appState.c2Filter;
+        });
+
+        filtered.forEach(function (card) {
+          var step = appState.c2StepState[card.id] || 0; // 0 = hidden, 1 = hint, 2 = full
+          var chosen = appState.c2ChoiceState[card.id];
+          var isMastered = appState.masteredIds.indexOf(card.id) !== -1;
+
+          var art = document.createElement('article');
+          art.className = 'c2-card';
+
+          var top = document.createElement('div');
+          top.className = 'c2-card-top';
+          var tag = document.createElement('span');
+          tag.className = 'tag-cat';
+          tag.textContent = card.catLabel;
+          var st = document.createElement('span');
+          st.className = 'status-badge' + (isMastered ? ' mastered' : '');
+          st.textContent = isMastered ? 'Dominada' : 'Por repasar';
+          top.appendChild(tag);
+          top.appendChild(st);
+
+          var q = document.createElement('h3');
+          q.className = 'subhead';
+          q.style.fontSize = '1.08rem';
+          q.textContent = card.question;
+
+          var choicesBox = document.createElement('div');
+          choicesBox.className = 'c2-choices';
+          card.choices.forEach(function (chText, idx) {
+            var chBtn = document.createElement('button');
+            chBtn.type = 'button';
+            chBtn.className = 'choice-btn';
+            if (chosen === idx) {
+              chBtn.className += (idx === card.correctIdx) ? ' selected-right' : ' selected-wrong';
+            }
+            chBtn.textContent = chText;
+            chBtn.onclick = function () {
+              appState.c2ChoiceState[card.id] = idx;
+              if (idx === card.correctIdx && step < 1) {
+                appState.c2StepState[card.id] = 1;
+              }
+              renderC2Cards();
+              scheduleSave();
+            };
+            choicesBox.appendChild(chBtn);
+          });
+
+          art.appendChild(top);
+          art.appendChild(q);
+          art.appendChild(choicesBox);
+
+          if (step >= 1) {
+            var hintBox = document.createElement('div');
+            hintBox.className = 'reveal-box';
+            hintBox.textContent = card.hint;
+            art.appendChild(hintBox);
+          }
+
+          if (step >= 2) {
+            var ansBox = document.createElement('div');
+            ansBox.className = 'reveal-box answer-full';
+            ansBox.textContent = card.answer;
+            art.appendChild(ansBox);
+          }
+
+          var actions = document.createElement('div');
+          actions.className = 'c2-actions';
+
+          if (step < 2) {
+            var revBtn = document.createElement('button');
+            revBtn.type = 'button';
+            revBtn.className = 'btn btn-primary btn-sm';
+            revBtn.textContent = step === 0 ? 'Revelar pista clave' : 'Revelar explicación completa';
+            revBtn.onclick = function () {
+              appState.c2StepState[card.id] = step + 1;
+              renderC2Cards();
+              scheduleSave();
+            };
+            actions.appendChild(revBtn);
+          } else {
+            var hideBtn = document.createElement('button');
+            hideBtn.type = 'button';
+            hideBtn.className = 'btn btn-soft btn-sm';
+            hideBtn.textContent = 'Ocultar pauta';
+            hideBtn.onclick = function () {
+              appState.c2StepState[card.id] = 0;
+              renderC2Cards();
+              scheduleSave();
+            };
+            actions.appendChild(hideBtn);
+          }
+
+          var mBtn = document.createElement('button');
+          mBtn.type = 'button';
+          mBtn.className = isMastered ? 'btn btn-secondary btn-sm' : 'btn btn-soft btn-sm';
+          mBtn.textContent = isMastered ? 'Marcada como dominada' : 'Marcar dominada';
+          mBtn.onclick = function () {
+            var pos = appState.masteredIds.indexOf(card.id);
+            if (pos === -1) appState.masteredIds.push(card.id);
+            else appState.masteredIds.splice(pos, 1);
+            updateProgressUI();
+            renderC2Cards();
+            scheduleSave();
+          };
+          actions.appendChild(mBtn);
+
+          art.appendChild(actions);
+          container.appendChild(art);
+        });
+      }
+
+      function updateProgressUI() {
+        var count = appState.masteredIds.length;
+        var total = C2_CARDS.length;
+        var topPill = document.getElementById('top-progress-pill');
+        var c2Text = document.getElementById('c2-progress-text');
+        var c2Fill = document.getElementById('c2-progress-fill');
+        if (topPill) topPill.textContent = count + ' / ' + total + ' dominadas';
+        if (c2Text) c2Text.textContent = count + ' / ' + total + ' conceptos';
+        if (c2Fill) c2Fill.style.width = Math.round((count / total) * 100) + '%';
+      }
+
+      window.handleResetProgress = function (btn) {
+        if (!btn) return;
+        if (btn.dataset.armed !== 'true') {
+          btn.dataset.armed = 'true';
+          btn.textContent = 'Confirmar reinicio';
+          setTimeout(function () {
+            if (btn.dataset.armed === 'true') {
+              btn.dataset.armed = 'false';
+              btn.textContent = 'Reiniciar progreso';
+            }
+          }, 3500);
+          return;
+        }
+        btn.dataset.armed = 'false';
+        btn.textContent = 'Reiniciar progreso';
+        appState.masteredIds = [];
+        appState.c2StepState = {};
+        appState.c2ChoiceState = {};
+        appState.constIdx = 0;
+        appState.heroLambda = 450;
+        appState.heroMode = 'dual';
+        updateHeroReadouts();
+        setHeroMode('dual');
+        renderConstantsCarousel(false);
+        updateProgressUI();
+        renderC2Cards();
+        scheduleSave();
+      };
+
+      /* ---------- Resize & Boot ---------- */
+      var resizeTimer = null;
+      window.addEventListener('resize', function () {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+          if (qmMode === 'heisenberg') drawHeisenberg();
+          else drawQuantumBox();
+        }, 120);
+      });
+
+      async function boot() {
+        try {
+          if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === 'function') {
+            var saved = await window.notebookAppApi.getAppState();
+            if (saved && typeof saved === 'object') {
+              if (typeof saved.heroLambda === 'number') appState.heroLambda = saved.heroLambda;
+              if (typeof saved.heroMode === 'string') appState.heroMode = saved.heroMode;
+              if (typeof saved.constIdx === 'number' && saved.constIdx >= 0 && saved.constIdx < CONSTANTS.length) {
+                appState.constIdx = saved.constIdx;
+              }
+              if (Array.isArray(saved.masteredIds)) appState.masteredIds = saved.masteredIds;
+              if (saved.c2StepState && typeof saved.c2StepState === 'object') appState.c2StepState = saved.c2StepState;
+              if (saved.c2ChoiceState && typeof saved.c2ChoiceState === 'object') appState.c2ChoiceState = saved.c2ChoiceState;
+              if (typeof saved.c2Filter === 'string') appState.c2Filter = saved.c2Filter;
+            }
+          }
+        } catch (e) {
+          /* fallback to defaults */
+        }
+
+        initHeroParticles();
+        bindHeroEvents();
+        updateHeroReadouts();
+        setHeroMode(appState.heroMode);
+
+        renderConstantsCarousel(false);
+        updatePeReadouts();
+        updateComptonReadouts();
+        onHeisInput();
+        onBoxInput();
+        filterC2(appState.c2Filter);
+        updateProgressUI();
+
+        cancelAnimationFrame(heroAnimId);
+        heroAnimId = requestAnimationFrame(renderHero);
+
+        cancelAnimationFrame(peAnimId);
+        peAnimId = requestAnimationFrame(renderPhotoelectric);
+
+        cancelAnimationFrame(compAnimId);
+        compAnimId = requestAnimationFrame(renderCompton);
+
+        try {
+          if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
+            window.notebookAppApi.notifyAppReady();
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+      } else {
+        boot();
+      }
+    })();
+  </script>
+</body>
+</html>
